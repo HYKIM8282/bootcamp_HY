@@ -1,0 +1,85 @@
+cat > templates/base.html << 'EOF'
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}부동산 중개업소 조회{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f8f9fa; }
+
+    /* 헤더 */
+    .main-header {
+      background: #fff;
+      border-bottom: 2px solid #4a4fcf;
+      padding: 12px 0;
+    }
+    .main-header .brand {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #4a4fcf;
+    }
+
+    /* 서브 네비 */
+    .sub-nav {
+      background: #4a4fcf;
+      padding: 8px 0;
+    }
+    .sub-nav a {
+      color: #fff;
+      margin-right: 24px;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    .sub-nav a:hover { text-decoration: underline; }
+
+    /* 푸터 */
+    .main-footer {
+      background: #343a40;
+      color: #adb5bd;
+      text-align: center;
+      padding: 20px 0;
+      margin-top: 60px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── 헤더 ──────────────────────────────────── -->
+<header class="main-header">
+  <div class="container d-flex align-items-center justify-content-between">
+    <div class="brand">🏠 부동산 중개업소 조회 시스템</div>
+    <nav>
+      <a href="{% url 'brokers:agent_list' %}" class="btn btn-outline-primary btn-sm me-2">중개업소 조회</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── 서브 네비 ──────────────────────────────── -->
+<div class="sub-nav">
+  <div class="container">
+    <a href="#">홈</a>
+    <a href="{% url 'brokers:agent_list' %}">부동산 서비스</a>
+    <a href="#">부동산 중개업</a>
+  </div>
+</div>
+
+<!-- ── 컨텐츠 ─────────────────────────────────── -->
+<main class="container mt-4">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- ── 푸터 ──────────────────────────────────── -->
+<footer class="main-footer">
+  <div>© 2026 Heeyoung. All Rights Reserved.</div>
+  <div class="mt-1" style="font-size:0.8rem;">
+    데이터 출처: VWorld NED API (국토교통부 공간정보산업진흥원)
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+EOF

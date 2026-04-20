@@ -1,6 +1,8 @@
 from django.urls import path
-from .views import WorldAPIViewSet
+from . import views
+
+app_name = "brokers"
 
 urlpatterns = [
-    path('world/', WorldAPIViewSet.as_view({'get': 'list'})),
+    path("", views.agent_list, name="agent_list"),
 ]
