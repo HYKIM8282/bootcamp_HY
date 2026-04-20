@@ -17,10 +17,10 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--sigungu",
+            "--ldcode",
             type=str,
-            required=False,
-            help="예: 강남구, 관악구, 서초구"
+            default="11110",
+            help="시군구코드 (예: 11110 종로구, 11680 강남구)"
         )
         parser.add_argument(
             "--page",
@@ -31,7 +31,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--size",
             type=int,
-            default=10,
+            default=100,
             help="한 번에 가져올 개수"
         )
 
@@ -47,33 +47,25 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING("VWORLD_DOMAIN이 없어 기본값(http://localhost:8000)을 사용합니다."))
             domain = "http://localhost:8000"
 
-        sigungu = options.get("sigungu")
+        ldcode = options.get("ldcode")
         page = options.get("page")
         size = options.get("size")
 
         self.stdout.write(f"api_key exists: {bool(api_key)}")
         self.stdout.write(f"domain: {domain}")
-        self.stdout.write(f"sigungu: {sigungu}")
+        self.stdout.write(f"ldcode: {ldcode}")
         self.stdout.write(f"page: {page}, size: {size}")
 
-        url = "https://api.vworld.kr/req/data"
+        url = "https://api.vworld.kr/ned/data/getEBOfficeInfo"
 
         params = {
-            "service": "data",
-            "request": "GetFeature",
-            "data": "EV_BSC_BDONGUPSO_INFO",
             "key": api_key,
             "domain": domain,
             "format": "json",
-            "geometry": "false",
-            "size": size,
-            "page": page,
+            "numOfRows": size,
+            "pageNo": page,
+            "ldCode": ldcode,
         }
-
-        # 인증키부터 먼저 확인하려면 attrFilter는 잠시 주석 처리해도 됩니다.
-        # 아래 필드명 sigungu 는 실제 VWorld 응답 속성명과 다를 수 있습니다.
-        if sigungu:
-            params["attrFilter"] = f"sigungu:like:{sigungu}"
 
         self.stdout.write(self.style.WARNING(f"요청 파라미터: {params}"))
 
@@ -91,21 +83,15 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("API 응답 수신 성공"))
         self.stdout.write(str(data)[:3000])
 
-        response_body = data.get("response", {})
-        status = response_body.get("status")
+        # JSON 응답 파싱
+        fields_wrap = data.get("fields", {})
+        fields = fields_wrap.get("field", [])
 
-        if status == "ERROR":
-            error_info = response_body.get("error", {})
-            self.stdout.write(self.style.ERROR(f"VWorld 오류: {error_info}"))
-            return
+        # 결과가 1건이면 dict로 오므로 리스트로 통일
+        if isinstance(fields, dict):
+            fields = [fields]
 
-        features = (
-            response_body.get("result", {})
-            .get("featureCollection", {})
-            .get("features", [])
-        )
-
-        if not features:
+        if not fields:
             self.stdout.write(self.style.WARNING("저장할 데이터가 없습니다."))
             return
 
@@ -114,82 +100,29 @@ class Command(BaseCommand):
         skipped_count = 0
 
         with transaction.atomic():
-            for feature in features:
-                props = feature.get("properties", {})
+            for props in fields:
+                jurirno = props.get("jurirno", "")
 
-                # -----------------------------
-                # VWorld 응답 필드명 후보들
-                # 실제 응답 보고 필요시 수정하세요.
-                # -----------------------------
-                office_name = (
-                    props.get("bsnm")
-                    or props.get("office_name")
-                    or props.get("BSNM")
-                    or ""
-                )
-
-                broker_name = (
-                    props.get("rprsntvNm")
-                    or props.get("broker_name")
-                    or props.get("RPRSNTVNM")
-                    or ""
-                )
-
-                road_addr = (
-                    props.get("rdnmadr")
-                    or props.get("road_addr")
-                    or props.get("RDNMADR")
-                    or ""
-                )
-
-                jibun_addr = (
-                    props.get("lnmadr")
-                    or props.get("jibun_addr")
-                    or props.get("LNMADR")
-                    or ""
-                )
-
-                tel = (
-                    props.get("telno")
-                    or props.get("phone")
-                    or props.get("TELNO")
-                    or ""
-                )
-
-                sigungu_name = (
-                    props.get("sigungu")
-                    or props.get("SIGUNGU")
-                    or ""
-                )
-
-                license_no = (
-                    props.get("regno")
-                    or props.get("bsnmCode")
-                    or props.get("REGNO")
-                    or props.get("BSNMCODE")
-                    or None
-                )
-
-                if not office_name:
+                if not jurirno:
                     skipped_count += 1
                     continue
 
-                unique_value = license_no if license_no else office_name
-
-                # -----------------------------
-                # 여기서 RealEstateAgent 모델 필드명과 맞춰야 합니다.
-                # 아래 필드명이 models.py와 다르면 수정하세요.
-                # -----------------------------
                 obj, created = RealEstateAgent.objects.update_or_create(
-                    license_no=unique_value,
+                    jurirno=jurirno,
                     defaults={
-                        "office_name": office_name,
-                        "broker_name": broker_name,
-                        "road_address": road_addr,
-                        "jibun_address": jibun_addr,
-                        "phone_number": tel,
-                        "sigungu_name": sigungu_name,
-                        "raw_json": props,
+                        "ld_code":          props.get("ldCode", ""),
+                        "ld_code_nm":       props.get("ldCodeNm", ""),
+                        "bsnm_cmpnm":       props.get("bsnmCmpnm", ""),
+                        "brkr_nm":          props.get("brkrNm", ""),
+                        "sttus_se_code":    props.get("sttusSeCode", ""),
+                        "sttus_se_code_nm": props.get("sttusSeCodeNm", ""),
+                        "regist_de":        props.get("registDe") or None,
+                        "estbs_begin_de":   props.get("estbsBeginDe") or None,
+                        "estbs_end_de":     props.get("estbsEndDe") or None,
+                        "last_updt_dt":     props.get("lastUpdtDt") or None,
+                        "mnnmadr":          props.get("mnnmadr", ""),
+                        "rdnmadr":          props.get("rdnmadr", ""),
+                        "rdnmadr_code":     props.get("rdnmadrcode", ""),
                     }
                 )
 
