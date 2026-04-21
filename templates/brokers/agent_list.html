@@ -1,21 +1,17 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}   ← brokers/base.html → base.html 로 변경!
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/brokers/agent_list.css' %}">
+{% endblock %}
 
 {% block title %}부동산 중개업 조회{% endblock %}
 
 {% block content %}
 
-<!-- 브레드크럼 -->
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="#">홈</a></li>
-    <li class="breadcrumb-item"><a href="#">부동산 서비스</a></li>
-    <li class="breadcrumb-item active">부동산 중개업</li>
-  </ol>
-</nav>
 
-<h4 class="fw-bold mb-3">부동산 중개업 조회</h4>
+<h4 class="fw-bold mb-3">부동산 중개업 </h4>
 
-<!-- 설명 -->
 <p class="text-muted small mb-3">
   ○ 부동산중개업소 정보는 전국 각 지자체 정보를 통합 제공하는 서비스입니다.
 </p>
@@ -25,25 +21,21 @@
   <div class="card-body">
     <form method="get">
       <div class="row g-2 align-items-end">
-
         <div class="col-md-3">
           <label class="form-label fw-semibold small">시군구코드</label>
           <input type="text" name="ldcode" class="form-control form-control-sm"
                  placeholder="예: 11110" value="{{ request.GET.ldcode }}">
         </div>
-
         <div class="col-md-3">
           <label class="form-label fw-semibold small">상호명</label>
           <input type="text" name="bsnm_cmpnm" class="form-control form-control-sm"
                  placeholder="상호 검색" value="{{ request.GET.bsnm_cmpnm }}">
         </div>
-
         <div class="col-md-3">
           <label class="form-label fw-semibold small">등록번호</label>
           <input type="text" name="jurirno" class="form-control form-control-sm"
                  placeholder="등록번호" value="{{ request.GET.jurirno }}">
         </div>
-
         <div class="col-md-3">
           <label class="form-label fw-semibold small">상태</label>
           <select name="sttus" class="form-select form-select-sm">
@@ -52,12 +44,10 @@
             <option value="2" {% if request.GET.sttus == "2" %}selected{% endif %}>폐업</option>
           </select>
         </div>
-
         <div class="col-12 text-end">
           <a href="{% url 'brokers:agent_list' %}" class="btn btn-secondary btn-sm me-1">초기화</a>
           <button type="submit" class="btn btn-primary btn-sm">검색</button>
         </div>
-
       </div>
     </form>
   </div>
@@ -142,4 +132,4 @@
   </ul>
 </nav>
 
-{% endblock %}
+{% endblock %}   
