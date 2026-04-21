@@ -2,14 +2,14 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-
-VWORLD_API_KEY = os.getenv("VWORLD_API_KEY", )
-VWORLD_DOMAIN = os.getenv("VWORLD_DOMAIN", "http://localhost:8000")
-
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / ".env")
+
+VWORLD_API_KEY    = os.getenv("VWORLD_API_KEY", "")
+VWORLD_URL_OFFICE = os.getenv("VWORLD_URL_OFFICE", "https://api.vworld.kr/ned/data/getEBOfficeInfo")
+VWORLD_URL_BROKER = os.getenv("VWORLD_URL_BROKER", "https://api.vworld.kr/ned/data/getEBBrokerInfo")
+VWORLD_TIMEOUT    = int(os.getenv("VWORLD_TIMEOUT", 10))
 
 
 # Quick-start development settings - unsuitable for production
@@ -96,6 +96,12 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
+}
+
 
 
 # Internationalization

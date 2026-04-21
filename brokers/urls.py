@@ -1,8 +1,14 @@
-from django.urls import path
-from . import views
-
-app_name = "brokers"
+# brokers/urls.py
+from .views import (
+    # ... 기존 ...
+    OfficeWithBrokersView,
+    VWorldBothProxyView,
+    VWorldSequentialSyncView,
+)
 
 urlpatterns = [
-    path("", views.agent_list, name="agent_list"),
+    # ... 기존 ...
+    path("offices/<str:jurirno>/full/", OfficeWithBrokersView.as_view()),  # 3번
+    path("vworld/both/",               VWorldBothProxyView.as_view()),     # 1번
+    path("vworld/sync/",               VWorldSequentialSyncView.as_view()), # 4번
 ]

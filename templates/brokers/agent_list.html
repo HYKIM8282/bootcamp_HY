@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 {% extends 'base.html' %}   ← brokers/base.html → base.html 로 변경!
 {% load static %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/brokers/agent_list.css' %}">
 {% endblock %}
+=======
+cat > templates/brokers/agent_list.html << 'EOF'
+{% extends "base.html" %}
+>>>>>>> parent of 71f461a (commit message2)
 
 {% block title %}부동산 중개업 조회{% endblock %}
 
@@ -132,4 +137,9 @@
   </ul>
 </nav>
 
+<<<<<<< HEAD
 {% endblock %}   
+=======
+{% endblock %}
+EOF
+>>>>>>> parent of 71f461a (commit message2)
