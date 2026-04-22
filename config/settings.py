@@ -7,10 +7,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 VWORLD_API_KEY    = os.getenv("VWORLD_API_KEY", "")
-VWORLD_URL_OFFICE = os.getenv("VWORLD_URL_OFFICE", "https://api.vworld.kr/ned/data/getEBOfficeInfo")
-VWORLD_URL_BROKER = os.getenv("VWORLD_URL_BROKER", "https://api.vworld.kr/ned/data/getEBBrokerInfo")
+BASE_URLS = os.getenv("BASE_URLS", "https://api.vworld.kr/ned/data/getEBOfficeInfo")
+BASE_URLS2= os.getenv("BASE_URLS2", "https://api.vworld.kr/ned/data/getEBBfficeInfo")
 VWORLD_TIMEOUT    = int(os.getenv("VWORLD_TIMEOUT", 10))
-
+VWORLD_DOMAIN = os.getenv("VWORLD_DOMAIN", "localhost")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/

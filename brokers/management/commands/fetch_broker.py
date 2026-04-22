@@ -10,7 +10,8 @@ from brokers.models import RealEstateAgent
 
 load_dotenv()
 
-BASE_URL = "https://api.vworld.kr/ned/data/getEBOfficeInfo"
+BASE_URLS = "https://api.vworld.kr/ned/data/getEBOfficeInfo"
+
 
 
 class Command(BaseCommand):
@@ -77,7 +78,7 @@ class Command(BaseCommand):
 
             # ── API 호출 ──────────────────────────────────────────
             try:
-                response = requests.get(BASE_URL, params=params, timeout=20)
+                response = requests.get(BASE_URLS, params=params, timeout=20)
                 response.raise_for_status()
                 data = response.json()
             except requests.RequestException as e:

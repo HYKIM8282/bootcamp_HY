@@ -1,3 +1,14 @@
-.env
-.venv
+# Python
+__pycache__/
+*.pyc
+*.pyo
 
+# Django
+db.sqlite3
+*.log
+media/
+
+# 환경설정
+.env
+.venv/
+venv/

@@ -1,14 +1,20 @@
-# brokers/urls.py
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import (
-    # ... 기존 ...
-    OfficeWithBrokersView,
-    VWorldBothProxyView,
-    VWorldSequentialSyncView,
+    RealEstateAgentViewSet,
+    EBBrokerViewSet,        # ✅ 추가
+    broker_list_view,
+    broker_detail_view,
 )
 
+router = DefaultRouter()
+router.register("agents", RealEstateAgentViewSet, basename="realestateagent")
+router.register("eb-brokers", EBBrokerViewSet, basename="eb-broker")  # ✅ 추가
+
 urlpatterns = [
-    # ... 기존 ...
-    path("offices/<str:jurirno>/full/", OfficeWithBrokersView.as_view()),  # 3번
-    path("vworld/both/",               VWorldBothProxyView.as_view()),     # 1번
-    path("vworld/sync/",               VWorldSequentialSyncView.as_view()), # 4번
+    # 템플릿 화면
+    path("", broker_list_view, name="agent_list"),
+    path("<int:pk>/", broker_detail_view, name="broker-detail"),
+    # API
+    path("api/", include(router.urls)),
 ]
