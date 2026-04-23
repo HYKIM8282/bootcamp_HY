@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}{{ agent.bsnm_cmpnm }} - 상세정보{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-3">
+  <a href="{% url 'brokers:agent_list' %}" class="btn btn-sm btn-outline-secondary">← 목록</a>
+  <h4 class="fw-bold mb-0">부동산 중개업 상세</h4>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span class="fw-bold fs-6">{{ agent.bsnm_cmpnm }}</span>
+    {% if agent.sttus_se_code == "1" %}
+      <span class="badge bg-success">● 영업중</span>
+    {% else %}
+      <span class="badge bg-secondary">폐업</span>
+    {% endif %}
+  </div>
+
+  <div class="card-body">
+    <div class="row g-3">
+
+      <div class="col-md-6">
+        <p class="text-muted small mb-1">등록번호</p>
+        <p class="fw-semibold mb-0">{{ agent.jurirno|default:"-" }}</p>
+      </div>
+      <div class="col-md-6">
+        <p class="text-muted small mb-1">대표자</p>
+        <p class="fw-semibold mb-0">{{ agent.brkr_nm|default:"-" }}</p>
+      </div>
+
+      <div class="col-12"><hr class="my-1"></div>
+
+      <div class="col-md-6">
+        <p class="text-muted small mb-1">도로명주소</p>
+        <p class="mb-0">{{ agent.rdnmadr|default:"-" }}</p>
+      </div>
+      <div class="col-md-6">
+        <p class="text-muted small mb-1">지번주소</p>
+        <p class="mb-0">{{ agent.mnnmadr|default:"-" }}</p>
+      </div>
+      <div class="col-md-6">
+        <p class="text-muted small mb-1">시군구코드</p>
+        <p class="mb-0">{{ agent.ld_code|default:"-" }}</p>
+      </div>
+      <div class="col-md-6">
+        <p class="text-muted small mb-1">시군구명</p>
+        <p class="mb-0">{{ agent.ld_code_nm|default:"-" }}</p>
+      </div>
+
+      <div class="col-12"><hr class="my-1"></div>
+
+      <div class="col-md-4">
+        <p class="text-muted small mb-1">등록일</p>
+        <p class="mb-0">{{ agent.regist_de|default:"-" }}</p>
+      </div>
+      <div class="col-md-4">
+        <p class="text-muted small mb-1">영업 시작일</p>
+        <p class="mb-0">{{ agent.estbs_begin_de|default:"-" }}</p>
+      </div>
+      <div class="col-md-4">
+        <p class="text-muted small mb-1">영업 종료일</p>
+        <p class="mb-0">{{ agent.estbs_end_de|default:"-" }}</p>
+      </div>
+      <div class="col-md-6">
+        <p class="text-muted small mb-1">최종수정일</p>
+        <p class="mb-0">{{ agent.last_updt_dt|default:"-" }}</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
