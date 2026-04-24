@@ -96,7 +96,12 @@
       <tr>
         <td>{{ forloop.counter }}</td>
         <td class="text-start">{{ agent.jurirno }}</td>
-        <td class="text-start fw-semibold">{{ agent.bsnm_cmpnm }}</td>
+        <td class="text-start fw-semibold">
+          <a href="{% url 'brokers:broker1_detail' agent.pk %}" class="text-decoration-none text-dark">
+             {{ agent.bsnm_cmpnm }}
+          </a>
+        </td>
+
         <td class="text-start">{{ agent.rdnmadr|default:"-" }}</td>
         <td>{{ agent.brkr_nm }}</td>
         <td>{{ agent.regist_de }}</td>

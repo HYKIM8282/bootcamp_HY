@@ -16,7 +16,8 @@ router.register("eb-brokers", EBBrokerViewSet, basename="eb-broker")
 urlpatterns = [
     path("broker1/",   BrokerListView.as_view(),   name="broker1_list"),   # .as_view() 추가
     path("broker2/",   Broker2ListView.as_view(),  name="broker2_list"),
-    path("<int:pk>/",  BrokerDetailView.as_view(), name="broker_detail"),
+    path("detail1/<int:pk>/",  BrokerDetailView.as_view(), name="broker1_detail"),
+    path("detail2/<int:pk>/",  BrokerDetailView.as_view(), name="broker2_detail"),
 ]
 
 

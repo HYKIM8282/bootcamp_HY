@@ -4,6 +4,7 @@
 
 body {
   background: #f8f9fa;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 
 /* 헤더 */
@@ -18,13 +19,29 @@ body {
   color: #4a4fcf;
 }
 
+/* 수정 전: 버튼 색상 없음 */
+/* 수정 후: 헤더 내 로그인/로그아웃 버튼 색상 → 흰 배경에서 보이도록 */
+.main-header .btn-outline-primary {
+  color: #4a4fcf;           /* ✅ 글자색: 헤더 포인트 컬러 */
+  border-color: #4a4fcf;    /* ✅ 테두리색 */
+}
+.main-header .btn-outline-primary:hover {
+  background: #4a4fcf;      /* ✅ 호버 시 배경색 */
+  color: #fff;
+}
+.main-header .btn-primary {
+  background: #4a4fcf;      /* ✅ 배경색 */
+  border-color: #4a4fcf;
+  color: #fff;
+}
+
 /* 서브 네비 */
 .sub-nav {
   background: #4a4fcf;
   padding: 8px 0;
 }
 .sub-nav a {
-  color: #fff;
+  color: #ffffff;
   margin-right: 24px;
   text-decoration: none;
   font-size: 0.95rem;

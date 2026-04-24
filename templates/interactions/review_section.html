@@ -1,0 +1,69 @@
+{# 상세페이지에 include해서 사용하는 리뷰 섹션 #}
+
+<div class="mt-4">
+  <h5 class="fw-bold mb-3">📝 리뷰 ({{ reviews.count }}개)</h5>
+
+  {# ✅ 별점 평균 표시 #}
+  {% if reviews %}
+    {% with avg=reviews|length %}
+    <p class="text-muted small mb-3">
+      ⭐ 평균 별점:
+      <strong>
+        {{ agent.reviews.all|length }}건
+      </strong>
+    </p>
+    {% endwith %}
+  {% endif %}
+
+  {# ✅ 리뷰 작성 폼 #}
+  <div class="card shadow-sm mb-4">
+    <div class="card-header fw-semibold">리뷰 작성</div>
+    <div class="card-body">
+      <form method="post" action="{% url 'interactions:review_create' agent.pk %}">
+        {% csrf_token %}
+        <div class="mb-2">
+          <label class="form-label small fw-semibold">별점</label>
+          {{ form.score }}
+        </div>
+        <div class="mb-2">
+          <label class="form-label small fw-semibold">내용</label>
+          {{ form.content }}
+        </div>
+        <div class="text-end">
+          <button type="submit" class="btn btn-primary btn-sm">등록</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {# ✅ 리뷰 목록 #}
+  {% for review in reviews %}
+  <div class="card shadow-sm mb-2">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <span class="fw-semibold small">{{ review.author.username }}</span>
+        <span class="text-warning">
+          {# 별점 시각화 #}
+          {% for i in "12345" %}
+            {% if forloop.counter <= review.score %}⭐{% endif %}
+          {% endfor %}
+          ({{ review.score }}점)
+        </span>
+        <span class="text-muted small">{{ review.created_at|date:"Y-m-d" }}</span>
+      </div>
+      <p class="mb-1 small">{{ review.content }}</p>
+
+      {# ✅ 본인 리뷰만 삭제 버튼 표시 #}
+      {% if review.author == request.user %}
+      <div class="text-end">
+        <a href="{% url 'interactions:review_delete' review.pk %}"
+           class="btn btn-outline-danger btn-sm"
+           onclick="return confirm('삭제하시겠습니까?')">삭제</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <p class="text-muted small text-center py-3">아직 리뷰가 없습니다.</p>
+  {% endfor %}
+</div>

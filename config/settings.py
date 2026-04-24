@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'brokers',
+    'accounts',
+    'interactions', 
 ]
 
 MIDDLEWARE = [
@@ -120,3 +122,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+
+LOGIN_REDIRECT_URL = '/broker1/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/accounts/login/'

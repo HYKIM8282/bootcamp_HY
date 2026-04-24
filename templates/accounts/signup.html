@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}회원가입{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-header fw-bold">회원가입</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}
+                <div class="text-danger small mt-1">{{ field.errors.0 }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-sm">가입하기</button>
+          </div>
+        </form>
+        <div class="text-center mt-3 small">
+          이미 계정이 있으신가요? <a href="{% url 'accounts:login' %}">로그인</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
