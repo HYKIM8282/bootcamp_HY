@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}후기 작성 — {{ agent.bsnm_cmpnm }}{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 560px;">
+
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <a href="{% url 'brokers:broker1_detail' agent.pk %}"
+       class="btn btn-sm btn-outline-secondary">← 상세로</a>
+    <h4 class="fw-bold mb-0">후기 작성</h4>
+  </div>
+
+  <div class="alert alert-light border mb-4">
+    <span class="text-muted small">작성 대상</span>
+    <p class="fw-bold mb-0 fs-6">{{ agent.bsnm_cmpnm }}</p>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">별점 선택</label>
+          <div class="d-flex gap-3 flex-wrap">
+            {{ form.score }}
+          </div>
+          {% if form.score.errors %}
+            <div class="text-danger small mt-1">{{ form.score.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">후기 내용</label>
+          {{ form.content }}
+          {% if form.content.errors %}
+            <div class="text-danger small mt-1">{{ form.content.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-dark py-3 fw-semibold">
+            후기 등록
+          </button>
+          <a href="{% url 'brokers:broker1_detail' agent.pk %}"
+             class="btn btn-outline-secondary">
+            취소
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

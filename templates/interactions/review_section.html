@@ -1,21 +1,18 @@
-{# 상세페이지에 include해서 사용하는 리뷰 섹션 #}
+{# interactions/templates/interactions/review_section.html #}
 
 <div class="mt-4">
-  <h5 class="fw-bold mb-3">📝 리뷰 ({{ reviews.count }}개)</h5>
 
-  {# ✅ 별점 평균 표시 #}
+  {# ✅ 수정1: reviews.count → review_count (view context 변수명과 일치) #}
+  <h5 class="fw-bold mb-3">📝 리뷰 ({{ review_count }}개)</h5>
+
+  {# ✅ 수정2: avg_score 변수 직접 사용 #}
   {% if reviews %}
-    {% with avg=reviews|length %}
-    <p class="text-muted small mb-3">
-      ⭐ 평균 별점:
-      <strong>
-        {{ agent.reviews.all|length }}건
-      </strong>
-    </p>
-    {% endwith %}
+  <p class="text-muted small mb-3">
+    ⭐ 평균 별점: <strong>{{ avg_score }}</strong>점
+  </p>
   {% endif %}
 
-  {# ✅ 리뷰 작성 폼 #}
+  {# 리뷰 작성 폼 (기존 유지) #}
   <div class="card shadow-sm mb-4">
     <div class="card-header fw-semibold">리뷰 작성</div>
     <div class="card-body">
@@ -36,14 +33,13 @@
     </div>
   </div>
 
-  {# ✅ 리뷰 목록 #}
+  {# 리뷰 목록 (기존 유지) #}
   {% for review in reviews %}
   <div class="card shadow-sm mb-2">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center mb-1">
         <span class="fw-semibold small">{{ review.author.username }}</span>
         <span class="text-warning">
-          {# 별점 시각화 #}
           {% for i in "12345" %}
             {% if forloop.counter <= review.score %}⭐{% endif %}
           {% endfor %}
@@ -53,17 +49,23 @@
       </div>
       <p class="mb-1 small">{{ review.content }}</p>
 
-      {# ✅ 본인 리뷰만 삭제 버튼 표시 #}
+      {# ✅ 수정3: <a> 태그 → <form> POST로 변경 #}
       {% if review.author == request.user %}
       <div class="text-end">
-        <a href="{% url 'interactions:review_delete' review.pk %}"
-           class="btn btn-outline-danger btn-sm"
-           onclick="return confirm('삭제하시겠습니까?')">삭제</a>
+        <form method="post"
+              action="{% url 'interactions:review_delete' review.pk %}"
+              onsubmit="return confirm('삭제하시겠습니까?');"
+              class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger btn-sm">삭제</button>
+        </form>
       </div>
       {% endif %}
+
     </div>
   </div>
   {% empty %}
   <p class="text-muted small text-center py-3">아직 리뷰가 없습니다.</p>
   {% endfor %}
+
 </div>

@@ -9,4 +9,8 @@ urlpatterns = [
 
     # ✅ 리뷰 삭제: /interactions/<review_pk>/delete/
     path('<int:review_pk>/delete/', views.review_delete, name='review_delete'),
+    # ✅ 추가
+    path('<int:review_pk>/update/', views.review_update, name='review_update'),
+
+    
 ]

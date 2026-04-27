@@ -1,6 +1,8 @@
 {
     "recommendations": [
         "ms-python.python",
-        "qwtel.sqlite-viewer"
+        "qwtel.sqlite-viewer",
+        "formulahendry.auto-rename-tag",
+        "ecmel.vscode-html-css"
     ]
 }

@@ -73,3 +73,26 @@ def review_delete(request, review_pk):
         return redirect('brokers:broker1_detail', pk=agent_pk)
 
     return redirect('brokers:broker1_detail', pk=review.agent.pk)
+
+@login_required(login_url='/accounts/login/')
+def review_update(request, review_pk):
+    """리뷰 수정 (본인만 가능)"""
+    review = get_object_or_404(Review, pk=review_pk)
+
+    # ✅ 본인 리뷰만 수정 가능
+    if review.author != request.user:
+        return redirect('brokers:broker1_detail', pk=review.agent.pk)
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, instance=review)  # ✅ instance로 기존 데이터 불러옴
+        if form.is_valid():
+            form.save()
+            return redirect('brokers:broker1_detail', pk=review.agent.pk)
+    else:
+        form = ReviewForm(instance=review)  # ✅ GET: 기존 내용 채워서 보여줌
+
+    return render(request, 'interactions/review_update.html', {
+        'form':   form,
+        'review': review,
+        'agent':  review.agent,
+    })

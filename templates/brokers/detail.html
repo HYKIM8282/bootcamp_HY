@@ -71,4 +71,100 @@
     </div>
   </div>
 </div>
+
+
+<!-- ────────────────────────────────── -->
+<!-- ✅ 추가: 이용자 평점 카드            -->
+<!-- ────────────────────────────────── -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <p class="text-muted small mb-2">이용자 평점</p>
+    <div class="d-flex align-items-center justify-content-between">
+      <div>
+        <!-- 평균 별점 표시 -->
+        <span class="text-warning fs-4">
+          {% for i in "12345" %}
+            {% if forloop.counter <= avg_score %}★{% else %}☆{% endif %}
+          {% endfor %}
+        </span>
+        <strong class="fs-5 ms-2">{{ avg_score }}</strong>
+        <p class="text-muted small mt-1 mb-0">리뷰 {{ review_count }}건</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────────────────────────── -->
+<!-- ✅ 추가: 후기 작성하기 버튼          -->
+<!-- ────────────────────────────────── -->
+{% if user.is_authenticated %}
+  <a href="{% url 'interactions:review_create' agent.pk %}"
+     class="btn btn-dark w-100 py-3 mb-4 fw-semibold fs-6">
+    후기 작성하기
+  </a>
+{% else %}
+  <a href="{% url 'login' %}?next={{ request.path }}"
+     class="btn btn-secondary w-100 py-3 mb-4 fw-semibold fs-6">
+    로그인 후 후기 작성 가능
+  </a>
+{% endif %}
+
+<!-- ────────────────────────────────── -->
+<!-- ✅ 추가: 리뷰 목록                  -->
+<!-- ────────────────────────────────── -->
+<h6 class="fw-bold mb-3">이용 후기 ({{ review_count }}건)</h6>
+
+{% for review in reviews %}
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+
+    <!-- 리뷰 헤더: 작성자 + 별점 + 날짜 -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <div class="d-flex align-items-center gap-2">
+        <span class="fw-semibold">{{ review.author.username }}</span>
+        <span class="text-warning">
+          {% for i in "12345" %}
+            {% if forloop.counter <= review.score %}★{% else %}☆{% endif %}
+          {% endfor %}
+        </span>
+        <span class="badge bg-light text-dark border">{{ review.score }}점</span>
+      </div>
+      <span class="text-muted small">{{ review.created_at|date:"Y.m.d" }}</span>
+    </div>
+
+    <!-- 리뷰 내용 -->
+    <p class="mb-2" style="line-height:1.7;">{{ review.content }}</p>
+
+    <!-- 본인 리뷰만 삭제 버튼 표시 -->
+    {% if review.author == request.user %}
+    <div class="text-end">
+
+      <!-- ✅ 수정 버튼 추가 -->
+      <a href="{% url 'interactions:review_update' review.pk %}"
+        class="btn btn-outline-secondary btn-sm me-1">수정</a>
+
+      <form method="post"
+            action="{% url 'interactions:review_delete' review.pk %}"
+            onsubmit="return confirm('삭제하시겠습니까?');"
+            class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger btn-sm">삭제</button>
+      </form>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% empty %}
+<!-- 리뷰 없을 때 -->
+<div class="text-center text-muted py-5 border rounded">
+  <p class="mb-1">아직 등록된 후기가 없습니다.</p>
+  <p class="small">첫 번째 후기를 작성해보세요!</p>
+</div>
+{% endfor %}
+
+<!-- ✅ review_section.html include (리뷰 목록 + 작성 폼) -->
+
+
 {% endblock %}

@@ -18,6 +18,7 @@ urlpatterns = [
     path("broker2/",   Broker2ListView.as_view(),  name="broker2_list"),
     path("detail1/<int:pk>/",  BrokerDetailView.as_view(), name="broker1_detail"),
     path("detail2/<int:pk>/",  BrokerDetailView.as_view(), name="broker2_detail"),
+    path("api/", include(router.urls)),
 ]
 
 

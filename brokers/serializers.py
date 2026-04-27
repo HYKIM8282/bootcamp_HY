@@ -1,11 +1,23 @@
 from rest_framework import serializers
 from .models import RealEstateAgent, EBBrokerInfo
+from interactions.serializers import ReviewSerializer  # ← 가져오기만 함
 
 #부동산중개업사무소정보조회
+
+
+# ────────────────────────────────────────────────
+# 부동산중개업사무소 (목록용)
+# ────────────────────────────────────────────────
+
 class RealEstateAgentSerializer(serializers.ModelSerializer):
     class Meta:
         model = RealEstateAgent
         fields = "__all__"
+
+# ────────────────────────────────────────────────
+# 부동산중개업사무소 검색 파라미터
+# ────────────────────────────────────────────────
+        
 
 class RealEstateAgentSearchParamSerializer(serializers.Serializer):
     """부동산중개업사무소정보조회 API 검색 요청 파라미터 유효성 검사용"""
@@ -63,6 +75,11 @@ class RealEstateAgentSearchParamSerializer(serializers.Serializer):
 
 
 #부동산중개업자정보조회
+
+# ────────────────────────────────────────────────
+# 부동산중개업자정보 (API2)
+# ────────────────────────────────────────────────
+
 class EBBrokerInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = EBBrokerInfo
@@ -114,3 +131,55 @@ class EBBrokerSearchParamSerializer(serializers.Serializer):
                 "ldCode, bsnmCmpnm, brkrNm, jurirno 중 하나 이상 입력하세요."
             )
         return attrs
+
+
+# ────────────────────────────────────────────────
+# 부동산중개업사무소 (상세용) ← ✅ 여기가 핵심 수정 부분
+# ────────────────────────────────────────────────
+
+class RealEstateAgentDetailSerializer(serializers.ModelSerializer):
+    """
+    상세 API용 — 리뷰 목록 + 평균 별점 포함
+    BrokerDetailView의 API 응답 또는 DRF retrieve()에서 사용
+    """    
+    # ✅ Review 모델의 related_name='reviews' 를 통해 nested로 포함
+    reviews = ReviewSerializer(many=True, read_only=True)
+
+    # ✅ 평균 별점 (계산 필드)
+    avg_score = serializers.SerializerMethodField()
+
+    # ✅ 리뷰 총 개수 (계산 필드)
+    review_count = serializers.SerializerMethodField()
+    
+    class Meta:                        # ✅ 반드시 필요 — 없으면 에러
+        model  = RealEstateAgent
+        fields = [
+            'id',
+            'ld_code',
+            'ld_code_nm',
+            'jurirno',
+            'bsnm_cmpnm',
+            'brkr_nm',
+            'sttus_se_code',
+            'sttus_se_code_nm',
+            'regist_de',
+            'estbs_begin_de',
+            'estbs_end_de',
+            'mnnmadr',
+            'rdnmadr',
+            'last_updt_dt',
+            'avg_score',    # ✅ 계산 필드
+            'review_count', # ✅ 계산 필드
+            'reviews',      # ✅ nested 리뷰 목록
+        ]
+
+    def get_avg_score(self, obj):
+        # obj = RealEstateAgent 인스턴스
+        # obj.reviews → Review 모델의 related_name='reviews'
+        reviews = obj.reviews.all()
+        if not reviews.exists():
+            return 0
+        return round(sum(r.score for r in reviews) / reviews.count(), 1)
+
+    def get_review_count(self, obj):
+        return obj.reviews.count()
