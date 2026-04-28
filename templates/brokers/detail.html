@@ -73,15 +73,141 @@
 </div>
 
 
-<!-- ────────────────────────────────── -->
-<!-- ✅ 추가: 이용자 평점 카드            -->
-<!-- ────────────────────────────────── -->
+<!-- ✅ 추가 시작: 이미지 카드 (평점 카드 바로 위에 삽입) -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header fw-semibold">📷 사진</div>
+  <div class="card-body">
+
+    <!-- ✅ 추가: 이미지가 있을 때 캐러셀로 표시 -->
+    {% if images %}
+      <div id="brokerCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+        <div class="carousel-inner rounded border">
+
+          <!-- ✅ 추가: images 쿼리셋 순회하며 슬라이드 생성 -->
+          {% for img in images %}
+          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <img src="{{ img.image.url }}"
+                 class="d-block w-100"
+                 style="height: 220px; object-fit: cover;"
+                 alt="{{ img.caption|default:agent.bsnm_cmpnm }}">
+
+            <!-- ✅ 추가: 사진 설명이 있을 때만 캡션 표시 -->
+            {% if img.caption %}
+            <div class="carousel-caption d-none d-md-block">
+              <p class="bg-dark bg-opacity-50 rounded px-2 py-1 small mb-0">
+                {{ img.caption }}
+              </p>
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+
+        </div>
+
+        <!-- ✅ 추가: 사진이 2장 이상일 때만 좌우 버튼 표시 -->
+        {% if images|length > 1 %}
+        <button class="carousel-control-prev" type="button"
+                data-bs-target="#brokerCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button"
+                data-bs-target="#brokerCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+        {% endif %}
+      </div>
+
+      <!-- ✅ 추가: 총 사진 수 표시 -->
+      <p class="text-muted small text-center mb-2">총 {{ images|length }}장</p>
+
+      <!-- ✅ 추가: 본인이 올린 사진만 삭제 버튼 표시 -->
+      {% if user.is_authenticated %}
+        {% for img in images %}
+          {% if img.uploaded_by == user or user.is_staff %}
+          <form method="post"
+                action="{% url 'brokers:broker_image_delete' img.pk %}"
+                onsubmit="return confirm('이 사진을 삭제할까요?');"
+                class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger btn-sm mb-1">
+              🗑 사진 {{ forloop.counter }} 삭제
+            </button>
+          </form>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      <!-- ✅ 추가 끝: 삭제 버튼 -->
+
+    <!-- ✅ 추가: 이미지가 없을 때 placeholder 표시 -->
+    {% else %}
+      <div class="border rounded d-flex align-items-center justify-content-center bg-light mb-3"
+           style="height: 150px;">
+        <div class="text-center text-muted">
+          <div style="font-size: 2.5rem;">🏢</div>
+          <small>등록된 사진이 없습니다</small>
+        </div>
+      </div>
+    {% endif %}
+    <!-- ✅ 추가 끝: 이미지 표시 영역 -->
+
+
+    <!-- ✅ 추가 시작: 사진 추가 버튼 + 업로드 폼 (로그인 사용자만) -->
+    {% if user.is_authenticated %}
+
+      <!-- ✅ 추가: 버튼 클릭 시 폼 접기/펼치기 -->
+      <button class="btn btn-outline-secondary btn-sm w-100 mt-2"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#imageUploadBox">
+        📷 사진 추가하기
+      </button>
+
+      <!-- ✅ 추가: 업로드 폼 (collapse로 숨겨져 있다가 버튼 클릭 시 펼쳐짐) -->
+      <div class="collapse mt-3" id="imageUploadBox">
+        <form method="post"
+              action="{% url 'brokers:broker_image_upload' agent.pk %}"
+              enctype="multipart/form-data"
+              class="border rounded p-3 bg-light">
+          {% csrf_token %}
+
+          <!-- ✅ 추가: 이미지 파일 선택 -->
+          <div class="mb-2">
+            <label class="form-label small fw-semibold">이미지 파일</label>
+            {{ image_form.image }}
+          </div>
+
+          <!-- ✅ 추가: 사진 설명 입력 -->
+          <div class="mb-2">
+            <label class="form-label small fw-semibold">사진 설명 (선택)</label>
+            {{ image_form.caption }}
+          </div>
+
+          <!-- ✅ 추가: 대표 이미지 체크박스 -->
+          <div class="form-check mb-3">
+            {{ image_form.is_primary }}
+            <label class="form-check-label small">대표 이미지로 설정</label>
+          </div>
+
+          <button type="submit" class="btn btn-dark btn-sm w-100">
+            업로드
+          </button>
+        </form>
+      </div>
+
+    {% endif %}
+    <!-- ✅ 추가 끝: 사진 추가 버튼 + 업로드 폼 -->
+
+  </div>
+</div>
+<!-- ✅ 추가 끝: 이미지 카드 전체 -->
+
+
+<!-- 이용자 평점 카드 (기존 코드 그대로) -->
 <div class="card shadow-sm mb-4">
   <div class="card-body">
     <p class="text-muted small mb-2">이용자 평점</p>
     <div class="d-flex align-items-center justify-content-between">
       <div>
-        <!-- 평균 별점 표시 -->
         <span class="text-warning fs-4">
           {% for i in "12345" %}
             {% if forloop.counter <= avg_score %}★{% else %}☆{% endif %}
@@ -94,9 +220,7 @@
   </div>
 </div>
 
-<!-- ────────────────────────────────── -->
-<!-- ✅ 추가: 후기 작성하기 버튼          -->
-<!-- ────────────────────────────────── -->
+<!-- 후기 작성하기 버튼 (기존 코드 그대로) -->
 {% if user.is_authenticated %}
   <a href="{% url 'interactions:review_create' agent.pk %}"
      class="btn btn-dark w-100 py-3 mb-4 fw-semibold fs-6">
@@ -109,16 +233,13 @@
   </a>
 {% endif %}
 
-<!-- ────────────────────────────────── -->
-<!-- ✅ 추가: 리뷰 목록                  -->
-<!-- ────────────────────────────────── -->
+<!-- 리뷰 목록 (기존 코드 그대로) -->
 <h6 class="fw-bold mb-3">이용 후기 ({{ review_count }}건)</h6>
 
 {% for review in reviews %}
 <div class="card shadow-sm mb-3">
   <div class="card-body">
 
-    <!-- 리뷰 헤더: 작성자 + 별점 + 날짜 -->
     <div class="d-flex justify-content-between align-items-center mb-2">
       <div class="d-flex align-items-center gap-2">
         <span class="fw-semibold">{{ review.author.username }}</span>
@@ -132,17 +253,12 @@
       <span class="text-muted small">{{ review.created_at|date:"Y.m.d" }}</span>
     </div>
 
-    <!-- 리뷰 내용 -->
     <p class="mb-2" style="line-height:1.7;">{{ review.content }}</p>
 
-    <!-- 본인 리뷰만 삭제 버튼 표시 -->
     {% if review.author == request.user %}
     <div class="text-end">
-
-      <!-- ✅ 수정 버튼 추가 -->
       <a href="{% url 'interactions:review_update' review.pk %}"
         class="btn btn-outline-secondary btn-sm me-1">수정</a>
-
       <form method="post"
             action="{% url 'interactions:review_delete' review.pk %}"
             onsubmit="return confirm('삭제하시겠습니까?');"
@@ -157,14 +273,10 @@
 </div>
 
 {% empty %}
-<!-- 리뷰 없을 때 -->
 <div class="text-center text-muted py-5 border rounded">
   <p class="mb-1">아직 등록된 후기가 없습니다.</p>
   <p class="small">첫 번째 후기를 작성해보세요!</p>
 </div>
 {% endfor %}
-
-<!-- ✅ review_section.html include (리뷰 목록 + 작성 폼) -->
-
 
 {% endblock %}

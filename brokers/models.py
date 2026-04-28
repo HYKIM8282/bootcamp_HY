@@ -1,6 +1,5 @@
 from django.db import models
-
-
+from django.conf import settings as django_settings
 
 class RealEstateAgent(models.Model):
     ld_code = models.CharField(
@@ -177,3 +176,47 @@ class EBBrokerInfo(models.Model):
 
     def __str__(self):
         return f"[{self.ld_code_nm}] {self.bsnm_cmpnm} - {self.brkr_nm}"
+    
+
+class BrokerImage(models.Model):
+    """중개업소 pk에 연결되는 이미지 모델"""
+
+    agent = models.ForeignKey(
+        RealEstateAgent,
+        on_delete=models.CASCADE,
+        related_name='images',        # agent.images.all() 로 접근
+        verbose_name='중개업소',
+    )
+    uploaded_by = models.ForeignKey(
+        django_settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='업로더',
+    )
+    image = models.ImageField(
+        upload_to='brokers/%Y/%m/',   # media/brokers/2026/04/ 폴더에 저장
+        verbose_name='이미지',
+    )
+    caption = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name='사진 설명',
+    )
+    is_primary = models.BooleanField(
+        default=False,
+        verbose_name='대표이미지',
+    )
+    uploaded_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='업로드일시',
+    )
+
+    class Meta:
+        db_table = 'broker_image'
+        verbose_name = '중개업소 이미지'
+        verbose_name_plural = '중개업소 이미지 목록'
+        ordering = ['-is_primary', '-uploaded_at']
+
+    def __str__(self):
+        return f"{self.agent.bsnm_cmpnm} - 이미지 {self.pk}"

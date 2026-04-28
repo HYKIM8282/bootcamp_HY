@@ -1,7 +1,6 @@
-# brokers/views.py
-
 from django.core.paginator import Paginator
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect 
+from django.http import HttpResponseForbidden  
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -10,7 +9,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from interactions.models import Review
 from interactions.forms import ReviewForm
 
-from .models import RealEstateAgent, EBBrokerInfo
+from .models import RealEstateAgent, EBBrokerInfo, BrokerImage      # BrokerImage 추가
+from .forms import BrokerImageForm   
 from .serializers import (
     RealEstateAgentSerializer,
     EBBrokerInfoSerializer,
@@ -188,15 +188,13 @@ class BrokerListView(LoginRequiredMixin, View):
 # ────────────────────────────────────────────────
 # 상세 뷰
 # ────────────────────────────────────────────────
-
-# ❌ 삭제: BrokerDetailView(View) 중복 선언 2개 제거
-# ✅ LoginRequiredMixin + reviews context 포함 버전 하나만 유지
 class BrokerDetailView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
     def get(self, request, pk):
         agent   = get_object_or_404(RealEstateAgent, pk=pk)
         reviews = Review.objects.filter(agent=agent).select_related('author')
+        images  = BrokerImage.objects.filter(agent=agent)        # ← 추가
 
         avg_score = 0
         if reviews.exists():
@@ -204,14 +202,14 @@ class BrokerDetailView(LoginRequiredMixin, View):
                 sum(r.score for r in reviews) / reviews.count(), 1
             )
 
-        form = ReviewForm()
-
         return render(request, 'brokers/detail.html', {
             'agent':        agent,
             'reviews':      reviews,
             'avg_score':    avg_score,
             'review_count': reviews.count(),
-            'form':         form,
+            'form':         ReviewForm(),
+            'image_form':   BrokerImageForm(),   # ← 추가
+            'images':       images,              # ← 추가
         })
 
 
@@ -234,3 +232,41 @@ class Broker2ListView(LoginRequiredMixin, View):
             qs = qs.filter(bsnm_cmpnm__icontains=v)
         page_obj = Paginator(qs, 10).get_page(request.GET.get("page"))
         return render(request, "brokers/broker2_list.html", {"page_obj": page_obj})
+    
+
+# ─────────────────────────────────────────────
+# 이미지 업로드 뷰
+# ─────────────────────────────────────────────
+
+class BrokerImageUploadView(LoginRequiredMixin, View):
+    login_url = '/accounts/login/'
+
+    def post(self, request, pk):
+        agent = get_object_or_404(RealEstateAgent, pk=pk)
+        form  = BrokerImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            img             = form.save(commit=False)
+            img.agent       = agent
+            img.uploaded_by = request.user
+            img.save()
+        return redirect('brokers:broker1_detail', pk=pk)
+
+
+# ─────────────────────────────────────────────
+# 이미지 삭제 뷰
+# ─────────────────────────────────────────────
+
+class BrokerImageDeleteView(LoginRequiredMixin, View):
+    login_url = '/accounts/login/'
+
+    def post(self, request, image_pk):
+        img = get_object_or_404(BrokerImage, pk=image_pk)
+
+        # 업로드한 본인 또는 관리자만 삭제 가능
+        if img.uploaded_by != request.user and not request.user.is_staff:
+            return HttpResponseForbidden()
+
+        agent_pk = img.agent.pk
+        img.image.delete(save=False)   # 디스크에서도 파일 삭제
+        img.delete()
+        return redirect('brokers:broker1_detail', pk=agent_pk)

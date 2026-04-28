@@ -123,6 +123,10 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+# settings.py — STATIC_URL 아래에 추가
+
+MEDIA_URL  = '/media/'                          # 브라우저가 접근하는 URL 경로
+MEDIA_ROOT = BASE_DIR / 'media'                 # 실제 파일이 저장되는 폴더
 
 LOGIN_REDIRECT_URL = '/broker1/'
 LOGOUT_REDIRECT_URL = '/'

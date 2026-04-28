@@ -6,7 +6,8 @@ from .views import (
     BrokerListView,         # 클래스 이름으로 변경
     BrokerDetailView,
     Broker2ListView,    #broker_list_view,
-
+    BrokerImageUploadView,    # ← 추가
+    BrokerImageDeleteView,    # ← 추가
 )
 
 router = DefaultRouter()
@@ -18,9 +19,7 @@ urlpatterns = [
     path("broker2/",   Broker2ListView.as_view(),  name="broker2_list"),
     path("detail1/<int:pk>/",  BrokerDetailView.as_view(), name="broker1_detail"),
     path("detail2/<int:pk>/",  BrokerDetailView.as_view(), name="broker2_detail"),
+    path("detail1/<int:pk>/images/upload/", BrokerImageUploadView.as_view(), name="broker_image_upload"),
+    path("images/<int:image_pk>/delete/", BrokerImageDeleteView.as_view(), name="broker_image_delete"),
     path("api/", include(router.urls)),
 ]
-
-
-
-# 상단       링크 
