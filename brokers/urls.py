@@ -10,9 +10,11 @@ from .views import (
     BrokerImageDeleteView,    # ← 추가
 )
 
+app_name = 'brokers'
+
 router = DefaultRouter()
 router.register("agents", RealEstateAgentViewSet, basename="realestateagent")
-router.register("eb-brokers", EBBrokerViewSet, basename="eb-broker")  
+router.register("eb-brokers", EBBrokerViewSet, basename="eb-broker")
 
 urlpatterns = [
     path("broker1/",   BrokerListView.as_view(),   name="broker1_list"),   # .as_view() 추가

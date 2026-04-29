@@ -1,3 +1,4 @@
+import json
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseForbidden
@@ -169,8 +170,18 @@ class BrokerListView(LoginRequiredMixin, View):
             qs = qs.filter(jurirno__icontains=v)
         if v := request.GET.get("sttus", "").strip():
             qs = qs.filter(sttus_se_code=v)
+
         page_obj = Paginator(qs, 10).get_page(request.GET.get("page"))
-        return render(request, "brokers/broker1_list.html", {"page_obj": page_obj})
+
+        map_agents = list(
+            qs.filter(lat__isnull=False, lng__isnull=False)
+            .values("bsnm_cmpnm", "rdnmadr", "lat", "lng")
+        )
+
+        return render(request, "brokers/broker1_list.html", {
+            "page_obj": page_obj,
+            "map_agents_json": json.dumps(map_agents, ensure_ascii=False),
+        })
 
 
 # ────────────────────────────────────────────────

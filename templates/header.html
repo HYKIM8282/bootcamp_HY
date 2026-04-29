@@ -3,13 +3,24 @@
 <!-- 헤더 -->
 <header class="main-header">
   <div class="container d-flex align-items-center justify-content-between">
-    <div class="brand">🏠 히어로 </div>
+    <div class="brand">🏠 히어로</div>
+
+    <div class="header-auth">
+      {% if user.is_authenticated %}
+        <span class="header-username">{{ user.username }}</span>
+        <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="header-auth-btn btn-write-review">로그아웃</button>
+        </form>
+      {% else %}
+        <a href="{% url 'accounts:login' %}" class="header-auth-btn btn-write-review">로그인</a>
+      {% endif %}
+    </div>
 
   </div>
 </header>
 
 <!-- 서브 네비 -->
-<div class="sub-nav">
   <div class="container">
     <a href="#">홈</a>
     <a href="{% url 'brokers:broker1_list' %}">부동산 중개업사무소정보</a>

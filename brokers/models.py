@@ -18,6 +18,12 @@ class RealEstateAgent(models.Model):
     rdnmadr          = models.CharField(max_length=200, blank=True, verbose_name="도로명주소")
     rdnmadr_code     = models.CharField(max_length=25,  blank=True, verbose_name="도로명주소코드")
 
+    # ✅ [추가] 카카오맵 마커 표시용 좌표 필드
+    # 카카오 주소검색 API로 rdnmadr → 좌표 변환 후 저장
+    lat = models.FloatField(null=True, blank=True, verbose_name="위도")
+    lng = models.FloatField(null=True, blank=True, verbose_name="경도")
+    # ✅ [추가 끝]
+
     class Meta:
         db_table         = "real_estate_agent"
         verbose_name     = "부동산 중개업소"

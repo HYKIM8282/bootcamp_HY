@@ -1,11 +1,14 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / ".env")
 
+
+KAKAO_JS_KEY = os.getenv("KAKAO_JS_KEY")
 VWORLD_API_KEY    = os.getenv("VWORLD_API_KEY", "")
 BASE_URLS = os.getenv("BASE_URLS", "https://api.vworld.kr/ned/data/getEBOfficeInfo")
 BASE_URLS2= os.getenv("BASE_URLS2", "https://api.vworld.kr/ned/data/getEBBfficeInfo")
@@ -36,7 +39,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'brokers',
     'accounts',
-    'interactions', 
+    'interactions',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'config.context_processors.kakao_key',
             ],
         },
     },
@@ -131,3 +135,7 @@ MEDIA_ROOT = BASE_DIR / 'media'                 # 실제 파일이 저장되는 
 LOGIN_REDIRECT_URL = '/broker1/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
+
+
+
+
