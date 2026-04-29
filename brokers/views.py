@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
-from django.shortcuts import render, get_object_or_404, redirect 
-from django.http import HttpResponseForbidden  
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponseForbidden
+from django.db.models import Avg                                     # ✅ 추가
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -9,8 +10,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from interactions.models import Review
 from interactions.forms import ReviewForm
 
-from .models import RealEstateAgent, EBBrokerInfo, BrokerImage      # BrokerImage 추가
-from .forms import BrokerImageForm   
+from .models import RealEstateAgent, EBBrokerInfo, BrokerImage
+from .forms import BrokerImageForm
 from .serializers import (
     RealEstateAgentSerializer,
     EBBrokerInfoSerializer,
@@ -21,7 +22,7 @@ from .management.commands.fetch_broker2 import EBBrokerAPIClient, EBBrokerReques
 
 
 # ────────────────────────────────────────────────
-# API1 ViewSets (DRF)
+# API ViewSets — 변경 없음
 # ────────────────────────────────────────────────
 
 class RealEstateAgentViewSet(viewsets.ModelViewSet):
@@ -54,10 +55,6 @@ class RealEstateAgentViewSet(viewsets.ModelViewSet):
         call_command("fetch_broker")
         return Response({"message": "sync complete", "total": RealEstateAgent.objects.count()})
 
-
-# ────────────────────────────────────────────────
-# API2 ViewSets (DRF)
-# ────────────────────────────────────────────────
 
 class EBBrokerViewSet(viewsets.ModelViewSet):
     queryset = EBBrokerInfo.objects.all()
@@ -124,10 +121,8 @@ class EBBrokerViewSet(viewsets.ModelViewSet):
                     "last_updt_dt":       item.last_updt_dt,
                 },
             )
-            if created:
-                created_count += 1
-            else:
-                updated_count += 1
+            if created: created_count += 1
+            else:       updated_count += 1
         return Response(
             {"synced": len(all_items), "created": created_count, "updated": updated_count},
             status=status.HTTP_200_OK,
@@ -147,27 +142,20 @@ class EBBrokerViewSet(viewsets.ModelViewSet):
     @staticmethod
     def _serialize_item(item) -> dict:
         return {
-            "ldCode":          item.ld_code,
-            "ldCodeNm":        item.ld_code_nm,
-            "jurirno":         item.jurirno,
-            "bsnmCmpnm":       item.bsnm_cmpnm,
-            "brkrNm":          item.brkr_nm,
-            "brkrAsortCode":   item.brkr_asort_code,
+            "ldCode":          item.ld_code,        "ldCodeNm":        item.ld_code_nm,
+            "jurirno":         item.jurirno,         "bsnmCmpnm":       item.bsnm_cmpnm,
+            "brkrNm":          item.brkr_nm,         "brkrAsortCode":   item.brkr_asort_code,
             "brkrAsortCodeNm": item.brkr_asort_code_nm,
-            "crqfcNo":         item.crqfc_no,
-            "crqfcAcqdt":      item.crqfc_acqdt,
-            "ofcpsSecode":     item.ofcps_se_code,
-            "ofcpsSeCodeNm":   item.ofcps_se_code_nm,
+            "crqfcNo":         item.crqfc_no,        "crqfcAcqdt":      item.crqfc_acqdt,
+            "ofcpsSecode":     item.ofcps_se_code,   "ofcpsSeCodeNm":   item.ofcps_se_code_nm,
             "lastUpdtDt":      item.last_updt_dt,
         }
 
 
 # ────────────────────────────────────────────────
-# 템플릿 뷰1
+# 목록 뷰 — 변경 없음
 # ────────────────────────────────────────────────
 
-# ❌ 삭제: BrokerListView(View) 중복 선언 제거
-# ✅ LoginRequiredMixin 버전 하나만 유지
 class BrokerListView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
@@ -186,39 +174,56 @@ class BrokerListView(LoginRequiredMixin, View):
 
 
 # ────────────────────────────────────────────────
-# 상세 뷰
+# ★ 상세 뷰 — 버그 수정
 # ────────────────────────────────────────────────
+
 class BrokerDetailView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
     def get(self, request, pk):
-        agent   = get_object_or_404(RealEstateAgent, pk=pk)
-        reviews = Review.objects.filter(agent=agent).select_related('author')
-        images  = BrokerImage.objects.filter(agent=agent)        # ← 추가
+        agent        = get_object_or_404(RealEstateAgent, pk=pk)
+        reviews      = Review.objects.filter(agent=agent).select_related('author')
+        images       = BrokerImage.objects.filter(agent=agent)
+        review_count = reviews.count()
 
-        avg_score = 0
-        if reviews.exists():
-            avg_score = round(
-                sum(r.score for r in reviews) / reviews.count(), 1
-            )
+        # ❌ 버그1: 기존 코드 — Python sum() + for문 으로 avg 계산
+        #    reviews.count() 이후 for r in reviews 를 돌면
+        #    QS 가 다시 평가되어 DB 쿼리가 2번 발생 (성능 낭비)
+        #    avg_score = round(sum(r.score for r in reviews) / reviews.count(), 1) if reviews.count() else 0
+        #
+        # ✅ 수정: aggregate(Avg) 로 DB 단에서 한 번에 계산
+        avg_raw   = reviews.aggregate(avg=Avg('score'))['avg']
+        avg_score = round(avg_raw, 1) if avg_raw else 0
+
+        # ❌ 버그2: score_distribution 을 context에 넣지 않음
+        #    → 템플릿 {% for item in score_distribution %} 가
+        #      항상 {% empty %} 로 빠짐
+        #    → 평점 막대그래프가 아무것도 안 나오고
+        #      "0점 0건" 5행이 하드코딩으로만 표시됨
+        #
+        # ✅ 수정: 5점~1점 분포 계산 후 context에 추가
+        score_distribution = []
+        for s in [5, 4, 3, 2, 1]:
+            cnt = reviews.filter(score=s).count()
+            pct = round(cnt / review_count * 100) if review_count else 0
+            score_distribution.append({'score': s, 'count': cnt, 'percent': pct})
 
         return render(request, 'brokers/detail.html', {
-            'agent':        agent,
-            'reviews':      reviews,
-            'avg_score':    avg_score,
-            'review_count': reviews.count(),
-            'form':         ReviewForm(),
-            'image_form':   BrokerImageForm(),   # ← 추가
-            'images':       images,              # ← 추가
+            'agent':              agent,
+            'reviews':            reviews,
+            'avg_score':          avg_score,
+            'review_count':       review_count,
+            'form':               ReviewForm(),
+            'image_form':         BrokerImageForm(),
+            'images':             images,
+            'score_distribution': score_distribution,   # ✅ 추가
         })
 
 
 # ────────────────────────────────────────────────
-# 템플릿 뷰2
+# 목록 뷰2 — 변경 없음
 # ────────────────────────────────────────────────
 
-# ❌ 삭제: Broker2ListView(View) 중복 선언 제거
-# ✅ LoginRequiredMixin 버전 하나만 유지
 class Broker2ListView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
@@ -232,11 +237,11 @@ class Broker2ListView(LoginRequiredMixin, View):
             qs = qs.filter(bsnm_cmpnm__icontains=v)
         page_obj = Paginator(qs, 10).get_page(request.GET.get("page"))
         return render(request, "brokers/broker2_list.html", {"page_obj": page_obj})
-    
 
-# ─────────────────────────────────────────────
-# 이미지 업로드 뷰
-# ─────────────────────────────────────────────
+
+# ────────────────────────────────────────────────
+# ★ 이미지 업로드 뷰 — 핵심 버그 수정
+# ────────────────────────────────────────────────
 
 class BrokerImageUploadView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
@@ -244,17 +249,38 @@ class BrokerImageUploadView(LoginRequiredMixin, View):
     def post(self, request, pk):
         agent = get_object_or_404(RealEstateAgent, pk=pk)
         form  = BrokerImageForm(request.POST, request.FILES)
+
         if form.is_valid():
+
+            # ❌ 버그3 (이미지 중첩의 직접 원인 ★★★):
+            #    기존 이미지를 삭제하지 않고 바로 form.save() 함
+            #    → 업로드할 때마다 DB에 이미지 레코드가 계속 추가됨
+            #    → 템플릿이 images 전체를 출력하므로 사진이 2장·3장 중첩
+            #
+            # ✅ 수정: 저장 전에 기존 이미지 전체 삭제 (파일 + DB 레코드)
+            old_images = BrokerImage.objects.filter(agent=agent)
+            for old in old_images:
+                old.image.delete(save=False)   # media/ 폴더에서 실제 파일 삭제
+                old.delete()                   # DB 레코드 삭제
+
+            # ❌ 버그4: is_primary 를 설정하지 않음
+            #    → 모든 이미지가 is_primary=False(기본값)로 저장됨
+            #    → 템플릿의 images|dictsort:"is_primary"|last 가
+            #      is_primary=True 인 이미지를 찾지 못해 대표사진 미표시
+            #
+            # ✅ 수정: 단일 이미지 정책이므로 항상 True 로 강제 설정
             img             = form.save(commit=False)
             img.agent       = agent
             img.uploaded_by = request.user
+            img.is_primary  = True   # ✅ 항상 대표 이미지
             img.save()
+
         return redirect('brokers:broker1_detail', pk=pk)
 
 
-# ─────────────────────────────────────────────
-# 이미지 삭제 뷰
-# ─────────────────────────────────────────────
+# ────────────────────────────────────────────────
+# 이미지 삭제 뷰 — 정상 (변경 없음)
+# ────────────────────────────────────────────────
 
 class BrokerImageDeleteView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
@@ -262,11 +288,10 @@ class BrokerImageDeleteView(LoginRequiredMixin, View):
     def post(self, request, image_pk):
         img = get_object_or_404(BrokerImage, pk=image_pk)
 
-        # 업로드한 본인 또는 관리자만 삭제 가능
         if img.uploaded_by != request.user and not request.user.is_staff:
             return HttpResponseForbidden()
 
         agent_pk = img.agent.pk
-        img.image.delete(save=False)   # 디스크에서도 파일 삭제
+        img.image.delete(save=False)   # ✅ 디스크 파일도 삭제 — 기존 코드 정상
         img.delete()
         return redirect('brokers:broker1_detail', pk=agent_pk)

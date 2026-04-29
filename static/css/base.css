@@ -1,61 +1,758 @@
-/* ──────────────────────────────
-   base.css  –  공통 레이아웃
-────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   broker_detail.css  –  중개업 상세 페이지 (완전 정리)
+   HTML 클래스 기준: .rep-image / .header-right /
+   .rating-card / .review-card 등
+   ══════════════════════════════════════════════════ */
 
+/* ─────────────────────────────────────
+   0. CSS 변수
+───────────────────────────────────── */
+:root {
+  --blue-50:  #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --blue-800: #1e40af;
+  --blue-900: #1e3a8a;
+  --navy:     #0d1b4b;
+
+  --border:       #bfdbfe;
+  --text-primary: #1e3a8a;
+  --text-muted:   #60a5fa;
+  --bg-white:     #ffffff;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --shadow-card:  0 2px 12px rgba(30, 80, 200, .08);
+  --shadow-hover: 0 6px 24px rgba(30, 80, 200, .16);
+  --transition:   .22s ease;
+}
+
+/* ─────────────────────────────────────
+   1. 공통 body / 네비 / 래퍼
+───────────────────────────────────── */
 body {
-  background: #f8f9fa;
-  font-family: 'Noto Sans KR', sans-serif;
+  background: #f0f4fb;
+  font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  color: var(--text-primary);
+  margin: 0;
 }
 
-/* 헤더 */
-.main-header {
-  background: #fff;
-  border-bottom: 2px solid #4a4fcf;
-  padding: 12px 0;
+/* 네비게이션 바 */
+.top-nav {
+  background: linear-gradient(90deg, var(--navy) 0%, var(--blue-800) 100%);
+  padding: 0 32px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 13px;
+  box-shadow: 0 2px 12px rgba(13, 27, 75, .25);
 }
-.main-header .brand {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #4a4fcf;
-}
-
-/* 수정 전: 버튼 색상 없음 */
-/* 수정 후: 헤더 내 로그인/로그아웃 버튼 색상 → 흰 배경에서 보이도록 */
-.main-header .btn-outline-primary {
-  color: #4a4fcf;           /* ✅ 글자색: 헤더 포인트 컬러 */
-  border-color: #4a4fcf;    /* ✅ 테두리색 */
-}
-.main-header .btn-outline-primary:hover {
-  background: #4a4fcf;      /* ✅ 호버 시 배경색 */
+.top-nav .brand {
+  font-weight: 800;
+  font-size: 15px;
   color: #fff;
-}
-.main-header .btn-primary {
-  background: #4a4fcf;      /* ✅ 배경색 */
-  border-color: #4a4fcf;
-  color: #fff;
-}
-
-/* 서브 네비 */
-.sub-nav {
-  background: #4a4fcf;
-  padding: 8px 0;
-}
-.sub-nav a {
-  color: #ffffff;
-  margin-right: 24px;
+  letter-spacing: -0.5px;
   text-decoration: none;
-  font-size: 0.95rem;
+}
+.top-nav a          { color: #93c5fd; text-decoration: none; font-size: 12.5px; }
+.top-nav a:hover    { color: #fff; }
+.top-nav .sep       { color: #3b5fa0; }
+
+/* 페이지 래퍼 */
+.page-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 16px 60px;
+}
+
+/* 뒤로가기 버튼 */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue-600);
+  background: var(--blue-50);
+  border: 1px solid var(--blue-200);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  text-decoration: none;
+  margin-bottom: 18px;
+  transition: var(--transition);
+}
+.back-btn:hover { background: var(--blue-100); color: var(--blue-800); }
+
+
+/* ─────────────────────────────────────
+   2. 상세 헤더 (이미지 좌측 + 정보 우측)
+───────────────────────────────────── */
+.detail-header {
+  position: relative;
+  background: linear-gradient(135deg, #f8fbff 0%, #e8f0fe 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 24px 24px 24px 30px; /* 좌측 포인트 바 공간 */
+  margin-bottom: 20px;
+
+  /* ▶ flex: 이미지 왼쪽, 정보 오른쪽 */
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+/* 좌측 컬러 포인트 바 */
+.detail-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 5px; height: 100%;
+  background: linear-gradient(180deg, var(--blue-500), var(--blue-900));
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+
+/* ── 2-1. 대표 이미지 (좌측 300×300) ── */
+.rep-image {
+  flex-shrink: 0;
+  width: 300px;
+  height: 300px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 2px solid var(--blue-200);
+  box-shadow: 0 6px 24px rgba(30, 80, 200, .18);
+  background: var(--blue-50);
+  position: relative;
+}
+.rep-image img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .4s ease;
+}
+.rep-image:hover img { transform: scale(1.03); }
+
+/* 이미지 호버 오버레이 */
+.rep-image .img-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 27, 75, .55);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity var(--transition);
+  border-radius: var(--radius-md);
+}
+.rep-image:hover .img-overlay { opacity: 1; }
+
+.rep-image .overlay-btn {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 18px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, .92);
+  border: none;
+  color: var(--blue-800);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.rep-image .overlay-btn:hover { background: #fff; }
+
+/* 이미지 없을 때 placeholder */
+.rep-image .img-placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--blue-50), var(--blue-100));
+  color: var(--text-muted);
+  font-size: 12px;
+  gap: 10px;
+}
+.rep-image .img-placeholder .icon { font-size: 3rem; opacity: .5; }
+
+/* 업로드 트리거 (이미지 없을 때) */
+.rep-image .upload-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%; height: 100%;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--blue-50), var(--blue-100));
+  border: 2px dashed var(--blue-400);
+  border-radius: var(--radius-md);
+  gap: 8px;
+  padding: 20px;
+  transition: var(--transition);
+}
+.rep-image .upload-trigger:hover {
+  background: linear-gradient(135deg, var(--blue-100), rgba(91,128,245,.18));
+  border-color: var(--blue-600);
+}
+.rep-image .upload-trigger .upload-icon { font-size: 2.8rem; line-height: 1; }
+.rep-image .upload-trigger .upload-text { font-size: 14px; font-weight: 700; color: var(--blue-600); }
+.rep-image .upload-trigger .upload-hint { font-size: 11px; color: var(--text-muted); }
+
+/* 파일 선택 후 인라인 폼 */
+.rep-image .inline-upload-form {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px;
+  background: var(--bg-white);
+  border-radius: var(--radius-md);
+}
+.rep-image .inline-upload-form .upload-fields { width: 100%; }
+
+/* ── 2-2. 우측 정보 영역 ── */
+.header-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 상호명 + 배지 */
+.header-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.broker-name {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--blue-900);
+  letter-spacing: -0.5px;
+  line-height: 1.25;
+}
+.status-badge {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 13px;
+  border-radius: 20px;
+}
+.status-badge.open   { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.status-badge.closed { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+
+/* ── 2-3. 기본정보 그리드 ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 12px;
+}
+.info-item {
+  background: rgba(255, 255, 255, .78);
+  border: 1px solid var(--blue-100);
+  border-radius: 10px;
+  padding: 10px 13px;
+  transition: var(--transition);
+}
+.info-item:hover {
+  background: rgba(255, 255, 255, .96);
+  border-color: var(--blue-300);
+  box-shadow: 0 2px 10px rgba(30, 80, 200, .10);
+}
+.info-item.full-width { grid-column: 1 / -1; }
+.info-item .lbl {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--blue-500);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  margin-bottom: 4px;
+}
+.info-item .val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue-900);
+  line-height: 1.5;
+}
+.info-divider {
+  grid-column: 1 / -1;
+  border: none;
+  border-top: 1px dashed var(--blue-200);
+  margin: 2px 0;
+}
+
+/* 이미지 있을 때 추가 업로드 폼 (collapse) */
+.upload-box-inline {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: var(--shadow-hover);
+  margin-bottom: 16px;
+}
+
+
+/* ─────────────────────────────────────
+   3. 사진 섹션 카드
+───────────────────────────────────── */
+.section-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+.section-card .card-hd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 20px;
+  background: linear-gradient(90deg, var(--blue-50), var(--blue-100));
+  border-bottom: 1px solid var(--blue-200);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--blue-800);
+}
+.section-card .card-hd .count {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--blue-400);
+}
+.section-card .card-bd { padding: 20px; }
+
+/* photo-card (Django 템플릿 버전 호환) */
+.photo-card {
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-lg) !important;
+}
+.photo-card .card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(90deg, var(--blue-50), var(--blue-100)) !important;
+  border-bottom: 1px solid var(--blue-200) !important;
+  font-weight: 700;
+  color: var(--blue-800);
+}
+.photo-card .card-header .photo-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--blue-400);
+  font-weight: 500;
+}
+
+/* 캐러셀 */
+.broker-carousel {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--blue-200);
+  margin-bottom: 12px;
+}
+.broker-carousel .carousel-inner img {
+  height: 260px;
+  object-fit: cover;
+  width: 100%;
+}
+.broker-carousel .carousel-control-prev,
+.broker-carousel .carousel-control-next {
+  width: 36px; height: 36px;
+  background: rgba(30, 58, 138, .55);
+  border-radius: 50%;
+  top: 50%; transform: translateY(-50%);
+}
+.broker-carousel .carousel-control-prev { left: 10px; }
+.broker-carousel .carousel-control-next { right: 10px; }
+
+/* 사진 없을 때 */
+.no-photo,
+.no-photo-box {
+  height: 160px;
+  border-radius: var(--radius-sm);
+  border: 2px dashed var(--blue-200);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--blue-400);
+  background: var(--blue-50);
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+.no-photo .icon,
+.no-photo-box .icon { font-size: 2.2rem; opacity: .45; }
+
+/* 삭제 버튼 행 */
+.delete-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.btn-del {
+  font-size: 12px;
+  padding: 4px 12px;
+  border: 1px solid #fca5a5;
+  background: var(--bg-white);
+  color: #ef4444;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-del:hover { background: #fef2f2; }
+
+
+/* ─────────────────────────────────────
+   4. 평점 카드
+───────────────────────────────────── */
+.rating-card {
+  background: linear-gradient(135deg, var(--blue-50) 0%, var(--blue-100) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 28px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  box-shadow: var(--shadow-card);
+}
+.rating-big {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--blue-900);
+  line-height: 1;
+}
+.rating-stars {
+  font-size: 1.6rem;
+  color: #f59e0b;
+  letter-spacing: 3px;
+  margin: 6px 0;
+  line-height: 1;
+}
+.rating-sub {
+  font-size: 12px;
+  color: var(--blue-400);
+  font-weight: 600;
+}
+.rating-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rating-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--blue-600);
+}
+.rating-bar-bg {
+  flex: 1;
+  height: 6px;
+  background: var(--blue-100);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.rating-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  border-radius: 3px;
+  transition: width .6s ease;
+}
+
+/* Django 템플릿 버전 호환 */
+.rating-card .rating-number {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--blue-900);
+  line-height: 1;
+}
+.rating-card .review-count {
+  font-size: 12px;
+  color: var(--blue-400);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+
+/* ─────────────────────────────────────
+   5. 후기 작성 버튼
+───────────────────────────────────── */
+.btn-write-review {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(135deg, var(--blue-600) 0%, var(--blue-900) 100%);
+  color: #fff !important;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  text-decoration: none;
+  margin-bottom: 24px;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, .30);
+}
+.btn-write-review:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(37, 99, 235, .42);
+  color: #fff !important;
+}
+.btn-write-review.disabled {
+  background: #e2e8f0;
+  color: #94a3b8 !important;
+  box-shadow: none;
+  cursor: default;
+}
+.btn-write-review.disabled:hover { transform: none; }
+
+
+/* ─────────────────────────────────────
+   6. 리뷰 목록
+───────────────────────────────────── */
+.review-title,
+.review-section-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--blue-900);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.count-chip {
+  font-size: 11.5px;
+  font-weight: 700;
+  background: var(--blue-100);
+  color: var(--blue-600);
+  border: 1px solid var(--blue-200);
+  border-radius: 12px;
+  padding: 2px 10px;
+}
+
+.review-card {
+  background: linear-gradient(135deg, #f8fbff 0%, var(--blue-50) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition);
+}
+.review-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* 리뷰 카드 내부 요소 */
+.review-card .rv-author,
+.review-card .author {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--blue-900);
+}
+.review-card .rv-stars,
+.review-card .stars {
+  color: #f59e0b;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+.review-card .rv-score,
+.review-card .score-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--blue-100);
+  color: var(--blue-600);
+  border: 1px solid var(--blue-200);
+  border-radius: 12px;
+  padding: 2px 9px;
+}
+.review-card .rv-date,
+.review-card .date {
+  font-size: 12px;
+  color: var(--blue-400);
+}
+.review-card .rv-content,
+.review-card .content {
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: #334155;
+  margin: 10px 0 0;
+}
+
+/* 리뷰 없을 때 */
+.no-review,
+.no-review-box {
+  text-align: center;
+  padding: 48px 20px;
+  border: 2px dashed var(--blue-200);
+  border-radius: var(--radius-md);
+  color: var(--blue-400);
+  background: var(--blue-50);
+}
+.no-review .icon,
+.no-review-box .icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 10px;
+  opacity: .4;
+}
+
+/* ─────────────────────────────────────
+   2. 메인 헤더  (.main-header)
+   header.html:  <header class="main-header">
+───────────────────────────────────── */
+.main-header {
+  background: linear-gradient(90deg, #0d1b4b 0%, #1e40af 100%);
+  box-shadow: 0 2px 16px rgba(13, 27, 75, .35);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+ 
+.main-header .container {
+  max-width: 960px;
+  margin: 0 auto;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+ 
+/* 브랜드 로고 텍스트 */
+.main-header .brand {
+  font-size: 18px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.6px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity .2s ease;
+}
+.main-header .brand:hover { opacity: .82; color: #ffffff; }
+ 
+/* 우측 링크 묶음 (선택) */
+.main-header .header-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.main-header .header-links a {
+  font-size: 13px;
+  font-weight: 600;
+  color: #93c5fd;
+  text-decoration: none;
+  transition: color .2s ease;
+}
+.main-header .header-links a:hover { color: #ffffff; }
+ 
+/* ─────────────────────────────────────
+   3. 서브 네비게이션  (.sub-nav)
+   header.html:  <div class="sub-nav">
+───────────────────────────────────── */
+.sub-nav {
+  background: linear-gradient(90deg, #1e40af 0%, #1d4ed8 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, .10);
+}
+ 
+.sub-nav .container {
+  max-width: 960px;
+  margin: 0 auto;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  overflow-x: auto;          /* 모바일에서 스크롤 */
+  scrollbar-width: none;     /* Firefox */
+}
+.sub-nav .container::-webkit-scrollbar { display: none; }
+ 
+.sub-nav a {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #bfdbfe;
+  text-decoration: none;
+  padding: 0 14px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  border-bottom: 2px solid transparent;
+  transition: color .2s ease, background .2s ease, border-color .2s ease;
+  white-space: nowrap;
 }
 .sub-nav a:hover {
-  text-decoration: underline;
+  color: #ffffff;
+  background: rgba(255, 255, 255, .09);
+}
+.sub-nav a.active {
+  color: #ffffff;
+  border-bottom-color: #60a5fa;
+  background: rgba(255, 255, 255, .12);
+}
+ 
+/* ─────────────────────────────────────
+   4. 푸터  (.main-footer)
+   footer.html:  <footer class="main-footer">
+───────────────────────────────────── */
+.main-footer {
+  background: linear-gradient(90deg, #0d1b4b 0%, #1e3a8a 100%);
+  border-top: 1px solid rgba(255, 255, 255, .08);
+  color: #93c5fd;
+  text-align: center;
+  padding: 20px 16px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.75;
+}
+.main-footer a {
+  color: #60a5fa;
+  text-decoration: none;
+  transition: color .2s ease;
+}
+.main-footer a:hover { color: #ffffff; }
+
+
+/* ─────────────────────────────────────
+   7. 반응형
+───────────────────────────────────── */
+@media (max-width: 760px) {
+  .detail-header {
+    flex-direction: column;
+    padding: 20px 18px;
+  }
+  .rep-image {
+    width: 100%;
+    height: 220px;
+    border-radius: var(--radius-md);
+  }
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .rating-card {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .rating-bar-wrap { width: 100%; }
 }
 
-/* 푸터 */
-.main-footer {
-  background: #343a40;
-  color: #adb5bd;
-  text-align: center;
-  padding: 20px 0;
-  margin-top: 60px;
-  font-size: 0.85rem;
+@media (max-width: 480px) {
+  .info-grid { grid-template-columns: 1fr; }
+  .broker-name { font-size: 1.2rem; }
 }
