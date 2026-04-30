@@ -4,7 +4,7 @@ import requests
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from dotenv import load_dotenv
+from dotenv import load_dotenv  
 
 from brokers.models import RealEstateAgent
 

@@ -19,30 +19,52 @@
     <form method="get">
       <div class="row g-2 align-items-end">
         <div class="col-md-3">
-          <label class="form-label fw-semibold small">시군구코드</label>
-          <input type="text" name="ldcode" class="form-control form-control-sm"
-            placeholder="예: 11110" value="{{ request.GET.ldcode }}">
+          <label for="ldcode" class="form-label fw-semibold small">시군구코드</label>
+          <input
+            id="ldcode"
+            type="text"
+            name="ldcode"
+            class="form-control form-control-sm"
+            placeholder="예: 11110"
+            value="{{ request.GET.ldcode }}"
+          >
         </div>
+
         <div class="col-md-3">
-          <label class="form-label fw-semibold small">상호명</label>
-          <input type="text" name="bsnm_cmpnm" class="form-control form-control-sm"
-            placeholder="상호 검색" value="{{ request.GET.bsnm_cmpnm }}">
+          <label for="bsnm_cmpnm" class="form-label fw-semibold small">상호명</label>
+          <input
+            id="bsnm_cmpnm"
+            type="text"
+            name="bsnm_cmpnm"
+            class="form-control form-control-sm"
+            placeholder="상호 검색"
+            value="{{ request.GET.bsnm_cmpnm }}"
+          >
         </div>
+
         <div class="col-md-3">
-          <label class="form-label fw-semibold small">등록번호</label>
-          <input type="text" name="jurirno" class="form-control form-control-sm"
-            placeholder="등록번호" value="{{ request.GET.jurirno }}">
+          <label for="jurirno" class="form-label fw-semibold small">등록번호</label>
+          <input
+            id="jurirno"
+            type="text"
+            name="jurirno"
+            class="form-control form-control-sm"
+            placeholder="등록번호"
+            value="{{ request.GET.jurirno }}"
+          >
         </div>
+
         <div class="col-md-3">
-          <label class="form-label fw-semibold small">상태</label>
-          <select name="sttus" class="form-select form-select-sm">
+          <label for="sttus" class="form-label fw-semibold small">상태</label>
+          <select id="sttus" name="sttus" class="form-select form-select-sm">
             <option value="">전체</option>
             <option value="1" {% if request.GET.sttus == "1" %}selected{% endif %}>영업중</option>
             <option value="2" {% if request.GET.sttus == "2" %}selected{% endif %}>폐업</option>
           </select>
         </div>
+
         <div class="col-12 text-end">
-          <button type="button" class="btn btn-secondary btn-sm me-1" onclick="toggleMap()">🗺 지도보기</button>
+          <button type="button" class="btn btn-secondary btn-sm me-1" onclick="toggleMap()">지도보기</button>
           <button type="submit" class="btn btn-primary btn-sm">검색</button>
         </div>
       </div>
@@ -50,9 +72,19 @@
   </div>
 </div>
 
-<!-- 지도 영역 -->
+{% if selected_region %}
+<div class="mb-2 d-flex align-items-center gap-2">
+  <span class="badge bg-primary fs-6">선택 지역: {{ selected_region }}</span>
+  <a
+    href="?ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}"
+    class="btn btn-sm btn-outline-secondary"
+  >
+    전체 보기
+  </a>
+</div>
+{% endif %}
+
 <div id="map" style="width:100%; height:450px; display:none;" class="mb-3 rounded shadow-sm"></div>
-<!-- ✅ json_script로 데이터 안전하게 삽입 -->
 {{ map_agents_json|json_script:"map-data" }}
 
 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -66,8 +98,15 @@
   <table class="table table-bordered table-hover table-sm bg-white text-center align-middle">
     <thead class="table-dark">
       <tr>
-        <th>No.</th><th>등록번호</th><th>상호</th><th>소재지 (도로명)</th>
-        <th>대표자</th><th>등록일</th><th>상태</th><th>시작일</th><th>종료일</th>
+        <th>No.</th>
+        <th>등록번호</th>
+        <th>상호</th>
+        <th>소재지(도로명)</th>
+        <th>대표자</th>
+        <th>등록일</th>
+        <th>상태</th>
+        <th>시작일</th>
+        <th>종료일</th>
       </tr>
     </thead>
     <tbody>
@@ -85,9 +124,9 @@
         <td>{{ agent.regist_de }}</td>
         <td>
           {% if agent.sttus_se_code == "1" %}
-            <span class="badge bg-success">● 영업중</span>
+          <span class="badge bg-success">영업중</span>
           {% else %}
-            <span class="badge bg-secondary">폐업</span>
+          <span class="badge bg-secondary">폐업</span>
           {% endif %}
         </td>
         <td>{{ agent.estbs_begin_de|default:"-" }}</td>
@@ -106,80 +145,243 @@
   <ul class="pagination pagination-sm justify-content-center">
     {% if page_obj.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.previous_page_number }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}">이전</a>
+      <a
+        class="page-link"
+        href="?page={{ page_obj.previous_page_number }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}"
+      >
+        이전
+      </a>
     </li>
     {% endif %}
+
     {% for num in page_obj.paginator.page_range %}
       {% if num == page_obj.number %}
       <li class="page-item active"><span class="page-link">{{ num }}</span></li>
       {% elif num >= page_obj.number|add:"-3" and num <= page_obj.number|add:"3" %}
       <li class="page-item">
-        <a class="page-link" href="?page={{ num }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}">{{ num }}</a>
+        <a
+          class="page-link"
+          href="?page={{ num }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}"
+        >
+          {{ num }}
+        </a>
       </li>
       {% endif %}
     {% endfor %}
+
     {% if page_obj.has_next %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.next_page_number }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}">다음</a>
+      <a
+        class="page-link"
+        href="?page={{ page_obj.next_page_number }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}"
+      >
+        다음
+      </a>
     </li>
     {% endif %}
   </ul>
 </nav>
-
 {% endblock %}
 
 {% block extra_js %}
+
+{# [수정] services 라이브러리 포함 필수 #}
+{# appkey는 실제 본인 JavaScript 키로 바꾸세요 #}
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_JS_KEY&libraries=services"></script>
+
 <script>
-  // ✅ json_script로 읽어서 빨간줄 없음
-  const mapAgents = JSON.parse(document.getElementById('map-data').textContent);
+  const mapAgents = JSON.parse(document.getElementById("map-data").textContent);
+
   let mapInitialized = false;
+  let mapInstance = null;
+  let currentMarkers = [];
+  let clickMarker = null;
+  let clickInfoWindow = null;
+  let isNavigating = false; // [수정] 중복 클릭 방지
+
+  // [수정] 페이지 진입 시 ld_code_nm이 있으면 지도 자동 오픈
+  window.addEventListener("DOMContentLoaded", function () {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("ld_code_nm")) {
+      openMap();
+    }
+  });
+
+  function openMap() {
+    const mapDiv = document.getElementById("map");
+    mapDiv.style.display = "block";
+
+    if (!mapInitialized) {
+      initMap();
+      mapInitialized = true;
+    }
+  }
 
   function toggleMap() {
-    const mapDiv = document.getElementById('map');
-    if (mapDiv.style.display === 'none') {
-      mapDiv.style.display = 'block';
-      if (!mapInitialized) {
-        initMap();
-        mapInitialized = true;
-      }
+    const mapDiv = document.getElementById("map");
+    if (mapDiv.style.display === "none") {
+      openMap();
     } else {
-      mapDiv.style.display = 'none';
+      mapDiv.style.display = "none";
     }
   }
 
   function initMap() {
-    const map = new kakao.maps.Map(document.getElementById('map'), {
-      center: new kakao.maps.LatLng(37.5665, 126.9780),
-      level: 7
-    });
-
-    if (mapAgents.length === 0) {
-      document.getElementById('map').innerHTML =
-        '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;font-size:14px;">좌표 데이터 없음 — geocode 실행 필요</div>';
+    // [수정] SDK 로딩 여부 체크
+    if (typeof kakao === "undefined" || !kakao.maps) {
+      alert("카카오맵 SDK가 로드되지 않았습니다.");
       return;
     }
 
-    mapAgents.forEach(function(agent) {
-      const marker = new kakao.maps.Marker({
-        map: map,
-        position: new kakao.maps.LatLng(agent.lat, agent.lng),
-        title: agent.bsnm_cmpnm
-      });
+    const container = document.getElementById("map");
+    const options = {
+      center: new kakao.maps.LatLng(37.5665, 126.9780),
+      level: 7,
+    };
 
-      const infowindow = new kakao.maps.InfoWindow({
-        content:
-          '<div style="padding:8px;font-size:13px;min-width:150px;">' +
-          '<strong>' + agent.bsnm_cmpnm + '</strong><br>' +
-          '<span style="color:#666;">' + agent.rdnmadr + '</span>' +
-          '</div>'
-      });
+    const map = new kakao.maps.Map(container, options);
+    mapInstance = map;
 
-      kakao.maps.event.addListener(marker, 'click', function() {
-        infowindow.open(map, marker);
+    // [수정] services 라이브러리 체크
+    if (!kakao.maps.services || !kakao.maps.services.Geocoder) {
+      alert("Kakao Maps services 라이브러리가 없습니다. SDK URL에 libraries=services를 포함하세요.");
+      return;
+    }
+
+    renderMarkers(mapAgents, map, true);
+
+    kakao.maps.event.addListener(map, "click", function (mouseEvent) {
+      if (isNavigating) return; // [수정]
+
+      const lat = mouseEvent.latLng.getLat();
+      const lng = mouseEvent.latLng.getLng();
+
+      showClickMarker(map, lat, lng, "지역 확인 중...");
+
+      const geocoder = new kakao.maps.services.Geocoder();
+
+      geocoder.coord2RegionCode(lng, lat, function (result, status) {
+        console.log("[coord2RegionCode] status:", status, "result:", result);
+
+        if (status !== kakao.maps.services.Status.OK || !result || !result.length) {
+          showClickMarker(
+            map,
+            lat,
+            lng,
+            "지역 정보를 가져오지 못했습니다."
+          );
+          console.error("coord2RegionCode 실패");
+
+          // [수정] 여기서 끝나면 필터링도 당연히 안 됨
+          // 카카오 개발자 콘솔에 현재 접속 도메인 등록 필요
+          return;
+        }
+
+        // [수정] 행정동(H) 우선, 없으면 법정동(B) 사용
+        const region =
+          result.find((item) => item.region_type === "H") ||
+          result.find((item) => item.region_type === "B") ||
+          result[0];
+
+        const sido = (region.region_1depth_name || "").trim();
+        const sigungu = (region.region_2depth_name || "").trim();
+
+        if (!sigungu) {
+          showClickMarker(map, lat, lng, "구/군 정보를 찾지 못했습니다.");
+          return;
+        }
+
+        const displayText = sido ? `${sido} ${sigungu}` : sigungu;
+        showClickMarker(map, lat, lng, displayText);
+
+        applyRegionFilter(sigungu); // [수정]
       });
     });
   }
+
+  // [수정] 기존 검색조건 유지한 채 지역 필터만 변경
+  function applyRegionFilter(regionName) {
+    const params = new URLSearchParams(window.location.search);
+
+    params.set("ld_code_nm", regionName);
+    params.set("page", "1");
+
+    isNavigating = true;
+    setTimeout(function () {
+      window.location.href = `${window.location.pathname}?${params.toString()}`;
+    }, 500);
+  }
+
+  function showClickMarker(map, lat, lng, text) {
+    if (clickMarker) {
+      clickMarker.setMap(null);
+    }
+    if (clickInfoWindow) {
+      clickInfoWindow.close();
+    }
+
+    const position = new kakao.maps.LatLng(lat, lng);
+
+    clickMarker = new kakao.maps.Marker({
+      map: map,
+      position: position,
+    });
+
+    clickInfoWindow = new kakao.maps.InfoWindow({
+      content:
+        '<div style="padding:10px 14px;font-size:14px;min-width:180px;line-height:1.6;">' +
+        '📍 <strong>' + text + "</strong>" +
+        "</div>",
+    });
+
+    clickInfoWindow.open(map, clickMarker);
+  }
+
+  function renderMarkers(agents, map, fitBounds = false) {
+    currentMarkers.forEach(function (marker) {
+      marker.setMap(null);
+    });
+    currentMarkers = [];
+
+    if (!agents || agents.length === 0) {
+      return;
+    }
+
+    const bounds = new kakao.maps.LatLngBounds();
+
+    agents.forEach(function (agent) {
+      if (agent.lat === null || agent.lng === null) {
+        return;
+      }
+
+      const position = new kakao.maps.LatLng(agent.lat, agent.lng);
+
+      const marker = new kakao.maps.Marker({
+        map: map,
+        position: position,
+        title: agent.bsnm_cmpnm || "",
+      });
+
+      currentMarkers.push(marker);
+      bounds.extend(position);
+
+      const infowindow = new kakao.maps.InfoWindow({
+        content:
+          '<div style="padding:8px 12px;font-size:13px;min-width:180px;line-height:1.6;">' +
+          "<strong>" + (agent.bsnm_cmpnm || "-") + "</strong><br>" +
+          '<span style="color:#555;font-size:12px;">' + (agent.rdnmadr || "-") + "</span><br>" +
+          '<span style="color:#0d6efd;font-size:12px;">' + (agent.ld_code_nm || "-") + "</span>" +
+          "</div>",
+      });
+
+      kakao.maps.event.addListener(marker, "click", function () {
+        infowindow.open(map, marker);
+      });
+    });
+
+    if (fitBounds && currentMarkers.length > 0) {
+      map.setBounds(bounds);
+    }
+  }
 </script>
 {% endblock %}
-
-
