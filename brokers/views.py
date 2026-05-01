@@ -56,7 +56,6 @@ class RealEstateAgentViewSet(viewsets.ModelViewSet):
         if v := request.query_params.get("sttus", "").strip():
             qs = qs.filter(sttus_se_code=v)
 
-        # [수정] 지도 클릭 지역 필터를 주소 필드까지 함께 보도록 보강
         if v := request.query_params.get("ld_code_nm", "").strip():
             qs = qs.filter(
                 Q(ld_code_nm__icontains=v) |
@@ -64,7 +63,6 @@ class RealEstateAgentViewSet(viewsets.ModelViewSet):
                 Q(mnnmadr__icontains=v)
             )
 
-        # [수정] 지도 전용 데이터 요청 시 좌표 있는 데이터만
         if request.query_params.get("map_only"):
             qs = qs.filter(lat__isnull=False, lng__isnull=False)
 
@@ -231,7 +229,6 @@ class BrokerListView(LoginRequiredMixin, View):
         if v := request.GET.get("sttus", "").strip():
             qs = qs.filter(sttus_se_code=v)
 
-        # [수정] 지도 클릭 후 넘어온 구/군명 필터
         selected_region = request.GET.get("ld_code_nm", "").strip()
         if selected_region:
             qs = qs.filter(
@@ -242,7 +239,27 @@ class BrokerListView(LoginRequiredMixin, View):
 
         page_obj = Paginator(qs, self.paginate_by).get_page(request.GET.get("page"))
 
-        # [수정] 지도 마커용 데이터도 같은 필터 결과를 기준으로 보냄
+        # ─────────────────────────────────────────────────────────────
+        # [수정] 지도 마커 데이터를 두 그룹으로 분리해서 전달
+        #
+        # ▶ 기존 문제:
+        #   map_agents = qs.filter(lat__isnull=False, lng__isnull=False)
+        #   → DB에 좌표가 저장된 레코드(종로구 일부)만 마커로 표시됨
+        #   → 나머지 수천 건은 지도에 전혀 안 나타남
+        #
+        # ▶ 해결 방식:
+        #   그룹 A (map_agents_json)    : DB에 lat/lng 있음  → JS가 즉시 마커 생성
+        #   그룹 B (map_agents_addr_json): lat/lng 없지만 도로명 주소 있음
+        #                               → JS가 Kakao 주소검색 API로 좌표 변환 후 마커 생성
+        #
+        # ▶ 그룹 B 건수 제한 이유:
+        #   Kakao 주소검색 API는 호출 횟수 제한이 있으므로
+        #   한 번에 너무 많이 보내면 초과될 수 있음 → 최대 500건으로 제한
+        #   (전체를 DB에 좌표로 저장하려면 fetch_broker 관리 명령어에
+        #    Kakao 지오코딩 로직을 추가하는 것이 근본 해결책)
+        # ─────────────────────────────────────────────────────────────
+
+        # 그룹 A: 이미 좌표가 있는 레코드 → 전체 전달 (즉시 마커)
         map_agents = list(
             qs.filter(lat__isnull=False, lng__isnull=False).values(
                 "id",
@@ -255,9 +272,26 @@ class BrokerListView(LoginRequiredMixin, View):
             )
         )
 
+        # 그룹 B: 좌표 없고 도로명 주소는 있는 레코드 → 최대 500건 전달
+        # JS의 geocodeAddressQueue() 함수가 배치 단위로 Kakao API를 호출해서
+        # 좌표를 얻어 마커를 추가로 생성함
+        map_agents_addr = list(
+            qs.filter(lat__isnull=True)                  # 좌표 없는 것만
+            .exclude(rdnmadr__isnull=True)               # 주소 없으면 지오코딩 불가 → 제외
+            .exclude(rdnmadr="")                         # 빈 문자열도 제외
+            .values(
+                "id",
+                "bsnm_cmpnm",
+                "rdnmadr",        # 지오코딩에 사용할 도로명 주소
+                "ld_code_nm",
+                "sttus_se_code",
+            )[:500]              # Kakao API 호출 한도 고려 → 최대 500건
+        )
+
         context = {
             "page_obj": page_obj,
-            "map_agents_json": map_agents,
+            "map_agents_json": map_agents,           # 그룹 A: 즉시 마커
+            "map_agents_addr_json": map_agents_addr, # 그룹 B: 지오코딩 후 마커 [수정 추가]
             "selected_region": selected_region,
         }
         return render(request, "brokers/broker1_list.html", context)
