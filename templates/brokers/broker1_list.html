@@ -211,34 +211,29 @@
   const mapAgents     = JSON.parse(document.getElementById("map-data").textContent);
   const mapAgentsAddr = JSON.parse(document.getElementById("map-addr-data").textContent);
 
-  let mapInitialized  = false;
-  let mapInstance     = null;
-  let currentMarkers  = [];
-  let clickMarker     = null;
-  let clickInfoWindow = null;
-  let isNavigating    = false;
+  // ═══════════════════════════════════════════════════════════════════
+  // [수정 1/3] detailBaseUrl 전역 변수 추가
+  //
+  // ▶ 역할:
+  //   마커 클릭 시 이동할 상세 페이지 URL의 베이스 경로
+  //   Django 템플릿 태그로 detail1/0/ URL을 생성한 뒤
+  //   '/0/' 부분만 제거해 순수 베이스 경로를 추출
+  //   사용: detailBaseUrl + agent.id + '/'
+  //   예시: '/broker1/detail1/' + 42 + '/' → '/broker1/detail1/42/'
+  // ═══════════════════════════════════════════════════════════════════
+  const detailBaseUrl = "{% url 'brokers:broker1_detail' 0 %}".replace("/0/", "/"); // [수정 1/3]
 
-  // ═══════════════════════════════════════════════════════════════════
-  // [수정 1/3] geocodingCancelled 플래그 변수 추가
-  //
-  // ▶ 기존 문제:
-  //   geocodeAddressQueue()는 비동기 배치 처리로 백그라운드에서 계속 실행됨
-  //   clearAllMarkers()로 마커를 지워도 이미 진행 중인 배치가 완료될 때마다
-  //   addSingleMarker()가 호출되어 새 마커가 계속 추가되는 문제 발생
-  //   → "전체" 클릭 후에도 마커 몇 개가 지도에 남아있는 현상의 원인
-  //
-  // ▶ 해결:
-  //   geocodingCancelled 플래그를 전역 변수로 추가
-  //   clearAllMarkers() 호출 시 true 로 세팅 → addSingleMarker() 진입 차단
-  //   geocodeAddressQueue() 새로 시작 시 false 로 초기화
-  // ═══════════════════════════════════════════════════════════════════
-  let geocodingCancelled = false; // [수정 1/3] 지오코딩 중단 플래그 추가
+  let mapInitialized     = false;
+  let mapInstance        = null;
+  let currentMarkers     = [];
+  let clickMarker        = null;
+  let clickInfoWindow    = null;
+  let isNavigating       = false;
+  let geocodingCancelled = false;
 
   window.addEventListener("DOMContentLoaded", function () {
     if (new URLSearchParams(window.location.search).get("ld_code_nm")) {
-      kakao.maps.load(function () {
-        openMap();
-      });
+      kakao.maps.load(function () { openMap(); });
     }
 
     const currentCode = document.getElementById("ldcode").value;
@@ -251,28 +246,13 @@
         e.preventDefault();
         document.getElementById("ldcode").value = this.dataset.code;
         document.getElementById("districtLabel").textContent = this.textContent.trim() || "구 선택...";
-
-        if (this.dataset.code === "" && mapInitialized) {
-          clearAllMarkers();
-        }
+        if (this.dataset.code === "" && mapInitialized) { clearAllMarkers(); }
       });
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════
-  // [수정 2/3] clearAllMarkers() — geocodingCancelled = true 추가
-  //
-  // ▶ 기존:
-  //   마커 배열만 비우고 setMap(null) 처리 → 이미 진행 중인 지오코딩은
-  //   계속 실행되어 배치 완료 시 addSingleMarker()가 마커를 다시 추가함
-  //
-  // ▶ 해결:
-  //   함수 진입 즉시 geocodingCancelled = true 로 세팅
-  //   → 이후 addSingleMarker() 호출이 와도 첫 줄에서 즉시 return 처리됨
-  //   → 백그라운드 지오코딩 배치가 완료되어도 마커가 추가되지 않음
-  // ═══════════════════════════════════════════════════════════════════
   function clearAllMarkers() {
-    geocodingCancelled = true; // [수정 2/3] 진행 중인 지오코딩 배치 차단
+    geocodingCancelled = true;
     currentMarkers.forEach(function (m) { m.setMap(null); });
     currentMarkers = [];
     if (clickMarker)     { clickMarker.setMap(null); clickMarker = null; }
@@ -282,29 +262,21 @@
   function openMap() {
     document.getElementById("map").style.display = "block";
     if (!mapInitialized) {
-      kakao.maps.load(function () {
-        initMap();
-        mapInitialized = true;
-      });
+      kakao.maps.load(function () { initMap(); mapInitialized = true; });
     }
   }
 
   function toggleMap() {
     const mapDiv = document.getElementById("map");
     mapDiv.style.display = (mapDiv.style.display === "none") ? "block" : "none";
-
     if (mapDiv.style.display === "block" && !mapInitialized) {
       kakao.maps.load(function () {
         initMap();
         mapInitialized = true;
-        if (document.getElementById("ldcode").value === "") {
-          clearAllMarkers();
-        }
+        if (document.getElementById("ldcode").value === "") { clearAllMarkers(); }
       });
     } else if (mapDiv.style.display === "block" && mapInitialized) {
-      if (document.getElementById("ldcode").value === "") {
-        clearAllMarkers();
-      }
+      if (document.getElementById("ldcode").value === "") { clearAllMarkers(); }
     }
   }
 
@@ -323,7 +295,6 @@
     mapInstance = map;
 
     renderMarkers(mapAgents, map, true);
-
     if (mapAgentsAddr && mapAgentsAddr.length > 0) {
       geocodeAddressQueue(map, [...mapAgentsAddr]);
     }
@@ -350,42 +321,25 @@
     });
   }
 
-  // ═══════════════════════════════════════════════════════════════════
-  // [수정 3/3] geocodeAddressQueue() — 시작 시 geocodingCancelled 초기화
-  //
-  // ▶ 이유:
-  //   clearAllMarkers() 호출로 geocodingCancelled = true 가 된 상태에서
-  //   새로운 구를 선택해 다시 지오코딩이 시작될 수 있음
-  //   이때 플래그가 true 인 채로 남아있으면 새 배치도 차단되어버림
-  //   → 함수 진입 시 false 로 초기화해서 새 지오코딩은 정상 동작하도록 처리
-  // ═══════════════════════════════════════════════════════════════════
   function geocodeAddressQueue(map, queue, batchSize = 5, delayMs = 400) {
-    geocodingCancelled = false; // [수정 3/3] 새 지오코딩 시작 시 중단 플래그 초기화
-
+    geocodingCancelled = false;
     const total      = queue.length;
     const statusDiv  = document.getElementById("geocode-status");
     const progressEl = document.getElementById("geocode-progress");
-
     statusDiv.style.display = "block";
 
     function processBatch(remaining) {
-      if (!remaining || remaining.length === 0) {
-        statusDiv.style.display = "none";
-        return;
-      }
-
+      if (!remaining || remaining.length === 0) { statusDiv.style.display = "none"; return; }
       const batch    = remaining.splice(0, batchSize);
       const geocoder = new kakao.maps.services.Geocoder();
       let   done     = 0;
 
       batch.forEach(function (agent) {
         if (!agent.rdnmadr) { done++; return; }
-
         geocoder.addressSearch(agent.rdnmadr, function (result, status) {
           if (status === kakao.maps.services.Status.OK && result.length > 0) {
             addSingleMarker(map, parseFloat(result[0].y), parseFloat(result[0].x), agent);
           }
-
           done++;
           if (done === batch.length) {
             progressEl.textContent = `(${total - remaining.length} / ${total})`;
@@ -394,34 +348,30 @@
         });
       });
     }
-
     processBatch(queue);
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // [수정 4/3] addSingleMarker() — geocodingCancelled 체크 추가
+  // [수정 2/3] addSingleMarker() — 마커 클릭 시 상세 페이지 이동
   //
-  // ▶ 이유:
-  //   clearAllMarkers()가 호출된 이후에도 이미 Kakao API에 요청을 보낸
-  //   배치의 콜백이 뒤늦게 도착하면 이 함수가 실행됨
-  //   geocodingCancelled = true 이면 첫 줄에서 즉시 return 해서
-  //   마커가 지도에 추가되는 것을 완전히 차단
+  // ▶ 기존:
+  //   마커 클릭 → InfoWindow(말풍선) 오픈
+  //   infowindow 객체 생성 + open() 호출
+  //
+  // ▶ 변경:
+  //   마커 클릭 → detailBaseUrl + agent.id + '/' 로 페이지 이동
+  //   infowindow 관련 코드 전체 제거
   // ═══════════════════════════════════════════════════════════════════
   function addSingleMarker(map, lat, lng, agent) {
-    if (geocodingCancelled) return; // [수정 4/3] 중단 상태면 마커 추가 차단
-
-    const position  = new kakao.maps.LatLng(lat, lng);
-    const marker    = new kakao.maps.Marker({ map, position, title: agent.bsnm_cmpnm || "" });
+    if (geocodingCancelled) return;
+    const position = new kakao.maps.LatLng(lat, lng);
+    const marker   = new kakao.maps.Marker({ map, position, title: agent.bsnm_cmpnm || "" });
     currentMarkers.push(marker);
 
-    const infowindow = new kakao.maps.InfoWindow({
-      content:
-        '<div style="padding:8px 12px;font-size:13px;min-width:180px;line-height:1.6;">' +
-        "<strong>" + (agent.bsnm_cmpnm || "-") + "</strong><br>" +
-        '<span style="color:#555;font-size:12px;">' + (agent.rdnmadr || "-") + "</span><br>" +
-        '<span style="color:#0d6efd;font-size:12px;">' + (agent.ld_code_nm || "-") + "</span></div>",
+    // [수정 2/3] 기존: infowindow.open(map, marker) → 변경: 상세 페이지 이동
+    kakao.maps.event.addListener(marker, "click", function () {
+      window.location.href = detailBaseUrl + agent.id + "/";
     });
-    kakao.maps.event.addListener(marker, "click", function () { infowindow.open(map, marker); });
   }
 
   function applyRegionFilter(regionName) {
@@ -445,6 +395,17 @@
     clickInfoWindow.open(map, clickMarker);
   }
 
+  // ═══════════════════════════════════════════════════════════════════
+  // [수정 3/3] renderMarkers() — 마커 클릭 시 상세 페이지 이동
+  //
+  // ▶ 기존:
+  //   마커 클릭 → InfoWindow(말풍선) 오픈
+  //   infowindow 객체 생성 + open() 호출
+  //
+  // ▶ 변경:
+  //   마커 클릭 → detailBaseUrl + agent.id + '/' 로 페이지 이동
+  //   infowindow 관련 코드 전체 제거
+  // ═══════════════════════════════════════════════════════════════════
   function renderMarkers(agents, map, fitBounds = false) {
     currentMarkers.forEach(function (m) { m.setMap(null); });
     currentMarkers = [];
@@ -458,14 +419,10 @@
       currentMarkers.push(marker);
       bounds.extend(position);
 
-      const infowindow = new kakao.maps.InfoWindow({
-        content:
-          '<div style="padding:8px 12px;font-size:13px;min-width:180px;line-height:1.6;">' +
-          "<strong>" + (agent.bsnm_cmpnm || "-") + "</strong><br>" +
-          '<span style="color:#555;font-size:12px;">' + (agent.rdnmadr || "-") + "</span><br>" +
-          '<span style="color:#0d6efd;font-size:12px;">' + (agent.ld_code_nm || "-") + "</span></div>",
+      // [수정 3/3] 기존: infowindow.open(map, marker) → 변경: 상세 페이지 이동
+      kakao.maps.event.addListener(marker, "click", function () {
+        window.location.href = detailBaseUrl + agent.id + "/";
       });
-      kakao.maps.event.addListener(marker, "click", function () { infowindow.open(map, marker); });
     });
     if (fitBounds && currentMarkers.length > 0) { map.setBounds(bounds); }
   }
