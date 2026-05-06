@@ -1,31 +1,262 @@
 {% load static %}
 
-<!-- 헤더 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- ══════════════════════════════════════════
+     MAIN HEADER
+══════════════════════════════════════════ -->
 <header class="main-header">
-  <div class="container d-flex align-items-center justify-content-between">
+  <div class="mh-inner">
 
-    <!-- ✅ [수정] div → a 태그로 변경, href에 dashboard URL 연결 -->
-    <a href="{% url 'brokers:dashboard' %}" class="brand">🎒 길동이의 포켓홈</a>
+    <!-- 브랜드 -->
+    <a href="/" class="mh-brand">
+      <span class="mh-brand__icon">🏠</span>
+      <span class="mh-brand__text">
+        <span class="mh-brand__name">길동이의 포켓홈</span>
+        <span class="mh-brand__sub">서울 부동산 중개업 정보</span>
+      </span>
+    </a>
 
-    <div class="header-auth">
+    <!-- 우측 인증 영역 -->
+    <div class="mh-auth">
       {% if user.is_authenticated %}
-        <span class="header-username">{{ user.username }}</span>
+        <span class="mh-auth__user">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          {{ user.username }}
+        </span>
         <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">
           {% csrf_token %}
-          <button type="submit" class="header-auth-btn btn-write-review">로그아웃</button>
+          <button type="submit" class="mh-auth__btn mh-auth__btn--logout">로그아웃</button>
         </form>
       {% else %}
-        <a href="{% url 'accounts:login' %}" class="header-auth-btn btn-write-review">로그인</a>
+        <a href="{% url 'accounts:login' %}" class="mh-auth__btn mh-auth__btn--login">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          로그인
+        </a>
       {% endif %}
     </div>
 
   </div>
 </header>
 
-<!-- 서브 네비 -->
-<div class="container">
-  <!-- ✅ [수정] href="#" → dashboard URL 연결 -->
-  <a href="{% url 'brokers:dashboard' %}">홈</a>
-  <a href="{% url 'brokers:broker1_list' %}">부동산 중개업사무소정보</a>
-  <a href="{% url 'brokers:broker2_list' %}">부동산 중개사</a>
-</div>
+<!-- ══════════════════════════════════════════
+     SUB NAV
+══════════════════════════════════════════ -->
+<nav class="sub-nav">
+  <div class="sn-inner">
+
+    <a href="{% url 'brokers:dashboard'%}" class="sn-link {% block nav_home %}{% endblock %}">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+      홈
+    </a>
+
+    <span class="sn-sep"></span>
+
+    <a href="{% url 'brokers:broker1_list' %}" class="sn-link {% block nav_brokers %}{% endblock %}">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2M8 7V5a2 2 0 00-4 0v2"/></svg>
+      부동산 중개업사무소
+    </a>
+
+    <span class="sn-sep"></span>
+
+    <a href="{% url 'brokers:broker2_list' %}" class="sn-link {% block nav_agents %}{% endblock %}">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      부동산 중개사
+    </a>
+
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     HEADER CSS (인라인 — base.html에 <style> 블록 없을 때)
+══════════════════════════════════════════ -->
+<style>
+/* ── 공통 토큰 (dashboard.css와 동일) ── */
+:root {
+  --navy-950: #050e1f;
+  --navy-900: #0B1D3A;
+  --navy-800: #112445;
+  --navy-700: #1a3461;
+  --navy-300: #7090B8;
+  --navy-100: #CBD8EE;
+  --navy-50:  #EDF2F9;
+  --amber:       #C9952A;
+  --amber-light: #F5C96E;
+  --font-serif: "Nanum Myeongjo", Georgia, serif;
+  --font-sans:  "Pretendard", "Noto Sans KR", sans-serif;
+}
+
+/* ── MAIN HEADER ── */
+.main-header {
+  background: var(--navy-950);
+  border-bottom: 1px solid rgba(201,149,42,0.15);
+  position: sticky;
+  top: 0;
+  z-index: 300;
+}
+
+.mh-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 브랜드 */
+.mh-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  transition: opacity 0.18s;
+}
+.mh-brand:hover { opacity: 0.82; }
+
+.mh-brand__icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.mh-brand__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.mh-brand__name {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.mh-brand__sub {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--navy-300);
+  letter-spacing: 0.02em;
+}
+
+/* 인증 영역 */
+.mh-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mh-auth__user {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--navy-300);
+}
+
+.mh-auth__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.38rem 0.85rem;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.18s;
+}
+
+.mh-auth__btn--login {
+  background: var(--amber);
+  color: var(--navy-950);
+}
+.mh-auth__btn--login:hover {
+  background: var(--amber-light);
+  color: var(--navy-950);
+  text-decoration: none;
+}
+
+.mh-auth__btn--logout {
+  background: transparent;
+  color: var(--navy-300);
+  border: 1px solid rgba(112,144,184,0.3);
+}
+.mh-auth__btn--logout:hover {
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+}
+
+/* ── SUB NAV ── */
+.sub-nav {
+  background: var(--navy-900);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: sticky;
+  top: 60px;
+  z-index: 299;
+}
+
+.sn-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.sn-inner::-webkit-scrollbar { display: none; }
+
+.sn-link {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--navy-300);
+  text-decoration: none;
+  padding: 0 1rem;
+  height: 42px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.sn-link:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.05);
+  text-decoration: none;
+}
+.sn-link.active {
+  color: var(--amber-light);
+  border-bottom-color: var(--amber);
+  font-weight: 600;
+}
+
+.sn-sep {
+  width: 1px;
+  height: 14px;
+  background: rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+
+/* ── 모바일 ── */
+@media (max-width: 600px) {
+  .mh-brand__sub { display: none; }
+  .mh-inner { padding: 0 16px; }
+  .sn-inner  { padding: 0 16px; }
+}
+</style>

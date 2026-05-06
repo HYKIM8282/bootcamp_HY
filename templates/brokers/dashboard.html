@@ -1,7 +1,11 @@
+
 {% extends "base.html" %}
 {% load static %}
 
 {% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'css/brokers/dashboard.css' %}">
 {% endblock extra_css %}
 
@@ -9,32 +13,350 @@
 
 {% block content %}
 
-  <div class="dashboard-hero">
-    <div class="container">
-      <h2>🏙️ 서울시 부동산 중개업 현황</h2>
-      <p class="subtitle mb-0">구를 클릭하면 해당 지역의 중개업소 목록과 지도를 조회합니다.</p>
+<!-- ══════════════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════════════ -->
+<div class="db-hero">
+  <div class="db-hero__grid-bg"></div>
+  <div class="db-hero__inner container">
+
+    <div class="db-hero__label">
+      <span class="db-hero__label-dot"></span>
+      공공데이터 기반 부동산 정보
     </div>
+
+    <h1 class="db-hero__title">
+      서울시 부동산<br>
+      <em>중개업 현황</em>
+    </h1>
+
+    <p class="db-hero__desc">
+      국토교통부 공공데이터를 기반으로 서울 25개 자치구<br class="d-none d-md-inline">
+      중개업소 정보를 투명하게 제공합니다.
+    </p>
+
+    <div class="db-hero__chips">
+      <span class="db-chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 실시간 공공데이터</span>
+      <span class="db-chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> 검증된 정보</span>
+      <span class="db-chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> 신뢰·투명 공개</span>
+    </div>
+
   </div>
+</div>
 
-  <div class="container pb-5">
+<!-- ══════════════════════════════════════════════════════════
+     STAT BAR
+══════════════════════════════════════════════════════════ -->
+<div class="db-stats-bar">
+  <div class="container">
+    <div class="db-stats-row">
 
-
-    {% include "brokers/includes/stat_cards.html" %}
-
- 
-    <div class="row g-4 align-items-start">
-
-     
-      <div class="col-lg-8">
-        {% include "brokers/includes/seoul_map.html" %}
+      <div class="db-stat">
+        <div class="db-stat__num">25</div>
+        <div class="db-stat__label">자치구</div>
+        <div class="db-stat__line"></div>
       </div>
 
-      
-      {% include "brokers/includes/side_panel.html" %}
+      <div class="db-stat db-stat--accent">
+        <div class="db-stat__num">{{ total_count|default:"—" }}</div>
+        <div class="db-stat__label">전체 중개업소</div>
+        <div class="db-stat__line"></div>
+      </div>
+
+      <div class="db-stat db-stat--green">
+        <div class="db-stat__num">{{ active_count|default:"—" }}</div>
+        <div class="db-stat__label">영업중</div>
+        <div class="db-stat__line"></div>
+      </div>
+
+      <div class="db-stat db-stat--muted">
+        <div class="db-stat__num">{{ closed_count|default:"—" }}</div>
+        <div class="db-stat__label">폐업</div>
+        <div class="db-stat__line"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════════════════════ -->
+<div class="container db-body">
+  <div class="row g-4 align-items-start">
+
+    <!-- ── MAP ──────────────────────────────────────────── -->
+    <div class="col-lg-8">
+      <div class="db-map-card">
+
+        <div class="db-map-card__header">
+          <div class="db-map-card__header-left">
+            <span class="db-map-card__eyebrow">서울특별시 25개 자치구</span>
+            <h2 class="db-map-card__title">지역별 중개업소 조회</h2>
+          </div>
+          <span id="selected-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span id="selected-name">—</span>
+            <span class="close-btn" id="badge-close" title="선택 해제">✕</span>
+          </span>
+        </div>
+
+        <div class="db-map-card__body">
+          <svg id="seoul-svg" viewBox="0 0 760 620" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="map-shadow">
+                <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="rgba(11,29,58,0.18)"/>
+              </filter>
+              <filter id="map-shadow-active">
+                <feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="rgba(11,29,58,0.35)"/>
+              </filter>
+              <linearGradient id="districtGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#CBD8EE"/>
+                <stop offset="100%" style="stop-color:#B0C4DE"/>
+              </linearGradient>
+              <linearGradient id="districtHover" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#C9952A"/>
+                <stop offset="100%" style="stop-color:#A87620"/>
+              </linearGradient>
+              <linearGradient id="districtActive" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#0B1D3A"/>
+                <stop offset="100%" style="stop-color:#1a3461"/>
+              </linearGradient>
+            </defs>
+
+            <g id="districts">
+              <path class="district" id="d11320" data-code="11320" data-name="도봉구"
+                    d="M 444.8,64.7 L 531.2,75.6 L 586.5,84.7 L 590.0,139.4 L 552.0,157.7
+                       L 514.0,166.8 L 470.7,161.3 L 441.4,139.4 L 444.8,64.7 Z"><title>도봉구</title></path>
+              <path class="district" id="d11350" data-code="11350" data-name="노원구"
+                    d="M 531.2,75.6 L 652.2,81.1 L 704.1,121.2 L 669.5,166.8 L 617.7,179.6
+                       L 586.5,194.2 L 552.0,157.7 L 586.5,139.4 L 590.0,84.7 L 531.2,75.6 Z"><title>노원구</title></path>
+              <path class="district" id="d11305" data-code="11305" data-name="강북구"
+                    d="M 410.2,135.8 L 444.8,64.7 L 470.7,161.3 L 441.4,139.4
+                       L 410.2,172.3 L 384.3,166.8 L 367.0,139.4 L 410.2,135.8 Z"><title>강북구</title></path>
+              <path class="district" id="d11380" data-code="11380" data-name="은평구"
+                    d="M 228.8,157.7 L 297.9,75.6 L 384.3,103.0 L 410.2,135.8 L 367.0,139.4
+                       L 341.1,185.0 L 306.5,212.4 L 263.3,230.7 L 228.8,194.2 L 228.8,157.7 Z"><title>은평구</title></path>
+              <path class="district" id="d11290" data-code="11290" data-name="성북구"
+                    d="M 410.2,135.8 L 410.2,172.3 L 441.4,139.4 L 441.4,194.2 L 470.7,161.3
+                       L 514.0,166.8 L 510.5,212.4 L 479.4,230.7 L 444.8,239.8 L 413.7,221.5
+                       L 384.3,203.3 L 358.4,212.4 L 341.1,185.0 L 367.0,139.4 L 410.2,135.8 Z"><title>성북구</title></path>
+              <path class="district" id="d11260" data-code="11260" data-name="중랑구"
+                    d="M 514.0,166.8 L 552.0,157.7 L 586.5,194.2 L 617.7,179.6 L 626.3,221.5
+                       L 600.4,258.0 L 565.8,270.8 L 539.9,258.0 L 510.5,239.8
+                       L 510.5,212.4 L 514.0,166.8 Z"><title>중랑구</title></path>
+              <path class="district" id="d11110" data-code="11110" data-name="종로구"
+                    d="M 306.5,212.4 L 341.1,185.0 L 358.4,212.4 L 384.3,203.3 L 413.7,221.5
+                       L 444.8,239.8 L 436.2,276.3 L 413.7,294.5 L 375.7,300.0 L 341.1,294.5
+                       L 306.5,281.7 L 282.3,267.1 L 289.3,239.8 L 306.5,212.4 Z"><title>종로구</title></path>
+              <path class="district" id="d11230" data-code="11230" data-name="동대문구"
+                    d="M 444.8,239.8 L 479.4,230.7 L 510.5,212.4 L 510.5,239.8 L 539.9,258.0
+                       L 531.2,285.4 L 510.5,307.3 L 479.4,321.9 L 453.5,312.7 L 436.2,294.5
+                       L 436.2,276.3 L 444.8,239.8 Z"><title>동대문구</title></path>
+              <path class="district" id="d11410" data-code="11410" data-name="서대문구"
+                    d="M 263.3,230.7 L 306.5,212.4 L 289.3,239.8 L 282.3,267.1 L 306.5,281.7
+                       L 297.9,312.7 L 272.0,325.5 L 246.0,321.9 L 228.8,298.1
+                       L 228.8,267.1 L 246.0,248.9 L 263.3,230.7 Z"><title>서대문구</title></path>
+              <path class="district" id="d11200" data-code="11200" data-name="성동구"
+                    d="M 453.5,312.7 L 479.4,321.9 L 510.5,307.3 L 531.2,285.4 L 557.2,294.5
+                       L 565.8,321.9 L 557.2,354.7 L 531.2,376.6 L 496.7,385.7 L 470.7,372.9
+                       L 444.8,358.3 L 444.8,331.0 L 453.5,312.7 Z"><title>성동구</title></path>
+              <path class="district" id="d11215" data-code="11215" data-name="광진구"
+                    d="M 531.2,285.4 L 557.2,294.5 L 565.8,321.9 L 591.7,307.3 L 626.3,312.7
+                       L 634.9,343.7 L 626.3,376.6 L 591.7,391.2 L 557.2,385.7 L 531.2,376.6
+                       L 557.2,354.7 L 565.8,321.9 L 557.2,294.5 L 531.2,285.4 Z"><title>광진구</title></path>
+              <path class="district" id="d11440" data-code="11440" data-name="마포구"
+                    d="M 228.8,267.1 L 246.0,248.9 L 263.3,230.7 L 289.3,239.8 L 306.5,281.7
+                       L 297.9,312.7 L 272.0,325.5 L 246.0,321.9 L 228.8,298.1 L 211.5,321.9
+                       L 189.0,336.4 L 164.8,331.0 L 164.8,303.6 L 189.0,289.0
+                       L 211.5,294.5 L 228.8,267.1 Z"><title>마포구</title></path>
+              <path class="district" id="d11140" data-code="11140" data-name="중구"
+                    d="M 341.1,294.5 L 375.7,300.0 L 413.7,294.5 L 436.2,294.5 L 444.8,331.0
+                       L 444.8,358.3 L 418.9,372.9 L 389.5,367.5 L 358.4,358.3 L 341.1,340.1
+                       L 341.1,318.2 L 341.1,294.5 Z"><title>중구</title></path>
+              <path class="district" id="d11170" data-code="11170" data-name="용산구"
+                    d="M 341.1,318.2 L 341.1,340.1 L 358.4,358.3 L 389.5,367.5 L 418.9,372.9
+                       L 444.8,358.3 L 470.7,372.9 L 444.8,385.7 L 410.2,398.5 L 375.7,403.9
+                       L 344.6,398.5 L 323.8,380.2 L 323.8,349.2 L 341.1,318.2 Z"><title>용산구</title></path>
+              <path class="district" id="d11500" data-code="11500" data-name="강서구"
+                    d="M 81.9,294.5 L 151.0,300.0 L 164.8,331.0 L 189.0,336.4 L 189.0,367.5
+                       L 164.8,394.8 L 147.5,413.1 L 116.4,425.8 L 81.9,427.7 L 50.7,409.4
+                       L 43.8,367.5 L 55.9,331.0 L 81.9,294.5 Z"><title>강서구</title></path>
+              <path class="district" id="d11470" data-code="11470" data-name="양천구"
+                    d="M 164.8,394.8 L 189.0,367.5 L 202.8,385.7 L 206.3,413.1 L 189.0,435.0
+                       L 164.8,440.4 L 147.5,435.0 L 147.5,413.1 L 164.8,394.8 Z"><title>양천구</title></path>
+              <path class="district" id="d11560" data-code="11560" data-name="영등포구"
+                    d="M 202.8,385.7 L 211.5,362.0 L 237.4,358.3 L 268.5,362.0 L 282.3,376.6
+                       L 280.6,398.5 L 254.7,416.7 L 228.8,418.5 L 206.3,413.1
+                       L 206.3,398.5 L 202.8,385.7 Z"><title>영등포구</title></path>
+              <path class="district" id="d11530" data-code="11530" data-name="구로구"
+                    d="M 147.5,413.1 L 147.5,435.0 L 164.8,440.4 L 189.0,435.0 L 206.3,413.1
+                       L 206.3,435.0 L 185.6,464.1 L 151.0,478.7 L 119.9,473.3 L 99.1,449.5
+                       L 99.1,427.7 L 116.4,425.8 L 147.5,413.1 Z"><title>구로구</title></path>
+              <path class="district" id="d11545" data-code="11545" data-name="금천구"
+                    d="M 206.3,435.0 L 206.3,464.1 L 223.6,486.0 L 228.8,513.4 L 202.8,526.2
+                       L 182.1,522.5 L 159.6,504.3 L 151.0,478.7 L 185.6,464.1 L 206.3,435.0 Z"><title>금천구</title></path>
+              <path class="district" id="d11590" data-code="11590" data-name="동작구"
+                    d="M 282.3,376.6 L 323.8,380.2 L 344.6,398.5 L 344.6,422.2 L 323.8,440.4
+                       L 297.9,449.5 L 280.6,440.4 L 268.5,416.7 L 280.6,398.5 L 282.3,376.6 Z"><title>동작구</title></path>
+              <path class="district" id="d11620" data-code="11620" data-name="관악구"
+                    d="M 223.6,486.0 L 206.3,464.1 L 206.3,435.0 L 228.8,418.5 L 254.7,416.7
+                       L 280.6,440.4 L 297.9,449.5 L 323.8,440.4 L 341.1,453.2 L 344.6,486.0
+                       L 323.8,507.9 L 289.3,517.0 L 254.7,513.4 L 228.8,513.4 L 223.6,486.0 Z"><title>관악구</title></path>
+              <path class="district" id="d11650" data-code="11650" data-name="서초구"
+                    d="M 344.6,398.5 L 375.7,403.9 L 410.2,398.5 L 444.8,385.7 L 470.7,394.8
+                       L 496.7,409.4 L 496.7,440.4 L 470.7,464.1 L 427.5,489.7 L 393.0,495.1
+                       L 358.4,489.7 L 344.6,467.8 L 344.6,440.4 L 344.6,422.2 L 344.6,398.5 Z"><title>서초구</title></path>
+              <path class="district" id="d11680" data-code="11680" data-name="강남구"
+                    d="M 470.7,372.9 L 496.7,385.7 L 531.2,376.6 L 557.2,385.7 L 565.8,409.4
+                       L 557.2,440.4 L 539.9,464.1 L 514.0,482.4 L 496.7,486.0 L 496.7,440.4
+                       L 496.7,409.4 L 470.7,394.8 L 470.7,372.9 Z"><title>강남구</title></path>
+              <path class="district" id="d11710" data-code="11710" data-name="송파구"
+                    d="M 557.2,385.7 L 591.7,391.2 L 626.3,376.6 L 652.2,394.8 L 660.9,422.2
+                       L 643.6,453.2 L 621.1,471.4 L 591.7,486.0 L 565.8,489.7 L 539.9,486.0
+                       L 539.9,464.1 L 557.2,440.4 L 565.8,409.4 L 557.2,385.7 Z"><title>송파구</title></path>
+              <path class="district" id="d11740" data-code="11740" data-name="강동구"
+                    d="M 591.7,307.3 L 626.3,312.7 L 634.9,343.7 L 652.2,349.2 L 678.1,358.3
+                       L 678.1,394.8 L 652.2,394.8 L 626.3,376.6 L 591.7,391.2 L 565.8,409.4
+                       L 565.8,380.2 L 565.8,349.2 L 565.8,321.9 L 591.7,307.3 Z"><title>강동구</title></path>
+            </g>
+
+            <g id="labels" pointer-events="none">
+              <text class="district-label" x="508.8" y="117.6">도봉구</text>
+              <text class="district-label" x="617.7" y="143.1">노원구</text>
+              <text class="district-label" x="418.9" y="154.0">강북구</text>
+              <text class="district-label" x="292.7" y="179.6">은평구</text>
+              <text class="district-label" x="436.2" y="212.4">성북구</text>
+              <text class="district-label" x="569.3" y="227.0">중랑구</text>
+              <text class="district-label" x="361.9" y="256.2">종로구</text>
+              <text class="district-label" x="484.6" y="272.6">동대문구</text>
+              <text class="district-label" x="263.3" y="276.3">서대문구</text>
+              <text class="district-label" x="505.3" y="340.1">성동구</text>
+              <text class="district-label" x="583.1" y="343.7">광진구</text>
+              <text class="district-label" x="202.8" y="300.0">마포구</text>
+              <text class="district-label" x="384.3" y="327.3">중구</text>
+              <text class="district-label" x="379.1" y="376.6">용산구</text>
+              <text class="district-label" x="102.6" y="367.5">강서구</text>
+              <text class="district-label" x="176.9" y="413.1">양천구</text>
+              <text class="district-label" x="242.6" y="391.2">영등포구</text>
+              <text class="district-label" x="147.5" y="449.5">구로구</text>
+              <text class="district-label" x="189.0" y="489.7">금천구</text>
+              <text class="district-label" x="306.5" y="413.1">동작구</text>
+              <text class="district-label" x="282.3" y="486.0">관악구</text>
+              <text class="district-label" x="424.1" y="445.9">서초구</text>
+              <text class="district-label" x="522.6" y="431.3">강남구</text>
+              <text class="district-label" x="596.9" y="440.4">송파구</text>
+              <text class="district-label" x="621.1" y="367.5">강동구</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="db-map-card__footer">
+          <span class="db-map-hint">
+            <span class="db-map-hint__dot"></span>
+            구를 클릭하면 해당 지역 중개업소 목록으로 이동합니다.
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── SIDEBAR ───────────────────────────────────────── -->
+    <div class="col-lg-4">
+
+      <!-- 빠른 이동 -->
+      <div class="db-sidebar-section">
+        <div class="db-section-label">빠른 조회</div>
+        <div class="db-shortcut-group">
+          <a href="{% url 'brokers:broker1_list' %}" class="db-shortcut">
+            <div class="db-shortcut__icon db-shortcut__icon--all">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </div>
+            <div class="db-shortcut__text">
+              <span class="db-shortcut__title">전체 중개업소</span>
+              <span class="db-shortcut__sub">서울 25개 자치구 전체</span>
+            </div>
+            <svg class="db-shortcut__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+
+          <a href="{% url 'brokers:broker1_list' %}?sttus=1" class="db-shortcut db-shortcut--green">
+            <div class="db-shortcut__icon db-shortcut__icon--active">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="db-shortcut__text">
+              <span class="db-shortcut__title">영업중 중개업소</span>
+              <span class="db-shortcut__sub">현재 운영 중인 업소</span>
+            </div>
+            <svg class="db-shortcut__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+
+          <a href="{% url 'brokers:broker1_list' %}?sttus=2" class="db-shortcut db-shortcut--muted">
+            <div class="db-shortcut__icon db-shortcut__icon--closed">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            </div>
+            <div class="db-shortcut__text">
+              <span class="db-shortcut__title">폐업 중개업소</span>
+              <span class="db-shortcut__sub">운영 종료된 업소</span>
+            </div>
+            <svg class="db-shortcut__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- 구 선택기 -->
+      <div class="db-sidebar-section">
+        <div class="db-section-label">자치구 선택</div>
+        <div class="db-district-picker">
+          <select id="district-select" class="db-select">
+            <option value="">— 구를 선택하세요 —</option>
+            <option value="종로구"   data-code="11110">종로구</option>
+            <option value="중구"     data-code="11140">중구</option>
+            <option value="용산구"   data-code="11170">용산구</option>
+            <option value="성동구"   data-code="11200">성동구</option>
+            <option value="광진구"   data-code="11215">광진구</option>
+            <option value="동대문구" data-code="11230">동대문구</option>
+            <option value="중랑구"   data-code="11260">중랑구</option>
+            <option value="성북구"   data-code="11290">성북구</option>
+            <option value="강북구"   data-code="11305">강북구</option>
+            <option value="도봉구"   data-code="11320">도봉구</option>
+            <option value="노원구"   data-code="11350">노원구</option>
+            <option value="은평구"   data-code="11380">은평구</option>
+            <option value="서대문구" data-code="11410">서대문구</option>
+            <option value="마포구"   data-code="11440">마포구</option>
+            <option value="양천구"   data-code="11470">양천구</option>
+            <option value="강서구"   data-code="11500">강서구</option>
+            <option value="구로구"   data-code="11530">구로구</option>
+            <option value="금천구"   data-code="11545">금천구</option>
+            <option value="영등포구" data-code="11560">영등포구</option>
+            <option value="동작구"   data-code="11590">동작구</option>
+            <option value="관악구"   data-code="11620">관악구</option>
+            <option value="서초구"   data-code="11650">서초구</option>
+            <option value="강남구"   data-code="11680">강남구</option>
+            <option value="송파구"   data-code="11710">송파구</option>
+            <option value="강동구"   data-code="11740">강동구</option>
+          </select>
+          <button id="select-go-btn" class="db-go-btn">
+            해당 지역 조회
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- 신뢰 뱃지 -->
+      <div class="db-trust-card">
+        <div class="db-trust-card__icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="db-trust-card__body">
+          <strong>공공데이터 기반 정보</strong>
+          <p>국토교통부·서울시 공공데이터포털에서 제공하는 검증된 데이터를 사용합니다.</p>
+        </div>
+      </div>
 
     </div>
 
   </div>
+</div>
 
 {% endblock content %}
 
@@ -44,7 +366,6 @@
 (function () {
   "use strict";
 
-  // ── 이동 URL 생성 ──────────────────────────────────────────────
   var baseListUrl = "{% url 'brokers:broker1_list' %}";
 
   function buildUrl(districtName, ldcode) {
@@ -55,7 +376,6 @@
     return baseListUrl + "?" + params.toString();
   }
 
-  // ── 선택 구 배지 ───────────────────────────────────────────────
   var badge      = document.getElementById("selected-badge");
   var badgeTxt   = document.getElementById("selected-name");
   var badgeClose = document.getElementById("badge-close");
@@ -73,7 +393,6 @@
     document.getElementById("district-select").value = "";
   });
 
-  // ── SVG 구 클릭 → 리스트 페이지 이동 ─────────────────────────
   document.querySelectorAll(".district").forEach(function (path) {
     path.addEventListener("click", function () {
       var name = this.dataset.name;
@@ -84,22 +403,18 @@
       });
       this.classList.add("active");
 
-      // 드롭다운 동기화
       var sel = document.getElementById("district-select");
       for (var i = 0; i < sel.options.length; i++) {
         if (sel.options[i].value === name) { sel.selectedIndex = i; break; }
       }
-
       showBadge(name);
 
-      // 220ms: active 색상 전환 후 이동
       setTimeout(function () {
         window.location.href = buildUrl(name, code);
       }, 220);
     });
   });
 
-  // ── 드롭다운 이동 버튼 ────────────────────────────────────────
   document.getElementById("select-go-btn").addEventListener("click", function () {
     var sel  = document.getElementById("district-select");
     var name = sel.value;
@@ -116,7 +431,6 @@
     }, 220);
   });
 
-  // ── 드롭다운 변경 → SVG 하이라이트만 (이동 없이) ─────────────
   document.getElementById("district-select").addEventListener("change", function () {
     var name = this.value;
     document.querySelectorAll(".district").forEach(function (p) {

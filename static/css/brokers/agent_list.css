@@ -1,0 +1,653 @@
+/* =============================================================
+   agent_list.css  —  부동산 중개업사무소 목록
+   키워드: 신뢰 · 투명성  |  네이비 + 앰버 골드
+   Bootstrap 충돌 방지: 주요 레이아웃에 !important 적용
+   ============================================================= */
+
+/* ── 디자인 토큰 ─────────────────────────────────────────── */
+:root {
+  --n950: #050e1f;
+  --n900: #0B1D3A;
+  --n800: #112445;
+  --n700: #1a3461;
+  --n300: #7090B8;
+  --n100: #CBD8EE;
+  --n50:  #EDF2F9;
+
+  --amber:      #C9952A;
+  --amber-lt:   #F5C96E;
+  --amber-pale: #FDF3DC;
+
+  --green:      #1A7C5E;
+  --green-pale: #E8F5F1;
+
+  --s600: #475569;
+  --s400: #94A3B8;
+  --s200: #E2E8F0;
+  --s100: #F8FAFC;
+  --white: #FFFFFF;
+
+  --ff-serif: "Nanum Myeongjo", Georgia, serif;
+  --ff-sans:  "Pretendard", "Noto Sans KR", sans-serif;
+
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+
+  --sh-md: 0 4px 20px rgba(11,29,58,.09);
+  --sh-lg: 0 8px 36px rgba(11,29,58,.13);
+}
+
+/* ══════════════════════════════════════════════════════════
+   0. 전역 base
+══════════════════════════════════════════════════════════ */
+body {
+  background: #eef2f7 !important;
+  font-family: var(--ff-sans) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   1. HERO BAR
+══════════════════════════════════════════════════════════ */
+.al-hero {
+  background: var(--n900) !important;
+  border-bottom: 1px solid rgba(201,149,42,.15) !important;
+  padding: 2rem 0 1.75rem !important;
+  margin-bottom: 0 !important;
+}
+
+.al-hero__inner {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+  flex-wrap: wrap !important;
+}
+
+.al-hero__breadcrumb {
+  display: flex !important;
+  align-items: center !important;
+  gap: .4rem !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .72rem !important;
+  color: var(--n300) !important;
+  margin-bottom: .4rem !important;
+}
+.al-hero__breadcrumb a {
+  color: var(--n300) !important;
+  text-decoration: none !important;
+  transition: color .15s;
+}
+.al-hero__breadcrumb a:hover { color: var(--amber-lt) !important; }
+.al-hero__breadcrumb span    { color: var(--amber-lt) !important; font-weight: 600 !important; }
+
+.al-hero__title {
+  font-family: var(--ff-serif) !important;
+  font-size: clamp(1.4rem, 3vw, 1.85rem) !important;
+  font-weight: 700 !important;
+  color: var(--white) !important;
+  letter-spacing: -.03em !important;
+  margin: 0 0 .3rem !important;
+  line-height: 1.2 !important;
+}
+
+.al-hero__desc {
+  font-family: var(--ff-sans) !important;
+  font-size: .78rem !important;
+  color: var(--n300) !important;
+  margin: 0 !important;
+}
+
+.al-region-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: .4rem !important;
+  background: rgba(201,149,42,.14) !important;
+  border: 1px solid rgba(201,149,42,.35) !important;
+  color: var(--amber-lt) !important;
+  font-size: .8rem !important;
+  font-weight: 700 !important;
+  padding: .38rem .9rem !important;
+  border-radius: 99px !important;
+  white-space: nowrap !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   2. 바디
+══════════════════════════════════════════════════════════ */
+.al-body {
+  padding-top: 1.75rem !important;
+  padding-bottom: 5rem !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   3. 검색 패널
+══════════════════════════════════════════════════════════ */
+.al-search-panel {
+  background: var(--white) !important;
+  border: 1px solid var(--s200) !important;
+  border-radius: var(--r-lg) !important;
+  box-shadow: var(--sh-md) !important;
+  margin-bottom: 1.25rem !important;
+  overflow: visible !important;   /* 드롭다운이 잘리지 않게 */
+}
+
+.al-search-panel__header {
+  display: flex !important;
+  align-items: center !important;
+  gap: .5rem !important;
+  padding: .72rem 1.4rem !important;
+  background: var(--n50) !important;
+  border-bottom: 1px solid var(--s200) !important;
+  border-radius: var(--r-lg) var(--r-lg) 0 0 !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .74rem !important;
+  font-weight: 700 !important;
+  color: var(--n800) !important;
+}
+
+.al-search-panel__body {
+  padding: 1.1rem 1.4rem 1.2rem !important;
+}
+
+/* ── 폼: 한 줄 flex ──────────────────────────────────── */
+/* Bootstrap row/col 충돌 없이 완전히 독립된 레이아웃 */
+.al-form {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-end !important;
+  gap: .65rem !important;
+  width: 100% !important;
+}
+
+/* 각 필드: flex-grow로 공간 분배 */
+.al-form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: .25rem !important;
+  flex: 1 1 0 !important;        /* 동등 분배 */
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 버튼 그룹: 고정 너비 */
+.al-form-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: .4rem !important;
+  align-items: flex-end !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 라벨 */
+.al-label {
+  font-family: var(--ff-sans) !important;
+  font-size: .65rem !important;
+  font-weight: 700 !important;
+  color: var(--s400) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .07em !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
+  padding: 0 0 0 2px !important;
+  display: block !important;
+}
+
+/* ── 드롭다운 ── */
+.al-dropdown-wrap {
+  position: relative !important;
+  width: 100% !important;
+}
+
+.al-dropdown-btn {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: .4rem !important;
+  padding: .52rem .75rem !important;
+  background: var(--white) !important;
+  border: 1.5px solid var(--s200) !important;
+  border-radius: var(--r-sm) !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .82rem !important;
+  font-weight: 500 !important;
+  color: var(--n900) !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  transition: border-color .15s, box-shadow .15s !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+}
+.al-dropdown-btn:hover,
+.al-dropdown-btn:focus {
+  border-color: var(--amber) !important;
+  box-shadow: 0 0 0 3px rgba(201,149,42,.13) !important;
+  outline: none !important;
+}
+.al-dropdown-btn > svg:first-child { flex-shrink: 0; color: var(--n300); }
+.al-dropdown-arrow { margin-left: auto !important; flex-shrink: 0; color: var(--s400); }
+
+.al-dropdown-menu {
+  min-width: 100% !important;
+  border: 1.5px solid var(--s200) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--sh-lg) !important;
+  padding: .28rem !important;
+  max-height: 260px !important;
+  overflow-y: auto !important;
+  z-index: 9999 !important;
+}
+.al-dropdown-item {
+  display: block !important;
+  padding: .4rem .78rem !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .81rem !important;
+  font-weight: 500 !important;
+  color: var(--n900) !important;
+  border-radius: 6px !important;
+  text-decoration: none !important;
+  transition: background .1s;
+  white-space: nowrap !important;
+}
+.al-dropdown-item:hover,
+.al-dropdown-item:focus {
+  background: var(--amber-pale) !important;
+  color: var(--amber) !important;
+}
+.al-dropdown-divider {
+  height: 1px !important;
+  background: var(--s200) !important;
+  margin: .22rem 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* ── 인풋 ── */
+.al-input-wrap,
+.al-select-wrap {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.al-input-icon {
+  position: absolute !important;
+  left: .7rem !important;
+  color: var(--s400) !important;
+  pointer-events: none !important;
+  flex-shrink: 0 !important;
+  z-index: 1 !important;
+}
+
+.al-input {
+  width: 100% !important;
+  padding: .52rem .75rem .52rem 2.1rem !important;
+  border: 1.5px solid var(--s200) !important;
+  border-radius: var(--r-sm) !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .82rem !important;
+  color: var(--n900) !important;
+  background: var(--white) !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: border-color .15s, box-shadow .15s !important;
+  margin: 0 !important;
+}
+.al-input:focus {
+  border-color: var(--amber) !important;
+  box-shadow: 0 0 0 3px rgba(201,149,42,.13) !important;
+}
+.al-input::placeholder { color: var(--s400) !important; }
+
+/* ── 셀렉트 ── */
+.al-select {
+  width: 100% !important;
+  padding: .52rem 2rem .52rem 2.1rem !important;
+  border: 1.5px solid var(--s200) !important;
+  border-radius: var(--r-sm) !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .82rem !important;
+  color: var(--n900) !important;
+  background: var(--white) !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  outline: none !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transition: border-color .15s, box-shadow .15s !important;
+  margin: 0 !important;
+}
+.al-select:focus {
+  border-color: var(--amber) !important;
+  box-shadow: 0 0 0 3px rgba(201,149,42,.13) !important;
+}
+.al-select-arrow {
+  position: absolute !important;
+  right: .7rem !important;
+  color: var(--s400) !important;
+  pointer-events: none !important;
+}
+
+/* ── 버튼 ── */
+.al-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: .35rem !important;
+  padding: .52rem 1rem !important;
+  border-radius: var(--r-sm) !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .79rem !important;
+  font-weight: 600 !important;
+  border: none !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: all .14s !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+}
+.al-btn--search {
+  background: var(--n900) !important;
+  color: var(--white) !important;
+}
+.al-btn--search:hover { background: var(--amber) !important; color: var(--white) !important; }
+
+.al-btn--map {
+  background: var(--white) !important;
+  color: var(--n700) !important;
+  border: 1.5px solid var(--s200) !important;
+}
+.al-btn--map:hover {
+  background: var(--n50) !important;
+  border-color: var(--n300) !important;
+  color: var(--n900) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   4. 지도
+══════════════════════════════════════════════════════════ */
+.al-map {
+  width: 100% !important;
+  height: 420px !important;
+  border-radius: var(--r-md) !important;
+  overflow: hidden !important;
+  border: 1.5px solid var(--s200) !important;
+  box-shadow: var(--sh-md) !important;
+  margin-bottom: 1.25rem !important;
+}
+
+.al-geocode-status {
+  display: flex !important;
+  align-items: center !important;
+  gap: .5rem !important;
+  background: var(--n50) !important;
+  border: 1px solid var(--n100) !important;
+  border-radius: var(--r-sm) !important;
+  padding: .48rem 1rem !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .75rem !important;
+  color: var(--n700) !important;
+  margin-bottom: 1rem !important;
+}
+.al-geocode-progress { font-weight: 700 !important; color: var(--amber) !important; }
+
+/* ══════════════════════════════════════════════════════════
+   5. 결과 메타바
+══════════════════════════════════════════════════════════ */
+.al-result-meta {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: .7rem !important;
+  padding: 0 2px !important;
+}
+.al-result-meta__left {
+  display: flex !important;
+  align-items: center !important;
+  gap: .6rem !important;
+}
+.al-result-count {
+  font-family: var(--ff-sans) !important;
+  font-size: .81rem !important;
+  color: var(--s600) !important;
+}
+.al-result-count strong { color: var(--n900) !important; font-weight: 800 !important; }
+
+.al-result-page {
+  font-family: var(--ff-sans) !important;
+  font-size: .71rem !important;
+  color: var(--s400) !important;
+  background: var(--s100) !important;
+  border-radius: 99px !important;
+  padding: .16rem .58rem !important;
+  border: 1px solid var(--s200) !important;
+}
+.al-clear-filter {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: .3rem !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .72rem !important;
+  font-weight: 600 !important;
+  color: var(--s400) !important;
+  border: 1px solid var(--s200) !important;
+  border-radius: 99px !important;
+  padding: .23rem .62rem !important;
+  text-decoration: none !important;
+  transition: all .14s;
+}
+.al-clear-filter:hover {
+  border-color: #ef4444 !important;
+  color: #ef4444 !important;
+  text-decoration: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   6. 테이블
+══════════════════════════════════════════════════════════ */
+.al-table-wrap {
+  background: var(--white) !important;
+  border-radius: var(--r-lg) !important;
+  box-shadow: var(--sh-md) !important;
+  border: 1px solid var(--s200) !important;
+  overflow: hidden !important;
+  overflow-x: auto !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.al-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-family: var(--ff-sans) !important;
+  margin: 0 !important;
+}
+
+/* 헤더 */
+.al-table thead { background: var(--n900) !important; }
+
+.al-th {
+  padding: .72rem 1rem !important;
+  background: var(--n900) !important;
+  color: var(--n300) !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .67rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .07em !important;
+  text-align: center !important;
+  border: none !important;
+  border-bottom: 2px solid var(--amber) !important;
+  white-space: nowrap !important;
+}
+.al-th--num    { width: 48px !important; }
+.al-th--name   { text-align: left !important; padding-left: 1.1rem !important; min-width: 160px !important; }
+.al-th--addr   { text-align: left !important; min-width: 200px !important; }
+.al-th--status { width: 78px !important; }
+
+/* 바디 행 */
+.al-table tbody tr.al-tr {
+  border-bottom: 1px solid var(--s100) !important;
+  transition: background .1s !important;
+  background: var(--white) !important;
+}
+.al-table tbody tr.al-tr:last-child { border-bottom: none !important; }
+.al-table tbody tr.al-tr:hover      { background: #f3f7ff !important; }
+
+/* 셀 */
+.al-td {
+  padding: .7rem 1rem !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .81rem !important;
+  color: var(--s600) !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  border: none !important;
+  border-bottom: 1px solid var(--s100) !important;
+}
+.al-td--num  { color: var(--s400) !important; font-size: .72rem !important; }
+.al-td--code {
+  font-size: .72rem !important;
+  color: var(--s400) !important;
+  font-family: "Consolas", "SF Mono", monospace !important;
+  letter-spacing: -.01em !important;
+}
+.al-td--name { text-align: left !important; padding-left: 1.1rem !important; }
+.al-td--addr {
+  text-align: left !important;
+  white-space: normal !important;
+  max-width: 240px !important;
+  font-size: .77rem !important;
+  line-height: 1.55 !important;
+}
+.al-td--date {
+  font-size: .73rem !important;
+  color: var(--s400) !important;
+  white-space: nowrap !important;
+}
+
+/* 상호명 링크 */
+.al-name-link {
+  font-weight: 700 !important;
+  font-size: .84rem !important;
+  color: var(--n900) !important;
+  text-decoration: none !important;
+  transition: color .13s;
+  display: inline !important;
+}
+.al-name-link:hover { color: var(--amber) !important; text-decoration: none !important; }
+
+/* 상태 뱃지 */
+.al-status {
+  display: inline-flex !important;
+  align-items: center !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .69rem !important;
+  font-weight: 700 !important;
+  padding: .22rem .64rem !important;
+  border-radius: 99px !important;
+  white-space: nowrap !important;
+}
+.al-status--open {
+  background: var(--green-pale) !important;
+  color: var(--green) !important;
+  border: 1px solid rgba(26,124,94,.18) !important;
+}
+.al-status--closed {
+  background: var(--s100) !important;
+  color: var(--s400) !important;
+  border: 1px solid var(--s200) !important;
+}
+
+/* 빈 결과 */
+.al-empty {
+  padding: 4rem 1rem !important;
+  text-align: center !important;
+  color: var(--s400) !important;
+}
+.al-empty svg { display: block !important; margin: 0 auto .75rem !important; opacity: .35 !important; }
+.al-empty p   { font-size: .9rem !important; font-weight: 600 !important; color: var(--s600) !important; margin: 0 0 .2rem !important; }
+.al-empty span { font-size: .77rem !important; }
+
+/* ══════════════════════════════════════════════════════════
+   7. 페이지네이션
+══════════════════════════════════════════════════════════ */
+.al-pagination {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: .28rem !important;
+  flex-wrap: wrap !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  list-style: none !important;
+}
+
+.al-page-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: .22rem !important;
+  min-width: 34px !important;
+  height: 34px !important;
+  padding: 0 .55rem !important;
+  border-radius: var(--r-sm) !important;
+  font-family: var(--ff-sans) !important;
+  font-size: .79rem !important;
+  font-weight: 600 !important;
+  color: var(--s600) !important;
+  background: var(--white) !important;
+  border: 1.5px solid var(--s200) !important;
+  text-decoration: none !important;
+  transition: all .13s !important;
+  box-shadow: none !important;
+}
+.al-page-btn:hover {
+  border-color: var(--n700) !important;
+  color: var(--n900) !important;
+  background: var(--n50) !important;
+  text-decoration: none !important;
+}
+.al-page-btn--active {
+  background: var(--n900) !important;
+  border-color: var(--n900) !important;
+  color: var(--white) !important;
+  cursor: default !important;
+}
+.al-page-btn--active:hover { background: var(--n900) !important; color: var(--white) !important; }
+.al-page-btn--nav { padding: 0 .75rem !important; }
+
+/* ══════════════════════════════════════════════════════════
+   8. 반응형
+══════════════════════════════════════════════════════════ */
+@media (max-width: 960px) {
+  /* 폼 2열로 */
+  .al-form {
+    flex-wrap: wrap !important;
+  }
+  .al-form-group {
+    flex: 1 1 calc(50% - .35rem) !important;
+    min-width: calc(50% - .35rem) !important;
+  }
+  .al-form-actions {
+    width: 100% !important;
+    justify-content: flex-end !important;
+  }
+}
+
+@media (max-width: 600px) {
+  /* 폼 1열 */
+  .al-form-group {
+    flex: 1 1 100% !important;
+    min-width: 100% !important;
+  }
+  .al-hero { padding: 1.5rem 0 1.25rem !important; }
+  .al-hero__breadcrumb { display: none !important; }
+  .al-result-page { display: none !important; }
+  .al-search-panel__body { padding: .85rem 1rem !important; }
+}

@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 {% load static %}
 
@@ -8,228 +9,291 @@
 {% block title %}부동산 중개업 조회{% endblock %}
 
 {% block content %}
-<h4 class="fw-bold mb-3">부동산 중개업</h4>
 
-<p class="text-muted small mb-3">
-  ○ 부동산중개업소 정보는 전국 각 지자체 정보를 통합 제공하는 서비스입니다.
-</p>
+<!-- ══════════════════════════════════════════════════════
+     PAGE HERO BAR
+══════════════════════════════════════════════════════ -->
+<div class="al-hero">
+  <div class="al-hero__inner container">
+    <div class="al-hero__left">
+      <div class="al-hero__breadcrumb">
+        <a href="{% url 'brokers:dashboard' %}">대시보드</a>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>중개업사무소 목록</span>
+      </div>
+      <h1 class="al-hero__title">부동산 중개업사무소 조회</h1>
+      <p class="al-hero__desc">서울시 공공데이터 기반 · 검증된 중개업소 정보를 제공합니다.</p>
+    </div>
+    <div class="al-hero__right">
+      {% if selected_region %}
+      <div class="al-region-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        {{ selected_region }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
 
-<div class="card mb-4 shadow-sm">
-  <div class="card-body">
-    <form method="get">
-      <div class="row g-2 align-items-end">
+<div class="container al-body">
 
-        <div class="col-md-3">
-          <label class="form-label fw-semibold small">시군구 (서울)</label>
-          <input type="hidden" name="ldcode" id="ldcode" value="{{ request.GET.ldcode }}">
-          <div class="dropdown">
+  <!-- ══════════════════════════════════════════════════
+       SEARCH PANEL
+  ══════════════════════════════════════════════════ -->
+  <div class="al-search-panel">
+    <div class="al-search-panel__header">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      검색 조건
+    </div>
+    <div class="al-search-panel__body">
+      <form method="get" class="al-form">
+        <input type="hidden" name="ldcode" id="ldcode" value="{{ request.GET.ldcode }}">
+
+        <!-- 구 선택 -->
+        <div class="al-form-group">
+          <label class="al-label">시군구</label>
+          <div class="al-dropdown-wrap">
             <button
-              class="btn btn-outline-secondary btn-sm w-100 text-start d-flex justify-content-between align-items-center"
-              type="button" id="districtDropdownBtn"
-              data-bs-toggle="dropdown" aria-expanded="false">
+              class="al-dropdown-btn"
+              type="button"
+              id="districtDropdownBtn"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
               <span id="districtLabel">
-                {% if request.GET.ldcode %}{{ request.GET.ldcode }}{% else %}구 선택...{% endif %}
+                {% if request.GET.ldcode %}{{ request.GET.ldcode }}{% else %}구 선택{% endif %}
               </span>
-              <span>▲</span>
+              <svg class="al-dropdown-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
-            <ul class="dropdown-menu w-100" aria-labelledby="districtDropdownBtn"
-                style="max-height:260px; overflow-y:auto;">
-              <li><a class="dropdown-item" href="#" data-code="">전체</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#" data-code="11110">종로구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11140">중구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11170">용산구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11200">성동구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11215">광진구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11230">동대문구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11260">중랑구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11290">성북구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11305">강북구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11320">도봉구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11350">노원구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11380">은평구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11410">서대문구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11440">마포구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11470">양천구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11500">강서구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11530">구로구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11545">금천구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11560">영등포구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11590">동작구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11620">관악구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11650">서초구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11680">강남구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11710">송파구</a></li>
-              <li><a class="dropdown-item" href="#" data-code="11740">강동구</a></li>
+            <ul class="dropdown-menu al-dropdown-menu" aria-labelledby="districtDropdownBtn">
+              <li><a class="al-dropdown-item" href="#" data-code="">전체 구</a></li>
+              <li><div class="al-dropdown-divider"></div></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11110">종로구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11140">중구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11170">용산구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11200">성동구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11215">광진구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11230">동대문구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11260">중랑구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11290">성북구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11305">강북구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11320">도봉구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11350">노원구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11380">은평구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11410">서대문구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11440">마포구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11470">양천구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11500">강서구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11530">구로구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11545">금천구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11560">영등포구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11590">동작구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11620">관악구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11650">서초구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11680">강남구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11710">송파구</a></li>
+              <li><a class="al-dropdown-item" href="#" data-code="11740">강동구</a></li>
             </ul>
           </div>
         </div>
 
-        <div class="col-md-3">
-          <label for="bsnm_cmpnm" class="form-label fw-semibold small">상호명</label>
-          <input id="bsnm_cmpnm" type="text" name="bsnm_cmpnm"
-            class="form-control form-control-sm" placeholder="상호 검색"
-            value="{{ request.GET.bsnm_cmpnm }}">
+        <!-- 상호명 -->
+        <div class="al-form-group">
+          <label class="al-label" for="bsnm_cmpnm">상호명</label>
+          <div class="al-input-wrap">
+            <svg class="al-input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2M8 7V5a2 2 0 00-4 0v2"/></svg>
+            <input id="bsnm_cmpnm" type="text" name="bsnm_cmpnm"
+              class="al-input" placeholder="상호명 검색"
+              value="{{ request.GET.bsnm_cmpnm }}">
+          </div>
         </div>
 
-        <div class="col-md-3">
-          <label for="jurirno" class="form-label fw-semibold small">등록번호</label>
-          <input id="jurirno" type="text" name="jurirno"
-            class="form-control form-control-sm" placeholder="등록번호"
-            value="{{ request.GET.jurirno }}">
+        <!-- 등록번호 -->
+        <div class="al-form-group">
+          <label class="al-label" for="jurirno">등록번호</label>
+          <div class="al-input-wrap">
+            <svg class="al-input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>
+            <input id="jurirno" type="text" name="jurirno"
+              class="al-input" placeholder="등록번호 검색"
+              value="{{ request.GET.jurirno }}">
+          </div>
         </div>
 
-        <div class="col-md-3">
-          <label for="sttus" class="form-label fw-semibold small">상태</label>
-          <select id="sttus" name="sttus" class="form-select form-select-sm">
-            <option value="">전체</option>
-            <option value="1" {% if request.GET.sttus == "1" %}selected{% endif %}>영업중</option>
-            <option value="2" {% if request.GET.sttus == "2" %}selected{% endif %}>폐업</option>
-          </select>
+        <!-- 상태 -->
+        <div class="al-form-group">
+          <label class="al-label" for="sttus">영업 상태</label>
+          <div class="al-select-wrap">
+            <svg class="al-input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <select id="sttus" name="sttus" class="al-select">
+              <option value="">전체</option>
+              <option value="1" {% if request.GET.sttus == "1" %}selected{% endif %}>영업중</option>
+              <option value="2" {% if request.GET.sttus == "2" %}selected{% endif %}>폐업</option>
+            </select>
+            <svg class="al-select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
         </div>
 
-        <div class="col-12 text-end">
-          <button type="button" class="btn btn-secondary btn-sm me-1" onclick="toggleMap()">지도보기</button>
-          <button type="submit" class="btn btn-primary btn-sm">검색</button>
+        <!-- 버튼 -->
+        <div class="al-form-actions">
+          <button type="button" class="al-btn al-btn--map" onclick="toggleMap()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+            지도 보기
+          </button>
+          <button type="submit" class="al-btn al-btn--search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            검색
+          </button>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
-</div>
 
-{% if selected_region %}
-<div class="mb-2 d-flex align-items-center gap-2">
-  <span class="badge bg-primary fs-6">선택 지역: {{ selected_region }}</span>
-  <a href="?ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}"
-     class="btn btn-sm btn-outline-secondary">전체 보기</a>
-</div>
-{% endif %}
+  <!-- 지도 -->
+  <div id="map" class="al-map" style="display:none;"></div>
 
-<div id="map" style="width:100%; height:450px; display:none;" class="mb-3 rounded shadow-sm"></div>
+  {{ map_agents_json|json_script:"map-data" }}
+  {{ map_agents_addr_json|json_script:"map-addr-data" }}
 
-{{ map_agents_json|json_script:"map-data" }}
-{{ map_agents_addr_json|json_script:"map-addr-data" }}
+  <div id="geocode-status" class="al-geocode-status" style="display:none;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/></svg>
+    주소 기반 마커 추가 중…
+    <span id="geocode-progress" class="al-geocode-progress"></span>
+  </div>
 
-<div id="geocode-status" class="alert alert-info py-1 px-3 small mb-2" style="display:none;">
-  📍 주소 기반 마커 추가 중... <span id="geocode-progress"></span>
-</div>
-
-<div class="d-flex justify-content-between align-items-center mb-2">
-  <span class="small text-muted">
-    총 <strong>{{ page_obj.paginator.count }}</strong>건
-    ( {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} page )
-  </span>
-</div>
-
-<div class="table-responsive shadow-sm">
-  <table class="table table-bordered table-hover table-sm bg-white text-center align-middle">
-    <thead class="table-dark">
-      <tr>
-        <th>No.</th><th>등록번호</th><th>상호</th><th>소재지(도로명)</th>
-        <th>대표자</th><th>등록일</th><th>상태</th><th>시작일</th><th>종료일</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for agent in page_obj %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td class="text-start">{{ agent.jurirno }}</td>
-        <td class="text-start fw-semibold">
-          <a href="{% url 'brokers:broker1_detail' agent.pk %}" class="text-decoration-none text-dark">
-            {{ agent.bsnm_cmpnm }}
-          </a>
-        </td>
-        <td class="text-start">{{ agent.rdnmadr|default:"-" }}</td>
-        <td>{{ agent.brkr_nm }}</td>
-        <td>{{ agent.regist_de }}</td>
-        <td>
-          {% if agent.sttus_se_code == "1" %}
-          <span class="badge bg-success">영업중</span>
-          {% else %}
-          <span class="badge bg-secondary">폐업</span>
-          {% endif %}
-        </td>
-        <td>{{ agent.estbs_begin_de|default:"-" }}</td>
-        <td>{{ agent.estbs_end_de|default:"-" }}</td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="9" class="text-center text-muted py-4">검색 결과가 없습니다.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-
-<nav class="mt-3">
-  <ul class="pagination pagination-sm justify-content-center">
-    {% if page_obj.has_previous %}
-    <li class="page-item">
-      <a class="page-link"
-         href="?page={{ page_obj.previous_page_number }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}">이전</a>
-    </li>
+  <!-- ══════════════════════════════════════════════════
+       RESULT META
+  ══════════════════════════════════════════════════ -->
+  <div class="al-result-meta">
+    <div class="al-result-meta__left">
+      <span class="al-result-count">
+        총 <strong>{{ page_obj.paginator.count }}</strong>건
+      </span>
+      <span class="al-result-page">
+        {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 페이지
+      </span>
+    </div>
+    {% if selected_region %}
+    <a href="?ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}"
+       class="al-clear-filter">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      필터 해제
+    </a>
     {% endif %}
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       TABLE
+  ══════════════════════════════════════════════════ -->
+  <div class="al-table-wrap">
+    <table class="al-table">
+      <thead>
+        <tr>
+          <th class="al-th al-th--num">No.</th>
+          <th class="al-th">등록번호</th>
+          <th class="al-th al-th--name">상호명</th>
+          <th class="al-th al-th--addr">소재지 (도로명)</th>
+          <th class="al-th">대표자</th>
+          <th class="al-th">등록일</th>
+          <th class="al-th al-th--status">상태</th>
+          <th class="al-th">시작일</th>
+          <th class="al-th">종료일</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for agent in page_obj %}
+        <tr class="al-tr">
+          <td class="al-td al-td--num">{{ forloop.counter }}</td>
+          <td class="al-td al-td--code">{{ agent.jurirno }}</td>
+          <td class="al-td al-td--name">
+            <a href="{% url 'brokers:broker1_detail' agent.pk %}" class="al-name-link"></a>
+              {{ agent.bsnm_cmpnm }}
+            </a>
+          </td>
+          <td class="al-td al-td--addr">{{ agent.rdnmadr|default:"—" }}</td>
+          <td class="al-td">{{ agent.brkr_nm }}</td>
+          <td class="al-td al-td--date">{{ agent.regist_de }}</td>
+          <td class="al-td">
+            {% if agent.sttus_se_code == "1" %}
+            <span class="al-status al-status--open">영업중</span>
+            {% else %}
+            <span class="al-status al-status--closed">폐업</span>
+            {% endif %}
+          </td>
+          <td class="al-td al-td--date">{{ agent.estbs_begin_de|default:"—" }}</td>
+          <td class="al-td al-td--date">{{ agent.estbs_end_de|default:"—" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="9" class="al-empty">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <p>검색 결과가 없습니다.</p>
+            <span>검색 조건을 변경해보세요.</span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       PAGINATION
+  ══════════════════════════════════════════════════ -->
+  <nav class="al-pagination">
+    {% if page_obj.has_previous %}
+    <a class="al-page-btn al-page-btn--nav"
+       href="?page={{ page_obj.previous_page_number }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      이전
+    </a>
+    {% endif %}
+
     {% for num in page_obj.paginator.page_range %}
       {% if num == page_obj.number %}
-      <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+      <span class="al-page-btn al-page-btn--active">{{ num }}</span>
       {% elif num >= page_obj.number|add:"-3" and num <= page_obj.number|add:"3" %}
-      <li class="page-item">
-        <a class="page-link"
-           href="?page={{ num }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}">{{ num }}</a>
-      </li>
+      <a class="al-page-btn"
+         href="?page={{ num }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}">
+        {{ num }}
+      </a>
       {% endif %}
     {% endfor %}
+
     {% if page_obj.has_next %}
-    <li class="page-item">
-      <a class="page-link"
-         href="?page={{ page_obj.next_page_number }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}">다음</a>
-    </li>
+    <a class="al-page-btn al-page-btn--nav"
+       href="?page={{ page_obj.next_page_number }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}">
+      다음
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
     {% endif %}
-  </ul>
-</nav>
+  </nav>
+
+</div>{# /container #}
 {% endblock %}
 
-{% block extra_js %}
 
+{% block extra_js %}
 <script type="text/javascript"
   src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_JS_KEY&libraries=services&autoload=false">
 </script>
 
 <script>
   const seoulDistricts = {
-    "11110": "종로구",   "11140": "중구",     "11170": "용산구",
-    "11200": "성동구",   "11215": "광진구",   "11230": "동대문구",
-    "11260": "중랑구",   "11290": "성북구",   "11305": "강북구",
-    "11320": "도봉구",   "11350": "노원구",   "11380": "은평구",
-    "11410": "서대문구", "11440": "마포구",   "11470": "양천구",
-    "11500": "강서구",   "11530": "구로구",   "11545": "금천구",
-    "11560": "영등포구", "11590": "동작구",   "11620": "관악구",
-    "11650": "서초구",   "11680": "강남구",   "11710": "송파구",
-    "11740": "강동구",
+    "11110":"종로구","11140":"중구","11170":"용산구","11200":"성동구",
+    "11215":"광진구","11230":"동대문구","11260":"중랑구","11290":"성북구",
+    "11305":"강북구","11320":"도봉구","11350":"노원구","11380":"은평구",
+    "11410":"서대문구","11440":"마포구","11470":"양천구","11500":"강서구",
+    "11530":"구로구","11545":"금천구","11560":"영등포구","11590":"동작구",
+    "11620":"관악구","11650":"서초구","11680":"강남구","11710":"송파구",
+    "11740":"강동구",
   };
 
   const mapAgents     = JSON.parse(document.getElementById("map-data").textContent);
   const mapAgentsAddr = JSON.parse(document.getElementById("map-addr-data").textContent);
+  const detailBaseUrl = "{% url 'brokers:broker1_detail' 0 %}".replace("/0/", "/");
 
-  // ═══════════════════════════════════════════════════════════════════
-  // [수정 1/3] detailBaseUrl 전역 변수 추가
-  //
-  // ▶ 역할:
-  //   마커 클릭 시 이동할 상세 페이지 URL의 베이스 경로
-  //   Django 템플릿 태그로 detail1/0/ URL을 생성한 뒤
-  //   '/0/' 부분만 제거해 순수 베이스 경로를 추출
-  //   사용: detailBaseUrl + agent.id + '/'
-  //   예시: '/broker1/detail1/' + 42 + '/' → '/broker1/detail1/42/'
-  // ═══════════════════════════════════════════════════════════════════
-  const detailBaseUrl = "{% url 'brokers:broker1_detail' 0 %}".replace("/0/", "/"); // [수정 1/3]
-
-  let mapInitialized     = false;
-  let mapInstance        = null;
-  let currentMarkers     = [];
-  let clickMarker        = null;
-  let clickInfoWindow    = null;
-  let isNavigating       = false;
-  let geocodingCancelled = false;
+  let mapInitialized = false, mapInstance = null;
+  let currentMarkers = [], clickMarker = null, clickInfoWindow = null;
+  let isNavigating = false, geocodingCancelled = false;
 
   window.addEventListener("DOMContentLoaded", function () {
     if (new URLSearchParams(window.location.search).get("ld_code_nm")) {
@@ -241,12 +305,13 @@
       document.getElementById("districtLabel").textContent = seoulDistricts[currentCode];
     }
 
-    document.querySelectorAll(".dropdown-menu .dropdown-item").forEach(function (item) {
+    document.querySelectorAll(".al-dropdown-menu .al-dropdown-item").forEach(function (item) {
       item.addEventListener("click", function (e) {
         e.preventDefault();
         document.getElementById("ldcode").value = this.dataset.code;
-        document.getElementById("districtLabel").textContent = this.textContent.trim() || "구 선택...";
-        if (this.dataset.code === "" && mapInitialized) { clearAllMarkers(); }
+        document.getElementById("districtLabel").textContent =
+          this.dataset.code ? this.textContent.trim() : "구 선택";
+        if (this.dataset.code === "" && mapInitialized) clearAllMarkers();
       });
     });
   });
@@ -270,51 +335,32 @@
     const mapDiv = document.getElementById("map");
     mapDiv.style.display = (mapDiv.style.display === "none") ? "block" : "none";
     if (mapDiv.style.display === "block" && !mapInitialized) {
-      kakao.maps.load(function () {
-        initMap();
-        mapInitialized = true;
-        if (document.getElementById("ldcode").value === "") { clearAllMarkers(); }
-      });
-    } else if (mapDiv.style.display === "block" && mapInitialized) {
-      if (document.getElementById("ldcode").value === "") { clearAllMarkers(); }
+      kakao.maps.load(function () { initMap(); mapInitialized = true; });
     }
   }
 
   function initMap() {
-    if (typeof kakao === "undefined" || !kakao.maps) {
-      alert("카카오맵 SDK가 로드되지 않았습니다."); return;
-    }
-    if (!kakao.maps.services || !kakao.maps.services.Geocoder) {
-      alert("SDK URL에 libraries=services 를 포함하세요."); return;
-    }
-
+    if (typeof kakao === "undefined" || !kakao.maps) return;
     const map = new kakao.maps.Map(document.getElementById("map"), {
       center: new kakao.maps.LatLng(37.5665, 126.9780),
       level: 8,
     });
     mapInstance = map;
-
     renderMarkers(mapAgents, map, true);
     if (mapAgentsAddr && mapAgentsAddr.length > 0) {
       geocodeAddressQueue(map, [...mapAgentsAddr]);
     }
-
     kakao.maps.event.addListener(map, "click", function (mouseEvent) {
       if (isNavigating) return;
       const lat = mouseEvent.latLng.getLat();
       const lng = mouseEvent.latLng.getLng();
       showClickMarker(map, lat, lng, "지역 확인 중...");
-
       new kakao.maps.services.Geocoder().coord2RegionCode(lng, lat, function (result, status) {
-        if (status !== kakao.maps.services.Status.OK || !result || !result.length) {
-          showClickMarker(map, lat, lng, "지역 정보를 가져오지 못했습니다."); return;
-        }
-        const region =
-          result.find((r) => r.region_type === "H") ||
-          result.find((r) => r.region_type === "B") || result[0];
-        const sido    = (region.region_1depth_name || "").trim();
+        if (status !== kakao.maps.services.Status.OK || !result || !result.length) return;
+        const region = result.find((r) => r.region_type === "H") || result[0];
+        const sido = (region.region_1depth_name || "").trim();
         const sigungu = (region.region_2depth_name || "").trim();
-        if (!sigungu) { showClickMarker(map, lat, lng, "구/군 정보를 찾지 못했습니다."); return; }
+        if (!sigungu) return;
         showClickMarker(map, lat, lng, sido ? `${sido} ${sigungu}` : sigungu);
         applyRegionFilter(sigungu);
       });
@@ -323,17 +369,15 @@
 
   function geocodeAddressQueue(map, queue, batchSize = 5, delayMs = 400) {
     geocodingCancelled = false;
-    const total      = queue.length;
-    const statusDiv  = document.getElementById("geocode-status");
+    const total = queue.length;
+    const statusDiv = document.getElementById("geocode-status");
     const progressEl = document.getElementById("geocode-progress");
-    statusDiv.style.display = "block";
-
+    statusDiv.style.display = "flex";
     function processBatch(remaining) {
       if (!remaining || remaining.length === 0) { statusDiv.style.display = "none"; return; }
-      const batch    = remaining.splice(0, batchSize);
+      const batch = remaining.splice(0, batchSize);
       const geocoder = new kakao.maps.services.Geocoder();
-      let   done     = 0;
-
+      let done = 0;
       batch.forEach(function (agent) {
         if (!agent.rdnmadr) { done++; return; }
         geocoder.addressSearch(agent.rdnmadr, function (result, status) {
@@ -351,27 +395,35 @@
     processBatch(queue);
   }
 
-  // ═══════════════════════════════════════════════════════════════════
-  // [수정 2/3] addSingleMarker() — 마커 클릭 시 상세 페이지 이동
-  //
-  // ▶ 기존:
-  //   마커 클릭 → InfoWindow(말풍선) 오픈
-  //   infowindow 객체 생성 + open() 호출
-  //
-  // ▶ 변경:
-  //   마커 클릭 → detailBaseUrl + agent.id + '/' 로 페이지 이동
-  //   infowindow 관련 코드 전체 제거
-  // ═══════════════════════════════════════════════════════════════════
   function addSingleMarker(map, lat, lng, agent) {
     if (geocodingCancelled) return;
-    const position = new kakao.maps.LatLng(lat, lng);
-    const marker   = new kakao.maps.Marker({ map, position, title: agent.bsnm_cmpnm || "" });
+    const marker = new kakao.maps.Marker({
+      map,
+      position: new kakao.maps.LatLng(lat, lng),
+      title: agent.bsnm_cmpnm || "",
+    });
     currentMarkers.push(marker);
-
-    // [수정 2/3] 기존: infowindow.open(map, marker) → 변경: 상세 페이지 이동
     kakao.maps.event.addListener(marker, "click", function () {
       window.location.href = detailBaseUrl + agent.id + "/";
     });
+  }
+
+  function renderMarkers(agents, map, fitBounds = false) {
+    currentMarkers.forEach(function (m) { m.setMap(null); });
+    currentMarkers = [];
+    if (!agents || agents.length === 0) return;
+    const bounds = new kakao.maps.LatLngBounds();
+    agents.forEach(function (agent) {
+      if (agent.lat === null || agent.lng === null) return;
+      const position = new kakao.maps.LatLng(agent.lat, agent.lng);
+      const marker = new kakao.maps.Marker({ map, position, title: agent.bsnm_cmpnm || "" });
+      currentMarkers.push(marker);
+      bounds.extend(position);
+      kakao.maps.event.addListener(marker, "click", function () {
+        window.location.href = detailBaseUrl + agent.id + "/";
+      });
+    });
+    if (fitBounds && currentMarkers.length > 0) map.setBounds(bounds);
   }
 
   function applyRegionFilter(regionName) {
@@ -387,44 +439,12 @@
   function showClickMarker(map, lat, lng, text) {
     if (clickMarker)     { clickMarker.setMap(null); }
     if (clickInfoWindow) { clickInfoWindow.close();  }
-    const position  = new kakao.maps.LatLng(lat, lng);
-    clickMarker     = new kakao.maps.Marker({ map, position });
+    const position = new kakao.maps.LatLng(lat, lng);
+    clickMarker = new kakao.maps.Marker({ map, position });
     clickInfoWindow = new kakao.maps.InfoWindow({
-      content: '<div style="padding:10px 14px;font-size:14px;min-width:180px;line-height:1.6;">📍 <strong>' + text + "</strong></div>",
+      content: '<div style="padding:10px 14px;font-size:13px;font-family:Pretendard,sans-serif;">📍 <strong>' + text + "</strong></div>",
     });
     clickInfoWindow.open(map, clickMarker);
-  }
-
-  // ═══════════════════════════════════════════════════════════════════
-  // [수정 3/3] renderMarkers() — 마커 클릭 시 상세 페이지 이동
-  //
-  // ▶ 기존:
-  //   마커 클릭 → InfoWindow(말풍선) 오픈
-  //   infowindow 객체 생성 + open() 호출
-  //
-  // ▶ 변경:
-  //   마커 클릭 → detailBaseUrl + agent.id + '/' 로 페이지 이동
-  //   infowindow 관련 코드 전체 제거
-  // ═══════════════════════════════════════════════════════════════════
-  function renderMarkers(agents, map, fitBounds = false) {
-    currentMarkers.forEach(function (m) { m.setMap(null); });
-    currentMarkers = [];
-    if (!agents || agents.length === 0) return;
-
-    const bounds = new kakao.maps.LatLngBounds();
-    agents.forEach(function (agent) {
-      if (agent.lat === null || agent.lng === null) return;
-      const position = new kakao.maps.LatLng(agent.lat, agent.lng);
-      const marker   = new kakao.maps.Marker({ map, position, title: agent.bsnm_cmpnm || "" });
-      currentMarkers.push(marker);
-      bounds.extend(position);
-
-      // [수정 3/3] 기존: infowindow.open(map, marker) → 변경: 상세 페이지 이동
-      kakao.maps.event.addListener(marker, "click", function () {
-        window.location.href = detailBaseUrl + agent.id + "/";
-      });
-    });
-    if (fitBounds && currentMarkers.length > 0) { map.setBounds(bounds); }
   }
 </script>
 {% endblock %}

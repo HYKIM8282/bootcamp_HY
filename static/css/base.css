@@ -756,10 +756,3 @@ body {
   .info-grid { grid-template-columns: 1fr; }
   .broker-name { font-size: 1.2rem; }
 }
-
-
-/* ✅ [추가] a.brand — 링크 밑줄 제거, 기존 흰색 글씨 유지 */
-a.brand {
-  text-decoration: none;
-  color: inherit;
-}
