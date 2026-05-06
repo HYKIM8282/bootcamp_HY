@@ -3,7 +3,9 @@
 <!-- 헤더 -->
 <header class="main-header">
   <div class="container d-flex align-items-center justify-content-between">
-    <div class="brand">🎒 길동이의 포켓홈 </div>
+
+    <!-- ✅ [수정] div → a 태그로 변경, href에 dashboard URL 연결 -->
+    <a href="{% url 'brokers:dashboard' %}" class="brand">🎒 길동이의 포켓홈</a>
 
     <div class="header-auth">
       {% if user.is_authenticated %}
@@ -21,9 +23,9 @@
 </header>
 
 <!-- 서브 네비 -->
-  <div class="container">
-    <a href="#">홈</a>
-    <a href="{% url 'brokers:broker1_list' %}">부동산 중개업사무소정보</a>
-    <a href="{% url 'brokers:broker2_list' %}">부동산 중개사</a>
-  </div>
+<div class="container">
+  <!-- ✅ [수정] href="#" → dashboard URL 연결 -->
+  <a href="{% url 'brokers:dashboard' %}">홈</a>
+  <a href="{% url 'brokers:broker1_list' %}">부동산 중개업사무소정보</a>
+  <a href="{% url 'brokers:broker2_list' %}">부동산 중개사</a>
 </div>
