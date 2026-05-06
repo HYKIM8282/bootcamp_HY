@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/brokers/dashboard.css' %}">
+{% endblock extra_css %}
+
+{% block title %}서울 부동산 중개업 현황{% endblock title %}
+
+{% block content %}
+
+  <div class="dashboard-hero">
+    <div class="container">
+      <h2>🏙️ 서울시 부동산 중개업 현황</h2>
+      <p class="subtitle mb-0">구를 클릭하면 해당 지역의 중개업소 목록과 지도를 조회합니다.</p>
+    </div>
+  </div>
+
+  <div class="container pb-5">
+
+
+    {% include "brokers/includes/stat_cards.html" %}
+
+ 
+    <div class="row g-4 align-items-start">
+
+     
+      <div class="col-lg-8">
+        {% include "brokers/includes/seoul_map.html" %}
+      </div>
+
+      
+      {% include "brokers/includes/side_panel.html" %}
+
+    </div>
+
+  </div>
+
+{% endblock content %}
+
+
+{% block extra_js %}
+<script>
+(function () {
+  "use strict";
+
+  // ── 이동 URL 생성 ──────────────────────────────────────────────
+  var baseListUrl = "{% url 'brokers:broker1_list' %}";
+
+  function buildUrl(districtName, ldcode) {
+    var params = new URLSearchParams();
+    params.set("ld_code_nm", districtName);
+    if (ldcode) params.set("ldcode", ldcode);
+    params.set("page", "1");
+    return baseListUrl + "?" + params.toString();
+  }
+
+  // ── 선택 구 배지 ───────────────────────────────────────────────
+  var badge      = document.getElementById("selected-badge");
+  var badgeTxt   = document.getElementById("selected-name");
+  var badgeClose = document.getElementById("badge-close");
+
+  function showBadge(name) {
+    badgeTxt.textContent = name;
+    badge.classList.add("visible");
+  }
+
+  badgeClose.addEventListener("click", function () {
+    badge.classList.remove("visible");
+    document.querySelectorAll(".district.active").forEach(function (p) {
+      p.classList.remove("active");
+    });
+    document.getElementById("district-select").value = "";
+  });
+
+  // ── SVG 구 클릭 → 리스트 페이지 이동 ─────────────────────────
+  document.querySelectorAll(".district").forEach(function (path) {
+    path.addEventListener("click", function () {
+      var name = this.dataset.name;
+      var code = this.dataset.code;
+
+      document.querySelectorAll(".district.active").forEach(function (p) {
+        p.classList.remove("active");
+      });
+      this.classList.add("active");
+
+      // 드롭다운 동기화
+      var sel = document.getElementById("district-select");
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === name) { sel.selectedIndex = i; break; }
+      }
+
+      showBadge(name);
+
+      // 220ms: active 색상 전환 후 이동
+      setTimeout(function () {
+        window.location.href = buildUrl(name, code);
+      }, 220);
+    });
+  });
+
+  // ── 드롭다운 이동 버튼 ────────────────────────────────────────
+  document.getElementById("select-go-btn").addEventListener("click", function () {
+    var sel  = document.getElementById("district-select");
+    var name = sel.value;
+    if (!name) return;
+    var code = sel.options[sel.selectedIndex].dataset.code || "";
+
+    document.querySelectorAll(".district").forEach(function (p) {
+      p.classList.toggle("active", p.dataset.name === name);
+    });
+    showBadge(name);
+
+    setTimeout(function () {
+      window.location.href = buildUrl(name, code);
+    }, 220);
+  });
+
+  // ── 드롭다운 변경 → SVG 하이라이트만 (이동 없이) ─────────────
+  document.getElementById("district-select").addEventListener("change", function () {
+    var name = this.value;
+    document.querySelectorAll(".district").forEach(function (p) {
+      p.classList.toggle("active", p.dataset.name === name);
+    });
+    if (name) showBadge(name);
+    else badge.classList.remove("visible");
+  });
+
+})();
+</script>
+{% endblock extra_js %}

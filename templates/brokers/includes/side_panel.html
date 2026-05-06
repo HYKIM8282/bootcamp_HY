@@ -1,0 +1,63 @@
+<div class="col-lg-4">
+
+
+  <div class="mb-3">
+    <p class="fw-bold text-secondary small mb-2">📌 바로가기</p>
+    <div class="d-flex flex-column gap-2">
+
+      <a href="{% url 'brokers:broker1_list' %}" class="shortcut-btn">
+        <span class="icon">📋</span> 전체 중개업소 목록
+      </a>
+
+      <a href="{% url 'brokers:broker1_list' %}?sttus=1" class="shortcut-btn">
+        <span class="icon">🟢</span> 영업중 중개업소
+      </a>
+
+      <a href="{% url 'brokers:broker1_list' %}?sttus=2" class="shortcut-btn">
+        <span class="icon">⬜</span> 폐업 중개업소
+      </a>
+
+    </div>
+  </div>
+
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white fw-bold small border-bottom">
+      🗺️ 구 빠른 선택
+    </div>
+    <div class="card-body p-2">
+      <select id="district-select" class="form-select form-select-sm">
+        <option value="">— 구를 선택하세요 —</option>
+        <option value="종로구"   data-code="11110">종로구</option>
+        <option value="중구"     data-code="11140">중구</option>
+        <option value="용산구"   data-code="11170">용산구</option>
+        <option value="성동구"   data-code="11200">성동구</option>
+        <option value="광진구"   data-code="11215">광진구</option>
+        <option value="동대문구" data-code="11230">동대문구</option>
+        <option value="중랑구"   data-code="11260">중랑구</option>
+        <option value="성북구"   data-code="11290">성북구</option>
+        <option value="강북구"   data-code="11305">강북구</option>
+        <option value="도봉구"   data-code="11320">도봉구</option>
+        <option value="노원구"   data-code="11350">노원구</option>
+        <option value="은평구"   data-code="11380">은평구</option>
+        <option value="서대문구" data-code="11410">서대문구</option>
+        <option value="마포구"   data-code="11440">마포구</option>
+        <option value="양천구"   data-code="11470">양천구</option>
+        <option value="강서구"   data-code="11500">강서구</option>
+        <option value="구로구"   data-code="11530">구로구</option>
+        <option value="금천구"   data-code="11545">금천구</option>
+        <option value="영등포구" data-code="11560">영등포구</option>
+        <option value="동작구"   data-code="11590">동작구</option>
+        <option value="관악구"   data-code="11620">관악구</option>
+        <option value="서초구"   data-code="11650">서초구</option>
+        <option value="강남구"   data-code="11680">강남구</option>
+        <option value="송파구"   data-code="11710">송파구</option>
+        <option value="강동구"   data-code="11740">강동구</option>
+      </select>
+      <button id="select-go-btn" class="btn btn-primary btn-sm w-100 mt-2">
+        이동 →
+      </button>
+    </div>
+  </div>
+
+</div>

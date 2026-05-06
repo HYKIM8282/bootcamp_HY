@@ -4,6 +4,7 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required  # [추가] dashboard 뷰용
 
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -21,8 +22,31 @@ from .serializers import (
     RealEstateAgentDetailSerializer,
     RealEstateAgentMapSerializer,
     RealEstateAgentSerializer,
+    
 )
 
+# =========================================================
+# [추가] 대시보드 View — 로그인 후 첫 페이지 (SVG 서울 지도)
+# =========================================================
+
+@login_required(login_url="/login/")
+def dashboard(request):
+    """
+    로그인 후 첫 페이지.
+    SVG 서울 지도를 표시하고, 구 클릭 시 broker1_list 로 이동.
+    통계 카드(전체/영업중/폐업)에 쓸 집계값을 컨텍스트로 전달.
+    """
+    # [추가] 전체·영업중·폐업 건수 집계
+    total_count  = RealEstateAgent.objects.count()
+    active_count = RealEstateAgent.objects.filter(sttus_se_code="1").count()
+    closed_count = RealEstateAgent.objects.filter(sttus_se_code="2").count()
+
+    context = {
+        "total_count":  total_count,   # [추가]
+        "active_count": active_count,  # [추가]
+        "closed_count": closed_count,  # [추가]
+    }
+    return render(request, "brokers/dashboard.html", context)
 
 # =========================================================
 # API ViewSets

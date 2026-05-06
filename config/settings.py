@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'brokers',
     'accounts',
     'interactions',
+
 ]
 
 MIDDLEWARE = [
@@ -132,6 +133,6 @@ STATICFILES_DIRS = [
 MEDIA_URL  = '/media/'                          # 브라우저가 접근하는 URL 경로
 MEDIA_ROOT = BASE_DIR / 'media'                 # 실제 파일이 저장되는 폴더
 
-LOGIN_REDIRECT_URL = '/broker1/'
+LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'

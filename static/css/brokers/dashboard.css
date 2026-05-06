@@ -1,0 +1,211 @@
+/* =============================================================
+   dashboard.css — 서울시 부동산 중개업 대시보드
+   ============================================================= */
+
+/* ── 전체 래퍼 ────────────────────────────────────────────── */
+.dashboard-hero {
+  background: linear-gradient(135deg, #0f2044 0%, #1a3a6e 60%, #1e4d8c 100%);
+  padding: 2.5rem 0 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 3px solid #2563eb;
+}
+
+.dashboard-hero h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.25rem;
+}
+
+.dashboard-hero .subtitle {
+  font-size: 0.875rem;
+  color: #93c5fd;
+}
+
+/* ── SVG 지도 컨테이너 ─────────────────────────────────────── */
+.map-wrapper {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 60% 40%, #eff6ff 0%, #fff 70%);
+  pointer-events: none;
+  border-radius: 16px;
+}
+
+#seoul-svg {
+  width: 100%;
+  max-height: 560px;
+  display: block;
+  position: relative;
+}
+
+/* ── SVG 구(district) 기본 스타일 ─────────────────────────── */
+.district {
+  fill: #bfdbfe;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: fill 0.18s ease, filter 0.18s ease;
+  filter: none;
+}
+
+.district:hover {
+  fill: #3b82f6;
+  filter: drop-shadow(0 2px 6px rgba(37, 99, 235, 0.35));
+}
+
+.district.active {
+  fill: #1d4ed8;
+  filter: drop-shadow(0 2px 8px rgba(29, 78, 216, 0.45));
+}
+
+/* ── SVG 구 이름 라벨 ─────────────────────────────────────── */
+.district-label {
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  fill: #1e3a5f;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -0.02em;
+}
+
+/* ── 선택 구 안내 배너 ────────────────────────────────────── */
+.district-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: #64748b;
+  margin-top: 0.75rem;
+}
+
+.district-hint .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3b82f6;
+  display: inline-block;
+}
+
+/* ── 선택된 구 뱃지 ───────────────────────────────────────── */
+#selected-badge {
+  display: none;
+  align-items: center;
+  gap: 0.6rem;
+  background: #1d4ed8;
+  color: #fff;
+  border-radius: 99px;
+  padding: 0.35rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  animation: fadeIn 0.25s ease;
+  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.30);
+}
+
+#selected-badge.visible {
+  display: inline-flex;
+}
+
+#selected-badge .close-btn {
+  cursor: pointer;
+  opacity: 0.75;
+  font-size: 1rem;
+  line-height: 1;
+  transition: opacity 0.15s;
+}
+
+#selected-badge .close-btn:hover {
+  opacity: 1;
+}
+
+/* ── 통계 카드 ────────────────────────────────────────────── */
+.stat-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid #3b82f6;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.10);
+}
+
+.stat-card .stat-num {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #1d4ed8;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.stat-card .stat-label {
+  font-size: 0.78rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat-card.green  { border-color: #22c55e; }
+.stat-card.green  .stat-num { color: #15803d; }
+.stat-card.orange { border-color: #f59e0b; }
+.stat-card.orange .stat-num { color: #b45309; }
+
+/* ── 바로가기 버튼 ────────────────────────────────────────── */
+.shortcut-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.shortcut-btn:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+  text-decoration: none;
+}
+
+.shortcut-btn .icon {
+  font-size: 1.1rem;
+}
+
+/* ── 애니메이션 ───────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 반응형 ───────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .dashboard-hero h2 { font-size: 1.35rem; }
+  .map-wrapper { padding: 1rem; }
+  .district-label { font-size: 8.5px; }
+  .stat-card .stat-num { font-size: 1.5rem; }
+}

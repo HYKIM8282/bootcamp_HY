@@ -13,7 +13,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)          # 가입 후 자동 로그인
-            return redirect('brokers:broker1_list')
+            return redirect('brokers:dashboard')
     else:
         form = SignUpForm()
     return render(request, 'accounts/signup.html', {'form': form})
@@ -21,7 +21,7 @@ def signup_view(request):
 # ✅ 로그인
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('brokers:broker1_list')
+        return redirect('brokers:dashboard')
     
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)

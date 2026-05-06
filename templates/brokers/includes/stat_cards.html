@@ -1,0 +1,30 @@
+<div class="row g-3 mb-4">
+
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-num">25</div>
+      <div class="stat-label">자치구</div>
+    </div>
+  </div>
+
+  <div class="col-6 col-md-3">
+    <div class="stat-card green">
+      <div class="stat-label">전체 중개업소</div>
+    </div>
+  </div>
+
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-num">{{ active_count|default:"—" }}</div>
+      <div class="stat-label">영업중</div>
+    </div>
+  </div>
+
+  <div class="col-6 col-md-3">
+    <div class="stat-card orange">
+      <div class="stat-num">{{ closed_count|default:"—" }}</div>
+      <div class="stat-label">폐업</div>
+    </div>
+  </div>
+
+</div>
