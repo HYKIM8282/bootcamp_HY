@@ -1,4 +1,8 @@
 ## 부동산 관련 사이트 제작중
+
+```python
+
+
 🏠 부동산 관련 사이트 (Real Estate Website)
 현재 제작 중인 부동산 관련 웹 서비스 프로젝트입니다
 .
@@ -41,3 +45,6 @@ uvicorn <프로젝트명>.asgi:application --reload
 . 코드를 수정하고 커밋하기 전에 반드시 pre-commit install 명령어를 실행하여 Git 훅을 적용해 주시기 바랍니다.
 본 서비스는 현재 초기 제작 단계에 있습니다
 .
+
+
+```
