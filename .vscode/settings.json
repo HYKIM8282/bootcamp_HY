@@ -2,5 +2,15 @@
     "editor.fontFamily": "'D2Coding',Consolas, 'Courier New', monospace",
     "editor.fontSize": 14,
     "editor.formatOnSave": true,
-    "editor.fontLigatures": false
+    "editor.fontLigatures": false,
+    "python.createEnvironment.contentButton": "show",
+    "python.experiments.optInto": [
+        
+    ],
+    "prettier.useTabs": false,
+    "prettier.bracketSameLine": false,
+    "claudeCode.autosave": false,
+    "claudeCode.allowDangerouslySkipPermissions": true
 }
+
+

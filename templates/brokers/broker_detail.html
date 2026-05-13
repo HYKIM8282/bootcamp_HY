@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ agent.bsnm_cmpnm }} - 상세정보{% endblock %}
+
+{% block content %}
+
+{# JS 가 읽을 설정값 — 인라인 JS 없이 완전 분리 #}
+<script id="pageConfig" type="application/json">
+{
+  "csrfToken"       : "{{ csrf_token }}",
+  "uploadUrl"       : "{% url 'brokers:broker_image_upload' agent.pk %}",
+  "imageDeleteBase" : "{% url 'brokers:broker_image_delete' 0 %}",
+  "reviewDeleteBase": "{% url 'interactions:review_delete' 0 %}"
+}
+</script>
+
+<div class="page-wrap">
+
+  <a href="{% url 'brokers:broker1_list' %}" class="back-btn">← 목록으로</a>
+
+  <div class="detail-header">
+
+    <div class="rep-image" id="repImageBox">
+
+      {% if images %}
+
+        {% with primary_img=images|dictsort:"is_primary"|last %}
+          <img id="repImg"
+               src="{% if primary_img %}{{ primary_img.image.url }}{% else %}{{ images.0.image.url }}{% endif %}"
+               alt="{{ agent.bsnm_cmpnm }}">
+        {% endwith %}
+
+        {% if user.is_authenticated %}
+          <div class="img-overlay">
+            <button class="overlay-btn" id="btnShowChangePanel">📷 사진 변경</button>
+            {% for img in images %}
+              {% if img.uploaded_by == user or user.is_staff %}
+                <button class="overlay-btn btn-img-delete"
+                        data-img-pk="{{ img.pk }}"
+                        style="background:rgba(220,38,38,.88);color:#fff;">
+                  🗑 삭제
+                </button>
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <div class="upload-panel" id="changePanel">
+            <button class="panel-close" id="btnCloseChangePanel" type="button">✕</button>
+            <input type="file" id="changeFileInput" accept="image/*" class="d-none">
+            <label for="changeFileInput" class="upload-trigger compact">
+              <span class="upload-icon">📷</span>
+              <span class="upload-text">파일 선택</span>
+            </label>
+            <p class="file-name-preview" id="changeFileName"></p>
+            <input type="text" id="changeCaptionInput"
+                   placeholder="사진 설명 (선택)"
+                   class="form-control form-control-sm mt-1 mb-2">
+            <button type="button" class="btn btn-primary btn-sm w-100" id="btnSubmitChange">업로드</button>
+            <div class="upload-feedback" id="changeFeedback"></div>
+          </div>
+        {% endif %}
+
+      {% else %}
+
+        {% if user.is_authenticated %}
+          <input type="file" id="newFileInput" accept="image/*" class="d-none">
+          <label for="newFileInput" class="upload-trigger" id="newUploadTrigger">
+            <span class="upload-icon">📷</span>
+            <span class="upload-text">사진 추가하기</span>
+            <span class="upload-hint">클릭하여 이미지 선택</span>
+          </label>
+          <div class="upload-panel inline-style" id="newUploadPanel">
+            <p class="file-name-preview" id="newFileName"></p>
+            <div class="progress-wrap" id="newProgressWrap">
+              <div class="progress" style="height:5px;">
+                <div id="newProgressBar" class="progress-bar bg-primary" style="width:0%;"></div>
+              </div>
+              <span id="newProgressText" class="progress-text">0%</span>
+            </div>
+            <input type="text" id="newCaptionInput"
+                   placeholder="사진 설명 (선택)"
+                   class="form-control form-control-sm mb-2">
+            <button type="button" class="btn btn-primary btn-sm w-100" id="btnSubmitNew">업로드</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm w-100 mt-1" id="btnCancelNew">취소</button>
+            <div class="upload-feedback" id="newFeedback"></div>
+          </div>
+        {% else %}
+          <div class="img-placeholder">
+            <span class="icon">🏢</span>
+            <span>등록된 사진 없음</span>
+          </div>
+        {% endif %}
+
+      {% endif %}
+
+    </div>
+
+    <div class="header-right">
+      <div class="header-top">
+        <span class="broker-name">{{ agent.bsnm_cmpnm }}</span>
+        {% if agent.sttus_se_code == "1" %}
+          <span class="status-badge open">● 영업중</span>
+        {% else %}
+          <span class="status-badge closed">폐업</span>
+        {% endif %}
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="lbl">등록번호</div>
+          <div class="val">{{ agent.jurirno|default:"-" }}</div>
+        </div>
+        <div class="info-item">
+          <div class="lbl">대표자</div>
+          <div class="val">{{ agent.brkr_nm|default:"-" }}</div>
+        </div>
+        <div class="info-item">
+          <div class="lbl">시군구</div>
+          <div class="val">{{ agent.ld_code_nm|default:"-" }}</div>
+        </div>
+        <hr class="info-divider">
+        <div class="info-item full-width">
+          <div class="lbl">도로명주소</div>
+          <div class="val">{{ agent.rdnmadr|default:"-" }}</div>
+        </div>
+        <div class="info-item full-width">
+          <div class="lbl">지번주소</div>
+          <div class="val">{{ agent.mnnmadr|default:"-" }}</div>
+        </div>
+        <hr class="info-divider">
+        <div class="info-item">
+          <div class="lbl">등록일</div>
+          <div class="val">{{ agent.regist_de|default:"-" }}</div>
+        </div>
+        <div class="info-item">
+          <div class="lbl">영업 시작일</div>
+          <div class="val">{{ agent.estbs_begin_de|default:"-" }}</div>
+        </div>
+        <div class="info-item">
+          <div class="lbl">영업 종료일</div>
+          <div class="val">{{ agent.estbs_end_de|default:"-" }}</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="rating-card">
+    <div>
+      <div class="rating-big">{{ avg_score|default:"0" }}</div>
+      <div class="rating-stars">
+        {% for i in "12345" %}
+          {% if forloop.counter <= avg_score %}★{% else %}☆{% endif %}
+        {% endfor %}
+      </div>
+      <div class="rating-sub">리뷰 {{ review_count }}건</div>
+    </div>
+    <div class="rating-bar-wrap">
+      {% for item in score_distribution %}
+        <div class="rating-bar-row">
+          <span>{{ item.score }}점</span>
+          <div class="rating-bar-bg">
+            <div class="rating-bar-fill"></div>
+          </div>
+          <span>{{ item.count }}</span>
+        </div>
+      {% empty %}
+        {% for s in "54321" %}
+          <div class="rating-bar-row">
+            <span>{{ s }}점</span>
+            <div class="rating-bar-bg">
+              <div class="rating-bar-fill" style="width:0%"></div>
+            </div>
+            <span>0</span>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if user.is_authenticated %}
+    <a href="{% url 'interactions:review_create' agent.pk %}" class="btn-write-review">
+      ✏️ 후기 작성하기
+    </a>
+  {% else %}
+    <a href="{% url 'login' %}?next={{ request.path }}" class="btn-write-review disabled">
+      🔒 로그인 후 후기 작성 가능
+    </a>
+  {% endif %}
+
+  <div class="review-title">
+    💬 이용 후기
+    <span class="count-chip" id="reviewCountChip">{{ review_count }}건</span>
+  </div>
+
+  <div id="reviewList">
+    {% for review in reviews %}
+      <div class="review-card" id="review-{{ review.pk }}">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center gap-2">
+            <span class="rv-author">{{ review.author.username }}</span>
+            <span class="rv-stars">
+              {% for i in "12345" %}
+                {% if forloop.counter <= review.score %}★{% else %}☆{% endif %}
+              {% endfor %}
+            </span>
+            <span class="rv-score">{{ review.score }}점</span>
+          </div>
+          <span class="rv-date">{{ review.created_at|date:"Y.m.d" }}</span>
+        </div>
+        <p class="rv-content">{{ review.content }}</p>
+        {% if review.author == request.user %}
+          <div class="text-end mt-2">
+            <a href="{% url 'interactions:review_update' review.pk %}"
+               class="btn btn-outline-primary btn-sm me-1"
+               style="font-size:12px;">수정</a>
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm btn-review-delete"
+                    data-review-pk="{{ review.pk }}"
+                    style="font-size:12px;">삭제</button>
+          </div>
+        {% endif %}
+      </div>
+    {% empty %}
+      <div class="no-review" id="noReviewBox">
+        <span class="icon">💬</span>
+        <p class="mb-0 fw-semibold">아직 등록된 후기가 없습니다</p>
+        <p class="small mt-1">첫 번째 후기를 작성해보세요!</p>
+      </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js"></script>
+<script src="{% static 'js/brokers/broker_detail.js' %}"></script>
+{% endblock %}

@@ -3,6 +3,8 @@
         "ms-python.python",
         "qwtel.sqlite-viewer",
         "formulahendry.auto-rename-tag",
-        "ecmel.vscode-html-css"
+        "ecmel.vscode-html-css",
+        "streetsidesoftware.code-spell-checker",
+        "dbaeumer.vscode-eslint"
     ]
 }

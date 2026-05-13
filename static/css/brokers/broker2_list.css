@@ -1,0 +1,65 @@
+/* ================================================================
+   brokers_base.css  –  Brokers 공통 디자인 토큰
+   경로: static/css/brokers/brokers_base.css
+   broker_detail / broker1_list / dashboard 공통 로드
+   ================================================================ */
+
+/* 세리프 폰트 (Nanum Myeongjo) — base.html의 Noto Sans KR과 병용 */
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap');
+
+
+/* ── 디자인 토큰 ─────────────────────────────────────────── */
+:root {
+  /* Navy palette */
+  --n950: #050e1f;
+  --n900: #0B1D3A;
+  --n800: #112445;
+  --n700: #1a3461;
+  --n300: #7090B8;
+  --n100: #CBD8EE;
+  --n50:  #EDF2F9;
+
+  /* Amber */
+  --amber:      #C9952A;
+  --amber-lt:   #F5C96E;
+  --amber-pale: #FDF3DC;
+
+  /* Semantic */
+  --green:      #1A7C5E;
+  --green-pale: #E8F5F1;
+  --red:        #DC2626;
+  --red-pale:   #FEF2F2;
+
+  /* Slate */
+  --s600: #475569;
+  --s500: #64748B;
+  --s400: #94A3B8;
+  --s200: #E2E8F0;
+  --s100: #F8FAFC;
+  --white: #FFFFFF;
+
+  /* Typography */
+  --ff-serif: "Nanum Myeongjo", Georgia, serif;
+  --ff-sans:  "Pretendard", "Noto Sans KR", sans-serif;
+
+  /* Border radius */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+
+  /* Shadows */
+  --sh-sm: 0 1px 4px  rgba(11, 29, 58, .06);
+  --sh-md: 0 4px 20px rgba(11, 29, 58, .09);
+  --sh-lg: 0 8px 40px rgba(11, 29, 58, .14);
+
+  /* Transition */
+  --tr: .2s ease;
+}
+
+/* body override — base.css의 blue 계열을 brokers navy 계열로 덮어씀 */
+body {
+  background: #eef2f7;
+  font-family: var(--ff-sans);
+  color: var(--n900);
+}

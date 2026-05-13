@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'brokers',
     'accounts',
     'interactions',
@@ -107,6 +108,17 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+}
+
+from datetime import timedelta
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME":  timedelta(hours=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS":  False,
+    "AUTH_HEADER_TYPES":      ("Bearer",),
 }
 
 
@@ -125,7 +137,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / 'static', 
 ]
 
 # settings.py — STATIC_URL 아래에 추가
@@ -136,3 +148,12 @@ MEDIA_ROOT = BASE_DIR / 'media'                 # 실제 파일이 저장되는 
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
+
+
+# 프로젝트 공용 static 폴더가 있다면
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+# collectstatic이 모아둘 최종 폴더
+STATIC_ROOT = BASE_DIR / 'staticfiles'
