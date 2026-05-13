@@ -1,34 +1,32 @@
 /* ================================================================
-   brokers_base.css  –  Brokers 공통 디자인 토큰
-   경로: static/css/brokers/brokers_base.css
-   broker_detail / broker1_list / dashboard 공통 로드
+   brokers_base.css (broker2_list.css) — Brokers 디자인 토큰
+   broker1_list / broker_detail / dashboard 공통 변수
    ================================================================ */
 
-/* 세리프 폰트 (Nanum Myeongjo) — base.html의 Noto Sans KR과 병용 */
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap');
 
 
-/* ── 디자인 토큰 ─────────────────────────────────────────── */
+/* ── 디자인 토큰 ─────────────────────────── */
 :root {
   /* Navy palette */
-  --n950: #050e1f;
-  --n900: #0B1D3A;
-  --n800: #112445;
-  --n700: #1a3461;
-  --n300: #7090B8;
-  --n100: #CBD8EE;
+  --n950: #060F1F;
+  --n900: #0D1F3C;
+  --n800: #152B52;
+  --n700: #1A3A6E;
+  --n300: #64A0C8;
+  --n100: #BDD0EA;
   --n50:  #EDF2F9;
 
   /* Amber */
-  --amber:      #C9952A;
-  --amber-lt:   #F5C96E;
-  --amber-pale: #FDF3DC;
+  --amber:      #D97706;
+  --amber-lt:   #F59E0B;
+  --amber-pale: #FEF3C7;
 
   /* Semantic */
-  --green:      #1A7C5E;
-  --green-pale: #E8F5F1;
+  --green:      #059669;
+  --green-pale: #D1FAE5;
   --red:        #DC2626;
-  --red-pale:   #FEF2F2;
+  --red-pale:   #FEE2E2;
 
   /* Slate */
   --s600: #475569;
@@ -44,22 +42,23 @@
 
   /* Border radius */
   --r-sm: 8px;
-  --r-md: 14px;
-  --r-lg: 20px;
-  --r-xl: 28px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 24px;
 
   /* Shadows */
-  --sh-sm: 0 1px 4px  rgba(11, 29, 58, .06);
-  --sh-md: 0 4px 20px rgba(11, 29, 58, .09);
-  --sh-lg: 0 8px 40px rgba(11, 29, 58, .14);
+  --sh-sm: 0 1px 4px  rgba(13, 31, 60, .06);
+  --sh-md: 0 4px 20px rgba(13, 31, 60, .09);
+  --sh-lg: 0 8px 40px rgba(13, 31, 60, .14);
 
   /* Transition */
-  --tr: .2s ease;
+  --tr: .18s ease;
 }
 
-/* body override — base.css의 blue 계열을 brokers navy 계열로 덮어씀 */
+/* body — brokers 섹션 공통 */
 body {
-  background: #eef2f7;
+  background: #F0F4FA;
   font-family: var(--ff-sans);
   color: var(--n900);
+  -webkit-font-smoothing: antialiased;
 }

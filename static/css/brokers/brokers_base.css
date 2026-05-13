@@ -1,1 +1,61 @@
-/* brokers 공통 기본 스타일 */
+/* ================================================================
+   brokers_base.css — Brokers 디자인 토큰 (base.html에서 로드됨)
+   broker1_list / broker_detail / dashboard 공통 변수
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap');
+@import url('broker_detail.css');
+
+:root {
+  /* Navy palette */
+  --n950: #060F1F;
+  --n900: #0D1F3C;
+  --n800: #152B52;
+  --n700: #1A3A6E;
+  --n300: #64A0C8;
+  --n100: #BDD0EA;
+  --n50:  #EDF2F9;
+
+  /* Amber */
+  --amber:      #D97706;
+  --amber-lt:   #F59E0B;
+  --amber-pale: #FEF3C7;
+
+  /* Semantic */
+  --green:      #059669;
+  --green-pale: #D1FAE5;
+  --red:        #DC2626;
+  --red-pale:   #FEE2E2;
+
+  /* Slate */
+  --s600: #475569;
+  --s500: #64748B;
+  --s400: #94A3B8;
+  --s200: #E2E8F0;
+  --s100: #F8FAFC;
+
+  /* Typography */
+  --ff-serif: "Nanum Myeongjo", Georgia, serif;
+  --ff-sans:  "Pretendard", "Noto Sans KR", sans-serif;
+
+  /* Border radius */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 24px;
+
+  /* Shadows */
+  --sh-sm: 0 1px 4px  rgba(13, 31, 60, .06);
+  --sh-md: 0 4px 20px rgba(13, 31, 60, .09);
+  --sh-lg: 0 8px 40px rgba(13, 31, 60, .14);
+
+  /* Transition */
+  --tr: .18s ease;
+}
+
+body {
+  background: #F0F4FA;
+  font-family: var(--ff-sans);
+  color: var(--n900);
+  -webkit-font-smoothing: antialiased;
+}

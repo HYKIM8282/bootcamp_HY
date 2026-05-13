@@ -1,174 +1,178 @@
+/* ================================================================
+   header.css — 메인 헤더 & 서브 네비게이션
+   ================================================================ */
+
+/* ── 1. 메인 헤더 ───────────────────────── */
 .main-header {
-  background: linear-gradient(90deg, #0d1b4b 0%, #1e40af 100%);
-  box-shadow: 0 2px 16px rgba(13, 27, 75, .35);
+  background: linear-gradient(90deg, #0D1F3C 0%, #1A3A6E 100%);
+  box-shadow: 0 2px 16px rgba(13, 31, 60, .45);
   position: sticky;
   top: 0;
   z-index: 200;
 }
 
-/* 헤더 내부 컨테이너 */
 .main-header .mh-inner {
-  max-width: 960px;
+  max-width: 1100px;
   margin: 0 auto;
-  height: 56px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 28px;
 }
 
-/* 브랜드 로고 섹션 */
+
+/* ── 브랜드 로고 ────────────────────────── */
 .main-header .mh-brand {
-  font-size: 18px;
-  font-weight: 900;
-  color: #ffffff;
-  letter-spacing: -0.6px;
-  text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 9px;
+  text-decoration: none;
   transition: opacity .2s ease;
 }
-.main-header .mh-brand:hover {
-  opacity: .82;
-  color: #ffffff;
-}
+.main-header .mh-brand:hover { opacity: .82; }
 
-/* 브랜드 아이콘 */
 .main-header .mh-brand__icon {
-  font-size: 20px;
+  font-size: 22px;
+  line-height: 1;
 }
 
-/* 브랜드 텍스트 영역 */
 .main-header .mh-brand__text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
-/* 브랜드 메인 텍스트 */
 .main-header .mh-brand__name {
   font-size: 16px;
-  font-weight: 900;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -.5px;
   display: block;
+  line-height: 1.2;
 }
 
-/* 브랜드 서브 텍스트 */
 .main-header .mh-brand__sub {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 500;
-  color: #93c5fd;
+  color: rgba(255, 255, 255, .52);
   display: block;
+  letter-spacing: .15px;
 }
 
-/* 인증 영역 */
+
+/* ── 인증 영역 ──────────────────────────── */
 .main-header .mh-auth {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-/* 사용자 정보 표시 */
 .main-header .mh-auth__user {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-size: 13px;
   font-weight: 600;
-  color: #93c5fd;
+  color: rgba(255, 255, 255, .72);
+  letter-spacing: -.2px;
 }
 
-/* 로그인/로그아웃 버튼 */
 .main-header .mh-auth__btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-size: 13px;
   font-weight: 600;
-  padding: 8px 14px;
-  border: 1px solid #60a5fa;
-  border-radius: 6px;
+  padding: 7px 16px;
+  border-radius: 7px;
   text-decoration: none;
-  background: transparent;
-  color: #93c5fd;
   cursor: pointer;
-  transition: all .2s ease;
+  transition: all .18s ease;
+  letter-spacing: -.2px;
+  font-family: inherit;
 }
-.main-header .mh-auth__btn:hover {
-  background: rgba(96, 165, 250, .1);
-  color: #ffffff;
-  border-color: #93c5fd;
-}
+
 .main-header .mh-auth__btn--login {
-  color: #60a5fa;
-  border-color: #60a5fa;
+  background: rgba(255, 255, 255, .1);
+  border: 1px solid rgba(255, 255, 255, .22);
+  color: #FFFFFF;
 }
+.main-header .mh-auth__btn--login:hover {
+  background: rgba(255, 255, 255, .2);
+  border-color: rgba(255, 255, 255, .42);
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
 .main-header .mh-auth__btn--logout {
-  color: #93c5fd;
-  border-color: #93c5fd;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, .18);
+  color: rgba(255, 255, 255, .65);
+}
+.main-header .mh-auth__btn--logout:hover {
+  background: rgba(220, 38, 38, .15);
+  border-color: rgba(220, 38, 38, .38);
+  color: #FCA5A5;
+  text-decoration: none;
 }
 
 
-/* ─────────────────────────────────────
-   2. 서브 네비게이션  (.sub-nav)
-   <nav class="sub-nav">
-───────────────────────────────────── */
+/* ── 2. 서브 네비게이션 ─────────────────── */
 .sub-nav {
-  background: linear-gradient(90deg, #1e40af 0%, #1d4ed8 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, .10);
+  background: #152B52;
+  border-bottom: 2px solid rgba(255, 255, 255, .06);
 }
 
-/* 서브네비 내부 컨테이너 */
 .sub-nav .sn-inner {
-  max-width: 960px;
+  max-width: 1100px;
   margin: 0 auto;
-  height: 40px;
+  height: 42px;
   display: flex;
   align-items: center;
-  padding: 0 24px;
+  padding: 0 28px;
   overflow-x: auto;
-  scrollbar-width: none;     /* Firefox */
+  scrollbar-width: none;
 }
-.sub-nav .sn-inner::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari, Edge */
-}
+.sub-nav .sn-inner::-webkit-scrollbar { display: none; }
 
-/* 서브네비 링크 */
 .sub-nav .sn-link {
   flex-shrink: 0;
   font-size: 13px;
   font-weight: 600;
-  color: #bfdbfe;
+  color: rgba(255, 255, 255, .58);
   text-decoration: none;
   padding: 0 14px;
-  height: 40px;
+  height: 42px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border-bottom: 2px solid transparent;
-  transition: color .2s ease, background .2s ease, border-color .2s ease;
+  border-bottom: 2.5px solid transparent;
+  transition: color .18s ease, border-color .18s ease;
   white-space: nowrap;
+  letter-spacing: -.2px;
 }
 .sub-nav .sn-link:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, .09);
+  color: #FFFFFF;
+  border-bottom-color: rgba(255, 255, 255, .28);
 }
 .sub-nav .sn-link.active {
-  color: #ffffff;
-  border-bottom-color: #60a5fa;
-  background: rgba(255, 255, 255, .12);
+  color: #FFFFFF;
+  border-bottom-color: #F59E0B;
 }
 
-/* 서브네비 구분선 */
 .sub-nav .sn-sep {
   flex-shrink: 0;
   width: 1px;
-  height: 20px;
-  background: rgba(255, 255, 255, .15);
-  margin: 0 8px;
+  height: 16px;
+  background: rgba(255, 255, 255, .12);
+  margin: 0 6px;
 }
 
-/* 서브네비 SVG 아이콘 스타일 */
 .sub-nav .sn-link svg {
-  stroke-width: 2;
+  opacity: .75;
+}
+.sub-nav .sn-link:hover svg,
+.sub-nav .sn-link.active svg {
+  opacity: 1;
 }

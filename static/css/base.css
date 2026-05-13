@@ -1,106 +1,148 @@
+/* ================================================================
+   base.css — 전역 디자인 토큰 & 공통 컴포넌트
+   테마: 신뢰 커뮤니티 블루칼라 모던
+   ================================================================ */
+
+@import url('accounts/login.css');
+@import url('accounts/signup.css');
+
 :root {
-  /* Blue Palette */
-  --blue-50:  #eff6ff;
-  --blue-100: #dbeafe;
-  --blue-200: #bfdbfe;
-  --blue-300: #93c5fd;
-  --blue-400: #60a5fa;
-  --blue-500: #3b82f6;
-  --blue-600: #2563eb;
-  --blue-700: #1d4ed8;
-  --blue-800: #1e40af;
-  --blue-900: #1e3a8a;
-  --navy:     #0d1b4b;
+  /* ── Navy (주 색상) ── */
+  --navy-950: #060F1F;
+  --navy-900: #0D1F3C;
+  --navy-800: #152B52;
+  --navy-700: #1A3A6E;
+  --navy-500: #2563EB;
+  --navy-400: #3B82F6;
+  --navy-300: #60A5FA;
+  --navy-200: #93C5FD;
+  --navy-100: #DBEAFE;
+  --navy-50:  #EFF6FF;
 
-  /* Semantic Colors */
-  --border:       #bfdbfe;
-  --text-primary: #1e3a8a;
-  --text-muted:   #60a5fa;
-  --bg-white:     #ffffff;
+  /* ── Amber (포인트) ── */
+  --amber:      #D97706;
+  --amber-lt:   #F59E0B;
+  --amber-pale: #FEF3C7;
 
-  /* Border Radius */
+  /* ── Semantic ── */
+  --green:      #059669;
+  --green-pale: #D1FAE5;
+  --red:        #DC2626;
+  --red-pale:   #FEE2E2;
+
+  /* ── Slate (중립) ── */
+  --slate-900: #0F172A;
+  --slate-800: #1E293B;
+  --slate-700: #334155;
+  --slate-600: #475569;
+  --slate-500: #64748B;
+  --slate-400: #94A3B8;
+  --slate-300: #CBD5E1;
+  --slate-200: #E2E8F0;
+  --slate-100: #F1F5F9;
+  --slate-50:  #F8FAFC;
+  --white:     #FFFFFF;
+
+  /* ── Semantic Aliases ── */
+  --text-primary:   var(--slate-900);
+  --text-secondary: var(--slate-600);
+  --text-muted:     var(--slate-400);
+  --border:         var(--slate-200);
+  --bg-page:        #F0F4FA;
+  --bg-white:       var(--white);
+
+  /* ── Typography ── */
+  --ff-sans:  "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  --ff-serif: "Nanum Myeongjo", Georgia, serif;
+
+  /* ── Border Radius ── */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
+  --radius-xl: 24px;
 
-  /* Shadows */
-  --shadow-card:  0 2px 12px rgba(30, 80, 200, .08);
-  --shadow-hover: 0 6px 24px rgba(30, 80, 200, .16);
+  /* ── Shadows ── */
+  --shadow-xs:   0 1px 3px  rgba(15, 23, 42, .05);
+  --shadow-card: 0 2px 12px rgba(15, 23, 42, .08);
+  --shadow-hover:0 6px 24px rgba(15, 23, 42, .13);
 
-  /* Transition */
-  --transition:   .22s ease;
+  /* ── Transition ── */
+  --transition: .18s ease;
 }
 
 
-/* ─────────────────────────────────────
-   1. 공통 body
-───────────────────────────────────── */
+/* ── body ─────────────────────────────── */
 body {
-  background: #f0f4fb;
-  font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  background: var(--bg-page);
+  font-family: var(--ff-sans);
   color: var(--text-primary);
   margin: 0;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
 }
 
 
-/* ─────────────────────────────────────
-   2. 공통 유틸  (여러 페이지에서 재사용)
-───────────────────────────────────── */
-
-/* 페이지 래퍼 */
+/* ── Page Wrap ────────────────────────── */
 .page-wrap {
-  max-width: 900px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 28px 16px 60px;
+  padding: 32px 20px 80px;
 }
 
-/* 뒤로가기 버튼 */
+
+/* ── Back Button ──────────────────────── */
 .back-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--blue-600);
-  background: var(--blue-50);
-  border: 1px solid var(--blue-200);
+  color: var(--slate-700);
+  background: var(--white);
+  border: 1.5px solid var(--slate-200);
   border-radius: var(--radius-sm);
-  padding: 6px 14px;
+  padding: 7px 16px;
   text-decoration: none;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
   transition: var(--transition);
+  box-shadow: var(--shadow-xs);
 }
 .back-btn:hover {
-  background: var(--blue-100);
-  color: var(--blue-800);
+  background: var(--navy-900);
+  border-color: var(--navy-900);
+  color: var(--white);
+  text-decoration: none;
+  box-shadow: var(--shadow-card);
 }
 
-/* 섹션 카드 (공통 카드 컴포넌트) */
+
+/* ── Section Card ─────────────────────── */
 .section-card {
-  background: var(--bg-white);
-  border: 1px solid var(--border);
+  background: var(--white);
+  border: 1px solid var(--slate-200);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   overflow: hidden;
 }
 .section-card .card-hd {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 13px 20px;
-  background: linear-gradient(90deg, var(--blue-50), var(--blue-100));
-  border-bottom: 1px solid var(--blue-200);
-  font-size: 14px;
+  padding: 14px 22px;
+  background: var(--slate-50);
+  border-bottom: 1px solid var(--slate-200);
+  font-size: 13px;
   font-weight: 700;
-  color: var(--blue-800);
+  color: var(--navy-900);
+  letter-spacing: -.2px;
 }
 .section-card .card-hd .count {
   margin-left: auto;
   font-size: 12px;
-  font-weight: 500;
-  color: var(--blue-400);
+  font-weight: 600;
+  color: var(--slate-400);
 }
 .section-card .card-bd {
-  padding: 20px;
+  padding: 22px;
 }

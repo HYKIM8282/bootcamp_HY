@@ -1,0 +1,137 @@
+/* ================================================================
+   signup.css — 회원가입 페이지 (Bootstrap 클래스 오버라이드)
+   login.css와 동일한 오버라이드 공유
+   ================================================================ */
+
+/* ── 페이지 레이아웃 ── */
+.row.justify-content-center {
+  min-height: calc(100vh - 180px);
+  align-items: center;
+  padding: 40px 0 60px;
+}
+
+/* ── 카드 컨테이너 ── */
+.card {
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 36px rgba(13, 31, 60, .13) !important;
+  overflow: hidden;
+  background: #FFFFFF !important;
+}
+
+/* ── 카드 헤더 ── */
+.card-header {
+  background: #0D1F3C !important;
+  border-bottom: none !important;
+  padding: 20px 28px !important;
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  color: #FFFFFF !important;
+  letter-spacing: -.4px;
+  position: relative;
+}
+.card-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 28px;
+  width: 36px;
+  height: 3px;
+  background: #D97706;
+  border-radius: 2px;
+}
+
+/* ── 카드 본문 ── */
+.card-body {
+  padding: 28px 28px 32px !important;
+}
+
+/* ── 폼 라벨 ── */
+.form-label {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #334155 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .07em !important;
+  margin-bottom: 6px !important;
+}
+
+/* ── 인풋 ── */
+.form-control,
+.form-control-sm {
+  border: 1.5px solid #E2E8F0 !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  font-size: 14px !important;
+  color: #0F172A !important;
+  background: #F8FAFC !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: border-color .18s, box-shadow .18s !important;
+  font-family: inherit !important;
+  height: auto !important;
+}
+.form-control:focus,
+.form-control-sm:focus {
+  border-color: #2563EB !important;
+  background: #FFFFFF !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .12) !important;
+}
+.form-control::placeholder,
+.form-control-sm::placeholder {
+  color: #94A3B8 !important;
+}
+
+/* ── 제출 버튼 ── */
+.btn-primary {
+  background: #0D1F3C !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 11px 20px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #FFFFFF !important;
+  letter-spacing: -.2px;
+  transition: all .18s ease !important;
+  font-family: inherit !important;
+  box-shadow: 0 4px 14px rgba(13, 31, 60, .22) !important;
+}
+.btn-primary:hover {
+  background: #2563EB !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 22px rgba(37, 99, 235, .32) !important;
+}
+.btn-primary:active {
+  transform: none !important;
+  background: #1A3A6E !important;
+}
+.btn-primary:focus {
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .25) !important;
+}
+
+/* ── 하단 링크 ── */
+.text-center.mt-3.small {
+  color: #64748B;
+  font-size: 13px !important;
+}
+.text-center.mt-3.small a {
+  color: #2563EB;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color .15s;
+}
+.text-center.mt-3.small a:hover {
+  color: #0D1F3C;
+}
+
+/* ── 에러 메시지 ── */
+.text-danger {
+  font-size: 12px !important;
+  color: #DC2626 !important;
+  font-weight: 500;
+}
+
+/* ── 마진 ── */
+.mb-3 {
+  margin-bottom: 18px !important;
+}

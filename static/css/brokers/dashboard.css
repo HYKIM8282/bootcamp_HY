@@ -1,37 +1,25 @@
-/* ══════════════════════════════════════════════════════════════
+/* ================================================================
    dashboard.css — 서울시 부동산 중개업 현황 대시보드
-   경로: static/css/brokers/dashboard.css
-   
-   기능:
-   - Hero 섹션 (제목, 설명, 칩)
-   - Stats bar (통계 수치)
-   - SVG 지도 (서울 25개 자치구)
-   - 사이드바 (바로가기, 구 선택기, 신뢰 뱃지)
-   ══════════════════════════════════════════════════════════════ */
+   ================================================================ */
 
 
-/* ──────────────────────────────────────
-   HERO SECTION
-   ────────────────────────────────────── */
+/* ── HERO SECTION ──────────────────────── */
 
 .db-hero {
   position: relative;
-  background: linear-gradient(135deg, #0B1D3A 0%, #1a3461 100%);
+  background: linear-gradient(140deg, #0D1F3C 0%, #152B52 55%, #1A3A6E 100%);
   color: #FFFFFF;
-  padding: 60px 0;
+  padding: 64px 0;
   overflow: hidden;
 }
 
 .db-hero__grid-bg {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background-image:
-    linear-gradient(rgba(201, 149, 42, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201, 149, 42, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(rgba(217, 119, 6, .06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217, 119, 6, .06) 1px, transparent 1px);
+  background-size: 44px 44px;
   pointer-events: none;
 }
 
@@ -44,44 +32,51 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #C9952A;
-  margin-bottom: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #F59E0B;
+  margin-bottom: 18px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: .9px;
 }
 
 .db-hero__label-dot {
   width: 6px;
   height: 6px;
-  background: #C9952A;
+  background: #F59E0B;
   border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .45; }
 }
 
 .db-hero__title {
   font-size: 48px;
   font-weight: 800;
-  line-height: 1.3;
-  margin: 0 0 16px 0;
+  line-height: 1.25;
+  margin: 0 0 18px;
   font-family: "Nanum Myeongjo", serif;
+  letter-spacing: -.5px;
 }
 
 .db-hero__title em {
   font-style: normal;
-  color: #C9952A;
+  color: #F59E0B;
 }
 
 .db-hero__desc {
-  font-size: 16px;
-  line-height: 1.6;
-  color: #B0C4DE;
-  margin: 0 0 24px 0;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, .65);
+  margin: 0 0 28px;
 }
 
 .db-hero__chips {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -89,34 +84,31 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 14px;
-  background: rgba(201, 149, 42, 0.15);
-  border: 1px solid rgba(201, 149, 42, 0.3);
+  padding: 7px 14px;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .18);
   border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #FFFFFF;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .88);
+  backdrop-filter: blur(4px);
 }
 
-.db-chip svg {
-  flex-shrink: 0;
-}
+.db-chip svg { flex-shrink: 0; }
 
 
-/* ──────────────────────────────────────
-   STATS BAR
-   ────────────────────────────────────── */
+/* ── STATS BAR ─────────────────────────── */
 
 .db-stats-bar {
-  background: #0B1D3A;
+  background: #0D1F3C;
   padding: 40px 0;
-  border-bottom: 1px solid rgba(201, 149, 42, 0.15);
+  border-bottom: 1px solid rgba(217, 119, 6, .18);
 }
 
 .db-stats-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 32px;
   align-items: center;
 }
 
@@ -126,72 +118,66 @@
   padding: 0 20px;
 }
 
+.db-stat + .db-stat::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 40px;
+  width: 1px;
+  background: rgba(255, 255, 255, .1);
+}
+
 .db-stat__num {
-  font-size: 36px;
+  font-size: 38px;
   font-weight: 800;
   line-height: 1;
   margin-bottom: 8px;
   color: #FFFFFF;
+  font-family: "Nanum Myeongjo", serif;
+  letter-spacing: -.5px;
 }
 
 .db-stat__label {
-  font-size: 14px;
-  color: #7090B8;
-  margin-bottom: 12px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, .48);
+  margin-bottom: 14px;
+  font-weight: 500;
 }
 
 .db-stat__line {
-  width: 40px;
+  width: 32px;
   height: 3px;
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, .25);
   margin: 0 auto;
   border-radius: 2px;
 }
 
-/* ✨ Stats Bar - 각 항목별 색상 (nth-child 사용) */
+.db-stat:nth-child(2) .db-stat__num  { color: #F59E0B; }
+.db-stat:nth-child(2) .db-stat__line { background: #F59E0B; }
 
-.db-stat:nth-child(2) .db-stat__num {
-  color: #D4AF37;
-}
+.db-stat:nth-child(3) .db-stat__num  { color: #34D399; }
+.db-stat:nth-child(3) .db-stat__line { background: #34D399; }
 
-.db-stat:nth-child(2) .db-stat__line {
-  background: #D4AF37;
-}
-
-.db-stat:nth-child(3) .db-stat__num {
-  color: #28A745;
-}
-
-.db-stat:nth-child(3) .db-stat__line {
-  background: #28A745;
-}
-
-.db-stat:nth-child(4) .db-stat__num {
-  color: #94A3B8;
-}
-
-.db-stat:nth-child(4) .db-stat__line {
-  background: #94A3B8;
-}
+.db-stat:nth-child(4) .db-stat__num  { color: #94A3B8; }
+.db-stat:nth-child(4) .db-stat__line { background: #94A3B8; }
 
 
-/* ──────────────────────────────────────
-   MAIN BODY
-   ────────────────────────────────────── */
+/* ── MAIN BODY ─────────────────────────── */
 
 .db-body {
-  padding: 48px 0;
+  padding: 48px 0 64px;
 }
 
 
-/* ──────────────────────────────────────
-   MAP CARD
-   ────────────────────────────────────── */
+/* ── MAP CARD ──────────────────────────── */
 
 .db-map-card {
   background: #FFFFFF;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(11, 29, 58, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(13, 31, 60, .10);
+  border: 1px solid #E2E8F0;
   overflow: hidden;
 }
 
@@ -199,100 +185,121 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px;
-  border-bottom: 1px solid #F0F4F8;
+  padding: 22px 24px;
+  border-bottom: 1px solid #F1F5F9;
   gap: 16px;
 }
 
-.db-map-card__header-left {
-  flex: 1;
-}
+.db-map-card__header-left { flex: 1; }
 
 .db-map-card__eyebrow {
   display: block;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  color: #C9952A;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
+  color: #D97706;
+  letter-spacing: .7px;
+  margin-bottom: 5px;
 }
 
 .db-map-card__title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #0B1D3A;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0D1F3C;
   margin: 0;
+  letter-spacing: -.4px;
 }
 
 #selected-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: #F3F7FF;
-  border: 1px solid #CBD8EE;
+  gap: 7px;
+  padding: 7px 12px;
+  background: #F0F4FA;
+  border: 1px solid #CBD5E1;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
-  color: #0B1D3A;
+  color: #0D1F3C;
 }
 
-#selected-badge svg {
-  color: #C9952A;
-  flex-shrink: 0;
-}
+#selected-badge svg { color: #D97706; flex-shrink: 0; }
 
 .close-btn {
   cursor: pointer;
-  font-size: 16px;
-  color: #7090B8;
-  transition: color 0.2s ease;
-  margin-left: 4px;
+  font-size: 15px;
+  color: #94A3B8;
+  transition: color .18s ease;
+  margin-left: 3px;
 }
-
-.close-btn:hover {
-  color: #0B1D3A;
-}
+.close-btn:hover { color: #0D1F3C; }
 
 .db-map-card__body {
   padding: 24px;
-  background: #F9FAFB;
+  background: #F8FAFC;
   min-height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-#seoul-svg {
-  max-width: 100%;
+/* SVG Map */
+.seoul-map-wrap {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+#seoul-map {
+  width: 100%;
   height: auto;
+  display: block;
 }
 
-/* SVG District Styling */
-.district {
-  fill: url(#districtGrad);
-  stroke: #FFFFFF;
+#seoul-map .district {
+  fill: #FFFFFF;
+  stroke: #CBD5E1;
   stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
   cursor: pointer;
-  transition: all 0.2s ease;
-  filter: url(#map-shadow);
+  transition: fill .18s ease, filter .18s ease;
+  vector-effect: non-scaling-stroke;
 }
 
-.district:hover {
-  fill: url(#districtHover);
-  filter: url(#map-shadow-active);
+#seoul-map .district:hover {
+  fill: #DBEAFE;
+  stroke: #2563EB;
+  filter: drop-shadow(0 3px 6px rgba(37, 99, 235, .22));
 }
 
-.district.active {
-  fill: url(#districtActive);
-  filter: url(#map-shadow-active);
+#seoul-map .district.active {
+  fill: #BFDBFE;
+  stroke: #1D4ED8;
+}
+
+#seoul-map .river {
+  fill: #EFF6FF;
+  stroke: #BFDBFE;
+  stroke-width: 1.5;
+  pointer-events: none;
+  vector-effect: non-scaling-stroke;
+}
+
+#seoul-map .label {
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  fill: #1E293B;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+  user-select: none;
 }
 
 .db-map-card__footer {
-  padding: 16px 24px;
-  background: #F9FAFB;
-  border-top: 1px solid #F0F4F8;
+  padding: 14px 24px;
+  background: #F8FAFC;
+  border-top: 1px solid #F1F5F9;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -302,92 +309,81 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
-  color: #7090B8;
+  font-size: 12.5px;
+  color: #94A3B8;
 }
 
 .db-map-hint__dot {
-  width: 4px;
-  height: 4px;
-  background: #C9952A;
+  width: 5px;
+  height: 5px;
+  background: #D97706;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 
-/* ──────────────────────────────────────
-   SIDEBAR SECTIONS
-   ────────────────────────────────────── */
+/* ── SIDEBAR SECTIONS ──────────────────── */
 
 .db-sidebar-section {
   background: #FFFFFF;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(11, 29, 58, 0.08);
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 10px rgba(13, 31, 60, .07);
 }
 
 .db-section-label {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  color: #C9952A;
-  letter-spacing: 0.5px;
+  color: #D97706;
+  letter-spacing: .7px;
   margin-bottom: 16px;
 }
 
-/* ── Shortcut Group ── */
+/* ── Shortcut ── */
 
 .db-shortcut-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .db-shortcut {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
-  background: #F9FAFB;
-  border: 1px solid #E2E8F0;
-  border-radius: 8px;
+  padding: 14px 16px;
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
   text-decoration: none;
-  color: #0B1D3A;
-  transition: all 0.2s ease;
+  color: #0D1F3C;
+  transition: all .18s ease;
 }
-
 .db-shortcut:hover {
-  background: #F3F7FF;
-  border-color: #CBD8EE;
+  background: #EFF6FF;
+  border-color: #BFDBFE;
+  transform: translateX(2px);
 }
 
 .db-shortcut__icon {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #E2E8F0;
-  border-radius: 6px;
+  border-radius: 8px;
   flex-shrink: 0;
-  color: #7090B8;
+  background: #E2E8F0;
+  color: #64748B;
 }
 
-.db-shortcut__icon--all {
-  background: rgba(178, 190, 210, 0.2);
-  color: #5A7090;
-}
-
-.db-shortcut__icon--active {
-  background: rgba(40, 167, 69, 0.15);
-  color: #28A745;
-}
-
-.db-shortcut__icon--closed {
-  background: rgba(148, 163, 184, 0.2);
-  color: #7090B8;
-}
+.db-shortcut__icon--active  { background: #D1FAE5; color: #059669; }
+.db-shortcut__icon--closed  { background: #F1F5F9; color: #94A3B8; }
+.db-shortcut--green .db-shortcut__icon { background: #D1FAE5; color: #059669; }
+.db-shortcut--muted .db-shortcut__icon { background: #F1F5F9; color: #94A3B8; }
 
 .db-shortcut__text {
   flex: 1;
@@ -397,65 +393,49 @@
 }
 
 .db-shortcut__title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #0B1D3A;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0D1F3C;
 }
 
 .db-shortcut__sub {
-  font-size: 12px;
-  color: #7090B8;
+  font-size: 11.5px;
+  color: #94A3B8;
 }
 
 .db-shortcut__arrow {
   flex-shrink: 0;
-  color: #CBD8EE;
-  transition: color 0.2s ease;
+  color: #CBD5E1;
+  transition: color .18s ease;
 }
-
-.db-shortcut:hover .db-shortcut__arrow {
-  color: #C9952A;
-}
-
-.db-shortcut--green .db-shortcut__icon {
-  background: rgba(40, 167, 69, 0.15);
-  color: #28A745;
-}
-
-.db-shortcut--muted .db-shortcut__icon {
-  background: rgba(148, 163, 184, 0.2);
-  color: #7090B8;
-}
+.db-shortcut:hover .db-shortcut__arrow { color: #D97706; }
 
 /* ── District Picker ── */
 
 .db-district-picker {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .db-select {
   width: 100%;
   padding: 10px 12px;
-  background: #FFFFFF;
-  border: 1px solid #E2E8F0;
-  border-radius: 6px;
-  font-size: 14px;
-  color: #0B1D3A;
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: #0D1F3C;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all .18s ease;
   font-family: inherit;
-}
-
-.db-select:hover {
-  border-color: #CBD8EE;
-}
-
-.db-select:focus {
   outline: none;
-  border-color: #C9952A;
-  box-shadow: 0 0 0 3px rgba(201, 149, 42, 0.1);
+}
+.db-select:hover { border-color: #CBD5E1; }
+.db-select:focus {
+  border-color: #2563EB;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
 }
 
 .db-go-btn {
@@ -463,35 +443,36 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 16px;
-  background: #0B1D3A;
+  padding: 11px 16px;
+  background: #0D1F3C;
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
   color: #FFFFFF;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all .18s ease;
+  font-family: inherit;
+  letter-spacing: -.2px;
 }
-
 .db-go-btn:hover {
-  background: #1a3461;
+  background: #2563EB;
+  box-shadow: 0 6px 18px rgba(37, 99, 235, .3);
+  transform: translateY(-1px);
 }
-
-.db-go-btn:active {
-  transform: scale(0.98);
-}
+.db-go-btn:active { transform: none; }
 
 /* ── Trust Card ── */
 
 .db-trust-card {
-  background: #0B1D3A;
+  background: linear-gradient(135deg, #0D1F3C 0%, #1A3A6E 100%);
   border-radius: 12px;
   padding: 20px;
   color: #FFFFFF;
   display: flex;
-  gap: 16px;
-  border: 1px solid rgba(201, 149, 42, 0.2);
+  gap: 14px;
+  border: 1px solid rgba(217, 119, 6, .22);
+  box-shadow: 0 4px 16px rgba(13, 31, 60, .18);
 }
 
 .db-trust-card__icon {
@@ -500,19 +481,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(201, 149, 42, 0.15);
+  background: rgba(217, 119, 6, .18);
   border-radius: 8px;
   flex-shrink: 0;
-  color: #C9952A;
+  color: #F59E0B;
 }
 
-.db-trust-card__body {
-  flex: 1;
-}
+.db-trust-card__body { flex: 1; }
 
 .db-trust-card__body strong {
   display: block;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   margin-bottom: 6px;
   color: #FFFFFF;
@@ -520,129 +499,41 @@
 
 .db-trust-card__body p {
   font-size: 12px;
-  color: #B0C4DE;
-  line-height: 1.5;
+  color: rgba(255, 255, 255, .6);
+  line-height: 1.6;
   margin: 0;
 }
 
 
-/*서울시 지도맵*/
-  .seoul-map-wrap {
-    max-width: 900px;
-    width: 100%;
-    margin: 0 auto;
-  }
-
-  #seoul-map {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  #seoul-map .district {
-    fill: #ffffff;
-    stroke: #111111;
-    stroke-width: 2;
-    stroke-linejoin: round;
-    stroke-linecap: round;
-    cursor: pointer;
-    transition: fill .18s ease, filter .18s ease;
-    vector-effect: non-scaling-stroke;
-  }
-
-  #seoul-map .district:hover {
-    fill: #f1f5ff;
-    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, .22));
-  }
-
-  #seoul-map .river {
-    fill: #ffffff;
-    stroke: #111111;
-    stroke-width: 2.2;
-    stroke-linejoin: round;
-    stroke-linecap: round;
-    pointer-events: none;
-    vector-effect: non-scaling-stroke;
-  }
-
-  #seoul-map .label {
-    font-family: "Noto Sans KR", "Malgun Gothic", Arial, sans-serif;
-    font-weight: 600;
-    fill: #111111;
-    text-anchor: middle;
-    dominant-baseline: middle;
-    pointer-events: none;
-    user-select: none;
-  }
-
-
-/*희영님이 수정한 내용*/
-.col-lg-8{
-        flex: 0 0 auto;
-        width: 100%;
+/* ── col override ── */
+.col-lg-8 {
+  flex: 0 0 auto;
+  width: 100%;
 }
 
-.textbox{
-  text-align: center;
-}
+.textbox { text-align: center; }
 
 
-/* ──────────────────────────────────────
-   RESPONSIVE
-   ────────────────────────────────────── */
+/* ── RESPONSIVE ────────────────────────── */
 
 @media (max-width: 992px) {
-  .db-hero__title {
-    font-size: 36px;
-  }
-
-  .db-stats-row {
-    gap: 24px;
-  }
+  .db-hero__title { font-size: 38px; }
+  .db-stats-row { gap: 20px; }
 }
 
 @media (max-width: 768px) {
-  .db-hero {
-    padding: 40px 0;
-  }
-
-  .db-hero__title {
-    font-size: 28px;
-  }
-
-  .db-hero__desc {
-    font-size: 14px;
-  }
-
-  .db-map-card__header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  #selected-badge {
-    width: 100%;
-  }
-
-  .db-stats-row {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-
-  .db-stat {
-    padding: 0 12px;
-  }
+  .db-hero { padding: 44px 0; }
+  .db-hero__title { font-size: 30px; }
+  .db-hero__desc { font-size: 14px; }
+  .db-map-card__header { flex-direction: column; align-items: flex-start; }
+  #selected-badge { width: 100%; }
+  .db-stats-row { grid-template-columns: repeat(2, 1fr); gap: 0; }
+  .db-stat + .db-stat::before { display: none; }
+  .db-stat { padding: 16px; border-bottom: 1px solid rgba(255,255,255,.07); }
 }
 
 @media (max-width: 576px) {
-  .db-hero__title {
-    font-size: 24px;
-  }
-
-  .db-stat__num {
-    font-size: 28px;
-  }
-
-  .db-shortcut {
-    padding: 12px;
-  }
+  .db-hero__title { font-size: 26px; }
+  .db-stat__num { font-size: 30px; }
+  .db-shortcut { padding: 12px 14px; }
 }
