@@ -20,15 +20,14 @@
         <button type="button" class="mh-auth__btn mh-auth__btn--logout" onclick="jwtLogout()">로그아웃</button>
         <script>
           async function jwtLogout() {
-            const access  = localStorage.getItem('access_token')  || '';
+            const access  = localStorage.getItem('access_token');
             const refresh = localStorage.getItem('refresh_token') || '';
+            const headers = { 'Content-Type': 'application/json' };
+            if (access) headers['Authorization'] = 'Bearer ' + access;
             try {
               await fetch('/accounts/api/logout/', {
                 method: 'POST',
-                headers: {
-                  'Content-Type':  'application/json',
-                  'Authorization': 'Bearer ' + access,
-                },
+                headers,
                 body: JSON.stringify({ refresh }),
               });
             } catch {}
