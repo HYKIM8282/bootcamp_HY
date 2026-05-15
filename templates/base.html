@@ -24,15 +24,6 @@
   <link rel="stylesheet" href="{% static 'css/brokers/broker1_list.css' %}">
   {% endblock %}
 
-  {% block extra_js %}
-
-  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey={{ kakao_key }}&libraries=services"></script>
-  <script src="{% static 'js/brokers/dashboard.js' %}"></script>
-  <script src="{% static 'js/brokers/broker1_list.js' %}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
-  {% endblock %}
-
 </head>
  <body>
 
@@ -44,6 +35,16 @@
   </main>
 
   {% include 'footer.html' %}
+
+  {% block extra_js %}
+
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js"></script>
+  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey={{ kakao_key }}&libraries=services"></script>
+  <script src="{% static 'js/brokers/dashboard.js' %}"></script>
+  <script src="{% static 'js/brokers/broker1_list.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  {% endblock %}
 
  </body>
 </html>

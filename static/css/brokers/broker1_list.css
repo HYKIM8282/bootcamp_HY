@@ -329,6 +329,63 @@
 }
 
 
+/* ── 동(읍·면·동) 버튼 패널 ────────────── */
+.al-dong-panel {
+  background: var(--white) !important;
+  border: 1px solid var(--s200) !important;
+  border-radius: var(--r-md) !important;
+  padding: .85rem 1.1rem !important;
+  margin: 1rem 0 !important;
+  box-shadow: var(--sh-sm) !important;
+}
+.al-dong-panel__label {
+  display: flex !important;
+  align-items: center !important;
+  gap: .4rem !important;
+  font-size: .74rem !important;
+  font-weight: 700 !important;
+  color: var(--n700) !important;
+  margin-bottom: .6rem !important;
+  letter-spacing: -.02em !important;
+}
+.al-dong-panel__label svg { color: var(--amber) !important; }
+
+.al-dong-panel__buttons {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: .4rem !important;
+}
+.al-dong-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 70px !important;
+  padding: .42rem .9rem !important;
+  font-size: .76rem !important;
+  font-weight: 600 !important;
+  color: var(--n700) !important;
+  background: var(--white) !important;
+  border: 1px solid var(--s200) !important;
+  border-radius: 8px !important;
+  text-decoration: none !important;
+  transition: all .15s ease !important;
+  white-space: nowrap !important;
+}
+.al-dong-btn:hover {
+  background: var(--amber-pale) !important;
+  border-color: var(--amber) !important;
+  color: var(--amber) !important;
+  transform: translateY(-1px);
+  text-decoration: none !important;
+}
+.al-dong-btn.is-active {
+  background: var(--n900) !important;
+  border-color: var(--n900) !important;
+  color: var(--white) !important;
+  box-shadow: 0 2px 6px rgba(13, 31, 60, .25) !important;
+}
+
+
 /* ── MAP ────────────────────────────────── */
 .al-map {
   width: 100% !important;

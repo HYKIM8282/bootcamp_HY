@@ -82,33 +82,33 @@
         </div>
 
         <div class="al-form-group">
+          <label class="al-label">동이름</label>
+          <input type="hidden" name="dong" id="dong" value="{{ selected_dong }}">
+          <div class="al-dropdown-wrap">
+            <button class="al-dropdown-btn" type="button" id="dongDropdownBtn"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span id="dongLabel">{% if selected_dong %}{{ selected_dong }}{% else %}동 선택{% endif %}</span>
+              <svg class="al-dropdown-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <ul class="dropdown-menu al-dropdown-menu" id="dongDropdownMenu" aria-labelledby="dongDropdownBtn">
+              <li><a class="al-dropdown-item" href="#" data-dong="">전체 동</a></li>
+              {% if dong_list %}
+              <li><div class="al-dropdown-divider"></div></li>
+              {% for dong in dong_list %}
+              <li><a class="al-dropdown-item" href="#" data-dong="{{ dong }}">{{ dong }}</a></li>
+              {% endfor %}
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="al-form-group">
           <label class="al-label" for="bsnm_cmpnm">상호명</label>
           <div class="al-input-wrap">
             <svg class="al-input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2M8 7V5a2 2 0 00-4 0v2"/></svg>
             <input id="bsnm_cmpnm" type="text" name="bsnm_cmpnm" class="al-input"
                    placeholder="상호명 검색" value="{{ request.GET.bsnm_cmpnm }}">
-          </div>
-        </div>
-
-        <div class="al-form-group">
-          <label class="al-label" for="jurirno">등록번호</label>
-          <div class="al-input-wrap">
-            <svg class="al-input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>
-            <input id="jurirno" type="text" name="jurirno" class="al-input"
-                   placeholder="등록번호 검색" value="{{ request.GET.jurirno }}">
-          </div>
-        </div>
-
-        <div class="al-form-group">
-          <label class="al-label" for="sttus">영업 상태</label>
-          <div class="al-select-wrap">
-            <svg class="al-input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <select id="sttus" name="sttus" class="al-select">
-              <option value="">전체</option>
-              <option value="1" {% if request.GET.sttus == "1" %}selected{% endif %}>영업중</option>
-              <option value="2" {% if request.GET.sttus == "2" %}selected{% endif %}>폐업</option>
-            </select>
-            <svg class="al-select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
         </div>
 
@@ -127,10 +127,30 @@
   </div>
 
 
+  {% if dong_list %}
+  <div class="al-dong-panel">
+    <div class="al-dong-panel__label">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+      </svg>
+      동 선택
+    </div>
+    <div class="al-dong-panel__buttons">
+      <a class="al-dong-btn {% if not selected_dong %}is-active{% endif %}"
+         href="?ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}">전체</a>
+      {% for dong in dong_list %}
+      <a class="al-dong-btn {% if selected_dong == dong %}is-active{% endif %}"
+         href="?ldcode={{ request.GET.ldcode }}&dong={{ dong }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}">{{ dong }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
   <div id="map" class="al-map" style="display:none;"></div>
 
   {{ map_agents_json|json_script:"map-data" }}
   {{ map_agents_addr_json|json_script:"map-addr-data" }}
+  {{ dongs_by_code|json_script:"dongs-by-code" }}
 
   <div id="geocode-status" class="al-geocode-status" style="display:none;">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/></svg>
@@ -237,7 +257,7 @@
   <nav class="al-pagination">
     {% if page_obj.has_previous %}
     <a class="al-page-btn al-page-btn--nav"
-       href="?page={{ page_obj.previous_page_number }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}">
+       href="?page={{ page_obj.previous_page_number }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}&dong={{ request.GET.dong }}">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
       이전
     </a>
@@ -248,7 +268,7 @@
       <span class="al-page-btn al-page-btn--active">{{ num }}</span>
       {% elif num >= page_obj.number|add:"-3" and num <= page_obj.number|add:"3" %}
       <a class="al-page-btn"
-         href="?page={{ num }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}">
+         href="?page={{ num }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}&dong={{ request.GET.dong }}">
         {{ num }}
       </a>
       {% endif %}
@@ -256,7 +276,7 @@
 
     {% if page_obj.has_next %}
     <a class="al-page-btn al-page-btn--nav"
-       href="?page={{ page_obj.next_page_number }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}">
+       href="?page={{ page_obj.next_page_number }}&ldcode={{ request.GET.ldcode }}&bsnm_cmpnm={{ request.GET.bsnm_cmpnm }}&jurirno={{ request.GET.jurirno }}&sttus={{ request.GET.sttus }}&ld_code_nm={{ request.GET.ld_code_nm }}&dong={{ request.GET.dong }}">
       다음
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
@@ -264,6 +284,10 @@
   </nav>
 
 </div>
+
+{# ─── 핑크 포켓 메뉴 (커뮤니티 사이드 + 글쓰기 모달) ─── #}
+{% include "community/pocket_menu.html" %}
+
 {% endblock %}
 
 

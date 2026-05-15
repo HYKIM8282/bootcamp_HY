@@ -209,6 +209,19 @@
   white-space: nowrap;
 }
 
+/* 파일 선택 시 미리보기 — 200×200 정사각형 (.rep-image 220px 컨테이너에 깔끔히 들어옴) */
+.upload-preview {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  display: none;
+  border-radius: 8px;
+  border: 1px solid var(--s200);
+  margin: .35rem auto;
+  background: var(--n50);
+}
+.upload-preview.is-visible { display: block; }
+
 .progress-wrap { width: 100%; }
 .progress-text { display: block; font-size: .68rem; color: var(--s400); margin-top: 2px; text-align: right; }
 
@@ -540,6 +553,21 @@
   border-top: 1px solid var(--s200);
   word-break: keep-all;
 }
+
+/* 리뷰 첨부 이미지 */
+.review-card .rv-image-wrap {
+  margin-top: .6rem;
+}
+.review-card .rv-image {
+  max-width: 240px;
+  max-height: 240px;
+  border-radius: 8px;
+  border: 1px solid var(--s200);
+  object-fit: cover;
+  cursor: zoom-in;
+  transition: transform .25s;
+}
+.review-card .rv-image:hover { transform: scale(1.02); }
 
 /* 수정/삭제 버튼 (Bootstrap 오버라이드) */
 .review-card .btn-outline-primary {

@@ -45,7 +45,7 @@ def review_create(request, agent_pk):
     agent = get_object_or_404(RealEstateAgent, pk=agent_pk)
 
     if request.method == 'POST':
-        form = ReviewForm(request.POST)
+        form = ReviewForm(request.POST, request.FILES)
         if form.is_valid():
             review = form.save(commit=False)
             review.agent  = agent   # ✅ 중개업소 자동 연결
@@ -63,16 +63,29 @@ def review_create(request, agent_pk):
 
 @login_required(login_url='/accounts/login/')
 def review_delete(request, review_pk):
-    """리뷰 삭제 (본인만 가능)"""
+    """리뷰 삭제 (본인만 가능)
+
+    - AJAX DELETE (axios apiClient) → JSON 응답
+    - 일반 POST/GET → redirect
+    """
     review = get_object_or_404(Review, pk=review_pk)
+    is_ajax = request.method == 'DELETE' or request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
     # ✅ 본인 리뷰만 삭제 가능
-    if review.author == request.user:
-        agent_pk = review.agent.pk
-        review.delete()
-        return redirect('brokers:broker1_detail', pk=agent_pk)
+    if review.author != request.user:
+        if is_ajax:
+            return JsonResponse(
+                {"success": False, "error": "삭제 권한이 없습니다."},
+                status=403,
+            )
+        return redirect('brokers:broker1_detail', pk=review.agent.pk)
 
-    return redirect('brokers:broker1_detail', pk=review.agent.pk)
+    agent_pk = review.agent.pk
+    review.delete()
+
+    if is_ajax:
+        return JsonResponse({"success": True}, status=200)
+    return redirect('brokers:broker1_detail', pk=agent_pk)
 
 @login_required(login_url='/accounts/login/')
 def review_update(request, review_pk):
@@ -84,7 +97,7 @@ def review_update(request, review_pk):
         return redirect('brokers:broker1_detail', pk=review.agent.pk)
 
     if request.method == 'POST':
-        form = ReviewForm(request.POST, instance=review)  # ✅ instance로 기존 데이터 불러옴
+        form = ReviewForm(request.POST, request.FILES, instance=review)  # ✅ instance로 기존 데이터 불러옴
         if form.is_valid():
             form.save()
             return redirect('brokers:broker1_detail', pk=review.agent.pk)

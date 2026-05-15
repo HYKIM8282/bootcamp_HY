@@ -6,7 +6,7 @@ class ReviewForm(forms.ModelForm):
 
     class Meta:
         model  = Review
-        fields = ['score', 'content']
+        fields = ['score', 'content', 'image']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,3 +27,12 @@ class ReviewForm(forms.ModelForm):
                 'placeholder': '리뷰를 작성해주세요.',
             }
         )
+
+        # ✅ 리뷰 이미지 위젯
+        self.fields['image'].widget = forms.ClearableFileInput(
+            attrs={
+                'class': 'form-control form-control-sm',
+                'accept': 'image/*',
+            }
+        )
+        self.fields['image'].required = False

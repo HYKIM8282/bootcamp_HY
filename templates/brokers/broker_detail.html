@@ -51,6 +51,7 @@
               <span class="upload-icon">📷</span>
               <span class="upload-text">파일 선택</span>
             </label>
+            <img id="changePreviewImg" class="upload-preview" alt="미리보기">
             <p class="file-name-preview" id="changeFileName"></p>
             <input type="text" id="changeCaptionInput"
                    placeholder="사진 설명 (선택)"
@@ -70,6 +71,7 @@
             <span class="upload-hint">클릭하여 이미지 선택</span>
           </label>
           <div class="upload-panel inline-style" id="newUploadPanel">
+            <img id="newPreviewImg" class="upload-preview" alt="미리보기">
             <p class="file-name-preview" id="newFileName"></p>
             <div class="progress-wrap" id="newProgressWrap">
               <div class="progress" style="height:5px;">
@@ -209,6 +211,11 @@
           <span class="rv-date">{{ review.created_at|date:"Y.m.d" }}</span>
         </div>
         <p class="rv-content">{{ review.content }}</p>
+        {% if review.image %}
+          <div class="rv-image-wrap">
+            <img src="{{ review.image.url }}" alt="리뷰 이미지" class="rv-image">
+          </div>
+        {% endif %}
         {% if review.author == request.user %}
           <div class="text-end mt-2">
             <a href="{% url 'interactions:review_update' review.pk %}"

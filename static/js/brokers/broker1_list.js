@@ -81,13 +81,71 @@ document.addEventListener("DOMContentLoaded", function () {
     row.addEventListener("click", handleClick);
   });
 
-  // 드롭다운 선택 이벤트
-  document.querySelectorAll(".al-dropdown-item").forEach(function (link) {
+  // ── 매핑 JSON 로드 (구코드 → 동 목록) ────────────────
+  var DONGS_BY_CODE = {};
+  try {
+    var dEl = document.getElementById("dongs-by-code");
+    if (dEl) DONGS_BY_CODE = JSON.parse(dEl.textContent);
+  } catch (e) { /* noop */ }
+
+  // ── 동 드롭다운 아이템 클릭 핸들러 등록 ───────────────
+  function bindDongItem(link) {
     link.addEventListener("click", function (e) {
       e.preventDefault();
-      document.getElementById("ldcode").value = this.dataset.code;
+      var v = this.dataset.dong || "";
+      document.getElementById("dong").value = v;
+      document.getElementById("dongLabel").textContent = v || "동 선택";
+    });
+  }
+  // 초기 렌더된 동 아이템들에 바인딩
+  document.querySelectorAll("#dongDropdownMenu .al-dropdown-item")
+          .forEach(bindDongItem);
+
+  // ── 시군구 변경 시 동 드롭다운 옵션 재렌더 ──────────
+  function rebuildDongMenu(ldcode) {
+    var menu = document.getElementById("dongDropdownMenu");
+    if (!menu) return;
+    var dongs = DONGS_BY_CODE[ldcode] || [];
+
+    // 기본 "전체 동" 항목만 남기고 비우기
+    menu.innerHTML = '<li><a class="al-dropdown-item" href="#" data-dong="">전체 동</a></li>';
+
+    if (dongs.length) {
+      var divider = document.createElement("li");
+      divider.innerHTML = '<div class="al-dropdown-divider"></div>';
+      menu.appendChild(divider);
+
+      dongs.forEach(function (d) {
+        var li = document.createElement("li");
+        var a  = document.createElement("a");
+        a.className     = "al-dropdown-item";
+        a.href          = "#";
+        a.dataset.dong  = d;
+        a.textContent   = d;
+        li.appendChild(a);
+        menu.appendChild(li);
+      });
+    }
+
+    // 새로 그린 모든 항목에 클릭 핸들러 재바인딩
+    menu.querySelectorAll(".al-dropdown-item").forEach(bindDongItem);
+
+    // 동 선택값/라벨 초기화
+    document.getElementById("dong").value = "";
+    document.getElementById("dongLabel").textContent = "동 선택";
+  }
+
+  // 시군구 드롭다운 선택 이벤트
+  document.querySelectorAll("#districtDropdownBtn ~ .al-dropdown-menu .al-dropdown-item")
+          .forEach(function (link) {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      var code = this.dataset.code || "";
+      document.getElementById("ldcode").value = code;
       document.getElementById("districtLabel").textContent =
-        this.dataset.code ? this.textContent.trim() : "구 선택";
+        code ? this.textContent.trim() : "구 선택";
+      // 구가 바뀌면 동 드롭다운 자동 갱신
+      rebuildDongMenu(code);
     });
   });
 

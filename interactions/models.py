@@ -34,6 +34,13 @@ class Review(models.Model):
     # ✅ 리뷰 내용
     content  = models.TextField()
 
+    # ✅ 리뷰 이미지 (선택)
+    image = models.ImageField(
+        upload_to='reviews/%Y/%m/',
+        null=True, blank=True,
+        verbose_name='리뷰 이미지',
+    )
+
     # ✅ 작성일 / 수정일
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

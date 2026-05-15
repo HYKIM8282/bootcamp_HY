@@ -1,0 +1,103 @@
+{% load static %}
+
+{# ─── 포켓메뉴 전용 에셋 ─── #}
+<link rel="stylesheet" href="{% static 'css/community/pocket_menu.css' %}">
+
+{# ─── JS 가 읽을 설정값 (form 태그 없이 axios JSON 전송용) ─── #}
+<script id="pktConfig" type="application/json">
+{
+  "csrfToken":     "{{ csrf_token }}",
+  "listUrl":       "{% url 'community:post_list' %}",
+  "createUrl":     "{% url 'community:post_list' %}",
+  "deleteUrlBase": "{% url 'community:post_delete' 0 %}",
+  "isAuthenticated": {% if user.is_authenticated %}true{% else %}false{% endif %},
+  "currentUser":   "{{ user.username|escapejs }}"
+}
+</script>
+
+{# ─── 1) 핑크 손잡이 (화면 좌측 가장자리 부착) ─── #}
+<button id="pktHandle" class="pkt-handle" type="button"
+        aria-controls="pktPanel" aria-expanded="false" aria-label="커뮤니티 열기">
+  <span class="pkt-handle__icon">💬</span>
+  <span class="pkt-handle__label">커<br>뮤<br>니<br>티</span>
+</button>
+
+{# ─── 2) 사이드 패널 ─── #}
+<aside id="pktPanel" class="pkt-panel" aria-hidden="true">
+
+  <header class="pkt-panel__header">
+    <h2 class="pkt-panel__title">대장리본 커뮤니티</h2>
+    <button class="pkt-panel__close" id="pktClose" type="button" aria-label="닫기">✕</button>
+  </header>
+
+  <div class="pkt-search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="pktSearchInput" class="pkt-search__input" placeholder="제목/내용 검색">
+    <button class="pkt-search__btn" type="button" id="pktSearchBtn">검색</button>
+  </div>
+
+  {# 카테고리 탭 — data-category 값이 서버의 Post.category 와 동일 #}
+  <nav class="pkt-tabs">
+    <button class="pkt-tab is-active" type="button" data-category="">전체</button>
+    <button class="pkt-tab" type="button" data-category="latest">최신글</button>
+    <button class="pkt-tab" type="button" data-category="hot">인기글</button>
+    <button class="pkt-tab" type="button" data-category="region">관심동네</button>
+  </nav>
+
+  {# 글 목록 — JS 가 동적으로 채움 #}
+  <div class="pkt-list" id="pktList">
+    <div class="pkt-empty" id="pktLoading">불러오는 중…</div>
+  </div>
+
+  <div class="pkt-more">
+    <button type="button" class="pkt-more__btn" id="pktMoreBtn" style="display:none;">더보기</button>
+  </div>
+
+  <button id="pktWriteBtn" class="pkt-write-btn" type="button">
+    <span class="pkt-write-btn__icon">✏</span>
+    글쓰기
+  </button>
+</aside>
+
+{# ─── 3) 글쓰기 모달 — <form> 없이 div + button #}
+<div id="pktModal" class="pkt-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="pkt-modal__backdrop" data-pkt-close></div>
+  <div class="pkt-modal__dialog">
+    <header class="pkt-modal__head">
+      <h3 class="pkt-modal__title">새 글 작성</h3>
+      <button class="pkt-modal__close" type="button" data-pkt-close aria-label="닫기">✕</button>
+    </header>
+
+    <div class="pkt-modal__form" id="pktPostForm">
+      <div class="pkt-field">
+        <label class="pkt-field__label" for="pktInputTitle">제목</label>
+        <input id="pktInputTitle" type="text" class="pkt-field__input"
+               placeholder="제목을 입력하세요" maxlength="80">
+      </div>
+
+      <div class="pkt-field">
+        <label class="pkt-field__label" for="pktInputCategory">카테고리</label>
+        <select id="pktInputCategory" class="pkt-field__select">
+          <option value="latest">최신글</option>
+          <option value="hot">인기글</option>
+          <option value="region">관심동네</option>
+        </select>
+      </div>
+
+      <div class="pkt-field">
+        <label class="pkt-field__label" for="pktInputContent">내용</label>
+        <textarea id="pktInputContent" rows="6" class="pkt-field__textarea"
+                  placeholder="내용을 입력하세요 (최대 1,000자)" maxlength="1000"></textarea>
+      </div>
+
+      <div class="pkt-feedback" id="pktFeedback"></div>
+
+      <div class="pkt-modal__actions">
+        <button type="button" class="pkt-btn pkt-btn--ghost" data-pkt-close>취소</button>
+        <button type="button" class="pkt-btn pkt-btn--primary" id="pktSubmitBtn">등록</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/community/pocket_menu.js' %}" defer></script>

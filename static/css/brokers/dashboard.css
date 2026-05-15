@@ -321,6 +321,70 @@
   flex-shrink: 0;
 }
 
+/* ── 동(읍·면·동) 버튼 패널 ────────────────────────────── */
+.db-dong-panel {
+  padding: 18px 24px 22px;
+  background: #FFFFFF;
+  border-top: 1px solid #F1F5F9;
+}
+.db-dong-panel__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 12px;
+  letter-spacing: -.02em;
+}
+.db-dong-panel__label svg { color: #D97706; }
+.db-dong-panel__label #dongPanelGuName {
+  color: #0D1F3C;
+  font-weight: 800;
+}
+
+.db-dong-panel__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.db-dong-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 78px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .15s ease;
+  user-select: none;
+}
+.db-dong-btn:hover {
+  background: #FEF3C7;
+  border-color: #D97706;
+  color: #D97706;
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+.db-dong-btn--all {
+  background: #F1F5F9;
+  font-weight: 700;
+}
+.db-dong-btn--all:hover {
+  background: #FEF3C7;
+}
+.db-dong-empty {
+  font-size: 13px;
+  color: #94A3B8;
+  padding: 6px 0;
+}
+
 
 /* ── SIDEBAR SECTIONS ──────────────────── */
 

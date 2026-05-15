@@ -18,7 +18,7 @@
 
   <div class="card shadow-sm">
     <div class="card-body">
-      <form method="post">
+      <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         <div class="mb-4">
@@ -36,6 +36,21 @@
           {{ form.content }}
           {% if form.content.errors %}
             <div class="text-danger small mt-1">{{ form.content.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">사진 첨부 <span class="text-muted small">(선택)</span></label>
+          {% if review.image %}
+            <div class="mb-2">
+              <img src="{{ review.image.url }}" alt="현재 사진"
+                   style="max-width:200px; max-height:200px; border-radius:6px; border:1px solid #dee2e6;">
+              <div class="text-muted small mt-1">현재 등록된 사진</div>
+            </div>
+          {% endif %}
+          {{ form.image }}
+          {% if form.image.errors %}
+            <div class="text-danger small mt-1">{{ form.image.errors }}</div>
           {% endif %}
         </div>
 

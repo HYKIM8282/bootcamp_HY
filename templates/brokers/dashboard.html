@@ -179,9 +179,23 @@
         <div class="db-map-card__footer">
           <span class="db-map-hint">
             <span class="db-map-hint__dot"></span>
-            구를 클릭하면 해당 지역 중개업소 목록으로 이동합니다
+            구를 클릭하면 아래에 동 목록이 표시됩니다. 동을 클릭하면 해당 지역 중개업소 목록으로 이동합니다.
           </span>
         </div>
+
+        {# ── 구 클릭 시 표시되는 동 버튼 패널 ── #}
+        <div class="db-dong-panel" id="dongPanel" style="display:none;">
+          <div class="db-dong-panel__label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span id="dongPanelGuName">—</span> 동 선택
+          </div>
+          <div class="db-dong-panel__buttons" id="dongPanelButtons"></div>
+        </div>
+
+        {# JS 가 읽을 매핑 데이터 — { "송파구": { "code": "11710", "dongs": [...] }, ... } #}
+        {{ info_by_gu|json_script:"info-by-gu" }}
 
       </div>
     </div>

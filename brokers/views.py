@@ -34,10 +34,43 @@ from .serializers import (
 
 @login_required(login_url="/accounts/login/")
 def dashboard(request):
+    # ✅ 구 이름 → { code, dongs } 매핑.
+    #   - ld_code_nm 이 "서울특별시 송파구" / "송파구" 등으로 섞여도
+    #     "XX구" 토큰만 추출해 키 불일치 방지.
+    #   - 같은 JSON 안에 ld_code 도 담아 JS 에서 한 번에 조회.
+    info_by_gu = {}
+    rows = (
+        RealEstateAgent.objects
+        .exclude(mnnmadr="")
+        .exclude(ld_code_nm="")
+        .values_list("ld_code_nm", "mnnmadr", "ld_code")
+    )
+    for gu_name_raw, addr, ld_code in rows:
+        # "서울특별시 송파구" → "송파구" 정규화 (마지막 "구" 토큰)
+        gu_name = None
+        for token in gu_name_raw.split():
+            if token.endswith("구"):
+                gu_name = token
+        if not gu_name:
+            continue
+
+        info = info_by_gu.setdefault(gu_name, {"code": ld_code, "dongs": set()})
+
+        parts = addr.split()
+        if len(parts) >= 3 and parts[2].endswith("동"):
+            info["dongs"].add(parts[2])
+
+    # set → 정렬된 list 로 직렬화 가능하게
+    info_by_gu = {
+        gu: {"code": info["code"], "dongs": sorted(info["dongs"])}
+        for gu, info in info_by_gu.items()
+    }
+
     return render(request, "brokers/dashboard.html", {
         "total_count":  RealEstateAgent.objects.count(),
         "active_count": RealEstateAgent.objects.filter(sttus_se_code="1").count(),
         "closed_count": RealEstateAgent.objects.filter(sttus_se_code="2").count(),
+        "info_by_gu":   info_by_gu,
     })
 
 
@@ -197,6 +230,48 @@ class BrokerListView(LoginRequiredMixin, View):
                 Q(mnnmadr__icontains=selected_region)
             )
 
+        # ✅ [추가] 동(읍·면·동) 필터 — 지번주소(mnnmadr) 의 "동" 부분 매칭
+        selected_dong = request.GET.get("dong", "").strip()
+        if selected_dong:
+            qs = qs.filter(mnnmadr__icontains=selected_dong)
+
+        # ✅ [추가] 현재 선택된 구에 속한 동 목록 — UI 버튼 렌더용
+        #   지번주소 형식: "서울특별시 송파구 송파동 143-6" → split[2] 가 동
+        #   ldcode(코드) 또는 ld_code_nm(이름) 어느 쪽으로 들어와도 처리
+        dong_list       = []
+        selected_ldcode = request.GET.get("ldcode", "").strip()
+        if selected_ldcode:
+            base_qs = RealEstateAgent.objects.filter(ld_code=selected_ldcode)
+        elif selected_region:
+            base_qs = RealEstateAgent.objects.filter(ld_code_nm__icontains=selected_region)
+        else:
+            base_qs = None
+
+        if base_qs is not None:
+            addresses = (
+                base_qs.exclude(mnnmadr="")
+                       .values_list("mnnmadr", flat=True)
+            )
+            dong_set = set()
+            for addr in addresses:
+                parts = addr.split()
+                if len(parts) >= 3 and parts[2].endswith("동"):
+                    dong_set.add(parts[2])
+            dong_list = sorted(dong_set)
+
+        # ✅ [추가] 전체 구별 동 매핑 — JS 가 시군구 변경 시 동 드롭다운 즉시 갱신용
+        #   { "11710": ["가락동", ...], "11680": [...], ... }
+        dongs_by_code = {}
+        for code, addr in (
+            RealEstateAgent.objects
+            .exclude(mnnmadr="").exclude(ld_code="")
+            .values_list("ld_code", "mnnmadr")
+        ):
+            parts = addr.split()
+            if len(parts) >= 3 and parts[2].endswith("동"):
+                dongs_by_code.setdefault(code, set()).add(parts[2])
+        dongs_by_code = {c: sorted(d) for c, d in dongs_by_code.items()}
+
         page_obj = Paginator(qs, self.paginate_by).get_page(request.GET.get("page"))
 
         # 그룹 A: DB에 좌표 있음 → 즉시 마커
@@ -218,6 +293,9 @@ class BrokerListView(LoginRequiredMixin, View):
             "map_agents_json":      map_agents,
             "map_agents_addr_json": map_agents_addr,
             "selected_region":      selected_region,
+            "dong_list":            dong_list,
+            "selected_dong":        selected_dong,
+            "dongs_by_code":        dongs_by_code,
         })
 
 

@@ -36,6 +36,9 @@ urlpatterns = [
     # review / interaction 쪽이 따로 있으면 그대로 유지
     path("interactions/", include("interactions.urls")),
 
+    # 커뮤니티 (글쓰기/목록/삭제)
+    path("community/", include(("community.urls", "community"), namespace="community")),
+
     # 루트("/") → 대시보드로 리다이렉트 (미로그인이면 login_required가 로그인 페이지로 보냄)
     path("", RedirectView.as_view(url="/brokers/dashboard/", permanent=False)),
 ]

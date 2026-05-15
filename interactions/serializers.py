@@ -26,6 +26,7 @@ class ReviewSerializer(serializers.ModelSerializer):
             'score',
             'score_display',
             'content',
+            'image',
             'created_at',
             'updated_at',
         ]

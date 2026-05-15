@@ -139,6 +139,7 @@ var UI = {
 
   var trigger    = document.getElementById("newUploadTrigger");
   var panel      = document.getElementById("newUploadPanel");
+  var previewEl  = document.getElementById("newPreviewImg");
   var fileNameEl = document.getElementById("newFileName");
   var progressWr = document.getElementById("newProgressWrap");
   var progressBr = document.getElementById("newProgressBar");
@@ -162,6 +163,11 @@ var UI = {
       return;
     }
     UI.clearFeedback(feedbackEl);
+    if (previewEl) {
+      if (previewEl.src && previewEl.src.indexOf("blob:") === 0) URL.revokeObjectURL(previewEl.src);
+      previewEl.src = URL.createObjectURL(this.files[0]);
+      previewEl.classList.add("is-visible");
+    }
     fileNameEl.textContent = "📄 " + this.files[0].name;
     trigger.style.display  = "none";
     panel.style.display    = "flex";
@@ -177,6 +183,11 @@ var UI = {
       progressWr.style.display = "none";
       UI.setProgress(progressBr, progressTx, 0);
       UI.clearFeedback(feedbackEl);
+      if (previewEl) {
+        if (previewEl.src && previewEl.src.indexOf("blob:") === 0) URL.revokeObjectURL(previewEl.src);
+        previewEl.removeAttribute("src");
+        previewEl.classList.remove("is-visible");
+      }
     });
   }
 
@@ -222,6 +233,7 @@ var UI = {
   var closeBtn   = document.getElementById("btnCloseChangePanel");
   var panel      = document.getElementById("changePanel");
   var fileInput  = document.getElementById("changeFileInput");
+  var previewEl  = document.getElementById("changePreviewImg");
   var fileNameEl = document.getElementById("changeFileName");
   var captionEl  = document.getElementById("changeCaptionInput");
   var submitBtn  = document.getElementById("btnSubmitChange");
@@ -243,6 +255,11 @@ var UI = {
       captionEl.value        = "";
       UI.clearFeedback(feedbackEl);
       UI.setLoading(submitBtn, false);
+      if (previewEl) {
+        if (previewEl.src && previewEl.src.indexOf("blob:") === 0) URL.revokeObjectURL(previewEl.src);
+        previewEl.removeAttribute("src");
+        previewEl.classList.remove("is-visible");
+      }
     });
   }
 
@@ -255,6 +272,11 @@ var UI = {
         UI.feedback(feedbackEl, "❌ " + err, "error");
         this.value = "";
         return;
+      }
+      if (previewEl) {
+        if (previewEl.src && previewEl.src.indexOf("blob:") === 0) URL.revokeObjectURL(previewEl.src);
+        previewEl.src = URL.createObjectURL(this.files[0]);
+        previewEl.classList.add("is-visible");
       }
       fileNameEl.textContent = "📄 " + this.files[0].name;
       UI.clearFeedback(feedbackEl);
