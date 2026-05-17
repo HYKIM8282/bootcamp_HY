@@ -37,16 +37,17 @@ python manage.py runserver
 
 🛠 기술 스택 (Tech Stack)
 이 프로젝트는 다음과 같은 주요 파이썬 라이브러리와 프레임워크를 기반으로 구축되었습니다.
-Backend Framework: Django 4.2.11
+Backend Framework: Django 4.2.11,  Django REST Framework
 ASGI Server: Uvicorn 0.27.1, uvloop 0.19.0
 Template Engine: Jinja2 3.1.2
 Security & Authentication: bcrypt 3.2.2
-, PyJWT 2.7.0, oauthlib 3.2.2
+, PyJWT 2.7.0, oauthlib 3.2.2, djangorestframework-simplejwt
 Environment Management: python-dotenv 1.0.1
 Code Quality & Formatting: pre-commit 3.6.2
 Utilities: requests 2.31.0
 , rich 13.7.1
 , click 8.1.6
+,Frontend: Vanilla JavaScript, axios
 
 ⚙️ 설치 및 실행 방법 (Installation & Usage)
 1. 저장소 복제 및 가상환경 설정
