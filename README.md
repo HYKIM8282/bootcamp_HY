@@ -47,7 +47,7 @@ Code Quality & Formatting: pre-commit 3.6.2
 Utilities: requests 2.31.0
 , rich 13.7.1
 , click 8.1.6
-,Frontend: Vanilla JavaScript, axios
+Frontend: Vanilla JavaScript, axios
 
 ⚙️ 설치 및 실행 방법 (Installation & Usage)
 1. 저장소 복제 및 가상환경 설정
