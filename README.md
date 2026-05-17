@@ -91,12 +91,4 @@ uvicorn <프로젝트명>.asgi:application --reload
 | `community` | 게시판/댓글 |
 | `interactions` | 좋아요/찜/팔로우 등 사용자 상호작용 |
 
-## 🛠 기술 스택
-
-- **Backend**: Django + Django REST Framework
-- **Auth**: JWT (SimpleJWT)
-- **DB**: SQLite (개발)
-- **Frontend**: Django Templates + Vanilla JS (axios)
-
-
 ```
