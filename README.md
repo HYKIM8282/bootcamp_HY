@@ -80,4 +80,23 @@ uvicorn <프로젝트명>.asgi:application --reload
 
 코드를 수정하고 커밋하기 전에 반드시 pre-commit install 명령어를 실행하여 Git 훅을 적용해 주시기 바랍니다.
 본 서비스는 현재 초기 제작 단계에 있습니다
+
+
+## 📦 앱 구조
+
+| 앱 | 역할 |
+|---|---|
+| `accounts` | 사용자 회원가입/로그인/JWT 인증 |
+| `brokers` | 부동산 중개사 정보 관리 (메인 도메인) |
+| `community` | 게시판/댓글 |
+| `interactions` | 좋아요/찜/팔로우 등 사용자 상호작용 |
+
+## 🛠 기술 스택
+
+- **Backend**: Django + Django REST Framework
+- **Auth**: JWT (SimpleJWT)
+- **DB**: SQLite (개발)
+- **Frontend**: Django Templates + Vanilla JS (axios)
+
+
 ```
