@@ -1,3 +1,4 @@
+{% load static %}
 <header class="main-header">
   <div class="mh-inner">
 
@@ -18,25 +19,7 @@
           {{ user.username }}
         </span>
         <button type="button" class="mh-auth__btn mh-auth__btn--logout" onclick="jwtLogout()">로그아웃</button>
-        <script>
-          async function jwtLogout() {
-            const access  = localStorage.getItem('access_token');
-            const refresh = localStorage.getItem('refresh_token') || '';
-            const headers = { 'Content-Type': 'application/json' };
-            if (access) headers['Authorization'] = 'Bearer ' + access;
-            try {
-              await fetch('/accounts/api/logout/', {
-                method: 'POST',
-                headers,
-                body: JSON.stringify({ refresh }),
-              });
-            } catch {}
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            localStorage.removeItem('username');
-            window.location.href = '/accounts/login/';
-          }
-        </script>
+        <script src="{% static 'js/account/logout.js' %}"></script>
       {% else %}
         <a href="{% url 'accounts:login' %}" class="mh-auth__btn mh-auth__btn--login">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
@@ -69,6 +52,13 @@
     <a href="{% url 'brokers:broker2_list' %}" class="sn-link {% block nav_agents %}{% endblock %}">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       부동산 중개사
+    </a>
+
+    <span class="sn-sep"></span>
+
+    <a href="{% url 'community:board' %}" class="sn-link {% block nav_community %}{% endblock %}">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      커뮤니티 게시판
     </a>
 
   </div>
