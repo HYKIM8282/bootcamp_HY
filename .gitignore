@@ -7,6 +7,7 @@ __pycache__/
 # Django
 *.log
 db.sqlite3
+db.sqlite3.bak*
 db.sqlite3-journal
 media/
 
@@ -25,3 +26,6 @@ venv/
 Thumbs.db
 
 docs-vault
+
+# Claude Code
+.claude/
