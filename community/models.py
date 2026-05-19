@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
 
@@ -45,6 +46,9 @@ class Post(models.Model):
     view_count = models.PositiveIntegerField(default=0, verbose_name="조회수")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="작성일")
     updated_at = models.DateTimeField(auto_now=True,     verbose_name="수정일")
+
+    # 통합 이미지(GFK) 역방향 — post.images.all() 가능. DB 스키마 변경 없음.
+    images = GenericRelation("interactions.Image")
 
     class Meta:
         db_table            = "community_post"

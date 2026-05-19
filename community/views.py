@@ -1,11 +1,15 @@
+from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError, transaction
 from django.db.models import F
 from django.shortcuts import render
 
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.parsers import JSONParser
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.response import Response
+
+from interactions.models import Image
+from interactions.serializers import ImageSerializer
 
 from .models import Post, PostLike
 from .serializers import PostSerializer
@@ -112,22 +116,45 @@ class PostViewSet(viewsets.ModelViewSet):
     # 수정/삭제: 본인 글만 가능
     # ─────────────────────────────────────────────────────
     def update(self, request, *args, **kwargs):
+        del args, kwargs  # DRF router 호환용 시그니처 — 본문은 직접 처리
         post = self.get_object()
         if not self._is_owner(request.user, post):
             return Response(
                 {"success": False, "error": {"code": "FORBIDDEN", "message": "수정 권한이 없습니다."}},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        return super().update(request, *args, **kwargs)
+        serializer = self.get_serializer(post, data=request.data, partial=False)
+        if not serializer.is_valid():
+            return Response(
+                {"success": False, "error": {"code": "VALIDATION", "message": _first_error(serializer.errors)}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        serializer.save()
+        return Response(
+            {"success": True, "data": PostSerializer(post).data},
+            status=status.HTTP_200_OK,
+        )
 
     def partial_update(self, request, *args, **kwargs):
+        del args, kwargs  # DRF router 호환용 시그니처 — 본문은 직접 처리
         post = self.get_object()
         if not self._is_owner(request.user, post):
             return Response(
                 {"success": False, "error": {"code": "FORBIDDEN", "message": "수정 권한이 없습니다."}},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        return super().partial_update(request, *args, **kwargs)
+        serializer = self.get_serializer(post, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response(
+                {"success": False, "error": {"code": "VALIDATION", "message": _first_error(serializer.errors)}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        serializer.save()
+        post.refresh_from_db()
+        return Response(
+            {"success": True, "data": PostSerializer(post).data},
+            status=status.HTTP_200_OK,
+        )
 
     def destroy(self, request, *args, **kwargs):
         post = self.get_object()
@@ -166,6 +193,78 @@ class PostViewSet(viewsets.ModelViewSet):
             {"success": True, "data": {"like_count": post.like_count, "liked": liked}},
             status=status.HTTP_200_OK,
         )
+
+    # ─────────────────────────────────────────────────────
+    # 이미지 업로드 — 게시글에 사진 첨부 (다중 가능)
+    #   POST /community/api/posts/<pk>/upload_image/
+    #   Content-Type: multipart/form-data (image, caption?, is_primary?)
+    #   본인 글만 첨부 가능
+    # ─────────────────────────────────────────────────────
+    @action(
+        detail=True,
+        methods=["post"],
+        permission_classes=[permissions.IsAuthenticated],
+        parser_classes=[MultiPartParser, FormParser],
+    )
+    def upload_image(self, request, pk=None):
+        post = self.get_object()
+        if not self._is_owner(request.user, post):
+            return Response(
+                {"success": False, "error": {"code": "FORBIDDEN", "message": "이미지 추가 권한이 없습니다."}},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        serializer = ImageSerializer(data=request.data, context={"request": request})
+        if not serializer.is_valid():
+            return Response(
+                {"success": False, "error": {"code": "VALIDATION", "message": _first_error(serializer.errors)}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        img = serializer.save(
+            content_type=ContentType.objects.get_for_model(Post),
+            object_id=post.pk,
+            uploaded_by=request.user,
+        )
+        return Response(
+            {"success": True, "data": ImageSerializer(img, context={"request": request}).data},
+            status=status.HTTP_201_CREATED,
+        )
+
+    # ─────────────────────────────────────────────────────
+    # 이미지 삭제
+    #   DELETE /community/api/posts/<pk>/images/<image_pk>/
+    #   본인 글의 이미지만 삭제 가능
+    # ─────────────────────────────────────────────────────
+    @action(
+        detail=True,
+        methods=["delete"],
+        url_path=r"images/(?P<image_pk>[^/.]+)",
+        permission_classes=[permissions.IsAuthenticated],
+        parser_classes=[JSONParser],
+    )
+    def delete_image(self, request, pk=None, image_pk=None):
+        post = self.get_object()
+        if not self._is_owner(request.user, post):
+            return Response(
+                {"success": False, "error": {"code": "FORBIDDEN", "message": "이미지 삭제 권한이 없습니다."}},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        img = Image.objects.filter(
+            pk=image_pk,
+            content_type=ContentType.objects.get_for_model(Post),
+            object_id=post.pk,
+        ).first()
+        if not img:
+            return Response(
+                {"success": False, "error": {"code": "NOT_FOUND", "message": "이미지를 찾을 수 없습니다."}},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        img.image.delete(save=False)
+        img.delete()
+        return Response({"success": True}, status=status.HTTP_200_OK)
 
     # ─────────────────────────────────────────────────────
     @staticmethod
