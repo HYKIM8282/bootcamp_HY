@@ -34,7 +34,8 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('access_token',  data.access);
         localStorage.setItem('refresh_token', data.refresh);
         localStorage.setItem('username',      data.username);
-        window.location.href = '/brokers/dashboard/';
+        var next = form.dataset.next || '/brokers/dashboard/';
+        window.location.href = next;
       } else if (data.errors) {
         showFieldErrors(data.errors);
       } else {

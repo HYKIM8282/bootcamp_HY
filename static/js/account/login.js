@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.disabled    = true;
     btn.textContent = '로그인 중...';
 
-    var next = form.dataset.next || '/brokers/dashboard/';
+    var next = form.dataset.next || '/community/';
 
     try {
       const res  = await fetch('/accounts/api/login/', {

@@ -35,7 +35,8 @@
         </form>
 
         <div class="text-center mt-3 small">
-          계정이 없으신가요? <a href="{% url 'accounts:signup' %}">회원가입</a>
+          계정이 없으신가요?
+          <a href="{% url 'accounts:signup' %}{% if next %}?next={{ next|urlencode }}{% endif %}">회원가입</a>
         </div>
       </div>
     </div>

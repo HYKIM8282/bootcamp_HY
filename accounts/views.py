@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,18 +11,32 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .forms import SignUpForm
 
 
+DEFAULT_REDIRECT = '/community/'
+
+
+def _safe_next(request):
+    """next 파라미터를 안전하게 정리. 외부 URL/잘못된 값이면 기본 경로 사용."""
+    next_url = request.GET.get('next', '') or ''
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}
+    ):
+        return next_url
+    return DEFAULT_REDIRECT
+
+
 # ── HTML 렌더링 뷰 (GET 전용) ────────────────────────────────────
 
 def signup_view(request):
     if request.user.is_authenticated:
-        return redirect('brokers:dashboard')
-    return render(request, 'accounts/signup.html')
+        return redirect(_safe_next(request))
+    next_url = _safe_next(request)
+    return render(request, 'accounts/signup.html', {'next': next_url})
 
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('brokers:dashboard')
-    next_url = request.GET.get('next', '')
+        return redirect(_safe_next(request))
+    next_url = _safe_next(request)
     return render(request, 'accounts/login.html', {'next': next_url})
 
 
