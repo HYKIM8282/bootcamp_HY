@@ -547,8 +547,16 @@
     const totalPages = Math.max(1, Math.ceil(state.total / state.pageSize));
     if (state.page < totalPages) { state.page += 1; loadList(); }
   });
-  $('boardCategory').addEventListener('change', (e) => {
-    state.category = e.target.value;
+  // 카테고리 탭 — 클릭 시 해당 카테고리만 필터링 + active 표시
+  $('boardTabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.board-tab');
+    if (!btn) return;
+    document.querySelectorAll('.board-tab').forEach((b) => {
+      const active = b === btn;
+      b.classList.toggle('is-active', active);
+      b.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    state.category = btn.dataset.cat || '';
     state.page = 1;
     loadList();
   });

@@ -20,12 +20,30 @@
 }
 .board-actions { display: flex; gap: 8px; }
 
-.board-select {
-  height: 36px;
-  padding: 0 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: #fff;
+/* === 카테고리 탭 === */
+.board-tabs {
+  display: flex;
+  gap: 2px;
+  margin: 4px 0 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.board-tab {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color .15s, border-color .15s;
+}
+.board-tab:hover { color: #111827; }
+.board-tab.is-active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+  font-weight: 600;
 }
 
 .board-btn {

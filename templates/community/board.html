@@ -25,17 +25,19 @@
   <header class="board-head">
     <h2 class="board-title">📋 커뮤니티 게시판</h2>
     <div class="board-actions">
-      <select id="boardCategory" class="board-select">
-        <option value="">전체</option>
-        <option value="latest">최신글</option>
-        <option value="hot">인기글</option>
-        <option value="region">관심동네</option>
-      </select>
       <button type="button" id="boardWriteBtn" class="board-btn board-btn--primary">
         ✏ 글쓰기
       </button>
     </div>
   </header>
+
+  {# 카테고리 탭 — 클릭 시 해당 카테고리 글만 필터링 #}
+  <nav class="board-tabs" id="boardTabs" role="tablist" aria-label="카테고리">
+    <button type="button" class="board-tab is-active" data-cat="" role="tab" aria-selected="true">전체</button>
+    <button type="button" class="board-tab" data-cat="latest" role="tab" aria-selected="false">최신글</button>
+    <button type="button" class="board-tab" data-cat="hot"    role="tab" aria-selected="false">인기글</button>
+    <button type="button" class="board-tab" data-cat="region" role="tab" aria-selected="false">관심동네</button>
+  </nav>
 
   {# 게시판 표 #}
   <div class="board-table-wrap">
