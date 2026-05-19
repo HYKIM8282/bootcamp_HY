@@ -175,18 +175,22 @@ class PostViewSet(viewsets.ModelViewSet):
         post = self.get_object()
         user = request.user
 
-        with transaction.atomic():
-            try:
+        # ⚠️ atomic 블록 안에서 IntegrityError 가 나면 outer 트랜잭션이 broken 상태가 되어
+        # 이후 쿼리가 TransactionManagementError 를 던진다. 따라서 try 를 atomic 바깥으로 두고
+        # 실패 시 새 atomic 블록을 다시 열어 언라이크 처리한다.
+        try:
+            with transaction.atomic():
                 PostLike.objects.create(post=post, user=user)
                 Post.objects.filter(pk=post.pk).update(like_count=F("like_count") + 1)
-                liked = True
-            except IntegrityError:
-                # 이미 좋아요를 누른 사용자 → 취소(언라이크)
+            liked = True
+        except IntegrityError:
+            # 이미 좋아요를 누른 사용자 → 취소(언라이크)
+            with transaction.atomic():
                 PostLike.objects.filter(post=post, user=user).delete()
                 Post.objects.filter(pk=post.pk, like_count__gt=0).update(
                     like_count=F("like_count") - 1
                 )
-                liked = False
+            liked = False
 
         post.refresh_from_db()
         return Response(
