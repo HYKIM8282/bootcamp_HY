@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}홈 (시안 v2 — 투명정보 커뮤니티){% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/_mockup/landing_v2.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="tv-wrap">
+
+  {# ============================================================
+     0. 페이지 브랜드 + 5단계 탭 네비게이션 (시안용)
+     ============================================================ #}
+  <div class="tv-pageheader">
+    <div class="tv-pageheader__brand">
+      <div class="tv-pageheader__logo">🏠</div>
+      <div>
+        <h1 class="tv-pageheader__title">부동산 투명정보 커뮤니티</h1>
+        <p class="tv-pageheader__sub">중개업소 정보 · 피해사례 · 지역 소통창구</p>
+      </div>
+    </div>
+    <div class="tv-pageheader__actions">
+      <button type="button" class="tv-btn tv-btn--dark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        글쓰기
+      </button>
+    </div>
+  </div>
+
+  <nav class="tv-stepnav">
+    <button class="tv-step tv-step--active">1. 커뮤니티 메인</button>
+    <button class="tv-step">2. Q&amp;A 상세</button>
+    <button class="tv-step">3. 중개업소 상세</button>
+    <button class="tv-step">4. 피해/후기 상세</button>
+    <button class="tv-step">5. 사용자 프로필</button>
+  </nav>
+
+
+  {# ============================================================
+     1. HERO — 좌측 컨셉 카피 + 우측 오늘의 위험 알림
+     ============================================================ #}
+  <section class="tv-hero">
+    <div class="tv-hero__main">
+      <h2 class="tv-hero__title">
+        지역별 중개업소와<br>
+        피해사례를 <em>한 화면</em>에서 확인하세요
+      </h2>
+      <p class="tv-hero__desc">
+        공공데이터 · 사용자 후기 · 전세사기·지주택 사례를 연결해<br>
+        계약 전 위험 신호를 빠르게 파악할 수 있는 커뮤니티입니다.
+      </p>
+      <form class="tv-search" onsubmit="return false;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="지역, 중개업소명, 피해 키워드 검색" class="tv-search__input">
+        <button type="submit" class="tv-search__btn">검색하기</button>
+      </form>
+    </div>
+
+    <aside class="tv-hero__alert">
+      <div class="tv-hero__alert-hd">
+        <span class="tv-hero__alert-eyebrow">오늘의 위험 알림</span>
+        <h3 class="tv-hero__alert-title">소통창구</h3>
+        <span class="tv-bell" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        </span>
+      </div>
+      <ul class="tv-alerts">
+        <li class="tv-alert">
+          <span class="tv-alert__ico">📈</span>
+          <p>최근 7일간 <b>전세사기 키워드</b> 보고가 23% 증가했습니다.</p>
+        </li>
+        <li class="tv-alert">
+          <span class="tv-alert__ico">📋</span>
+          <p>지주택 상담 글 중 <b>계약서·조합규약 확인</b> 요청이 가장 많습니다.</p>
+        </li>
+        <li class="tv-alert">
+          <span class="tv-alert__ico">⚠️</span>
+          <p>중개업소 후기 작성 시 <b>사실 중심 기록</b>을 권장합니다.</p>
+        </li>
+      </ul>
+    </aside>
+  </section>
+
+
+  {# ============================================================
+     2. STATS — 3개 통계 카드
+     ============================================================ #}
+  <section class="tv-stats">
+    <article class="tv-stat-card">
+      <div class="tv-stat-card__label">등록 중개업소</div>
+      <div class="tv-stat-card__num">509<span>건</span></div>
+      <div class="tv-stat-card__sub">서울시 공공데이터 기준</div>
+      <span class="tv-stat-card__ico tv-stat-card__ico--blue">🏢</span>
+    </article>
+    <article class="tv-stat-card">
+      <div class="tv-stat-card__label">전세사기 피해사례</div>
+      <div class="tv-stat-card__num tv-stat-card__num--amber">128<span>건</span></div>
+      <div class="tv-stat-card__sub">사용자 제보 · 확인 사례</div>
+      <span class="tv-stat-card__ico tv-stat-card__ico--amber">⚠️</span>
+    </article>
+    <article class="tv-stat-card">
+      <div class="tv-stat-card__label">지주택 관련 피해사례</div>
+      <div class="tv-stat-card__num tv-stat-card__num--red">43<span>건</span></div>
+      <div class="tv-stat-card__sub">지역주택조합 상담 이슈</div>
+      <span class="tv-stat-card__ico tv-stat-card__ico--red">📌</span>
+    </article>
+  </section>
+
+
+  {# ============================================================
+     3. MAIN BOARD — 3컬럼: 좌(필터+체크리스트) | 중(피드) | 우(지도+인기)
+     ============================================================ #}
+  <section class="tv-board">
+
+    {# ──────── 좌측: 지역 필터 + 계약 전 체크리스트 ──────── #}
+    <aside class="tv-board__left">
+
+      <div class="tv-card">
+        <div class="tv-card__hd">
+          <span class="tv-card__hd-ico">📍</span>
+          지역 필터
+        </div>
+        <div class="tv-card__bd">
+          <ul class="tv-region-list">
+            <li><button class="tv-region tv-region--active">전체</button></li>
+            <li><button class="tv-region">강남구</button></li>
+            <li><button class="tv-region">송파구</button></li>
+            <li><button class="tv-region">성동구</button></li>
+            <li><button class="tv-region">마포구</button></li>
+            <li><button class="tv-region">관악구</button></li>
+            <li><button class="tv-region">은평구</button></li>
+            <li><button class="tv-region">+ 더보기</button></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tv-card">
+        <div class="tv-card__hd">
+          <span class="tv-card__hd-ico tv-card__hd-ico--green">✅</span>
+          계약 전 체크리스트
+        </div>
+        <div class="tv-card__bd">
+          <ul class="tv-check">
+            <li><label><input type="checkbox"> 중개업소 등록 여부 확인</label></li>
+            <li><label><input type="checkbox"> 등기부등본 권리관계 확인</label></li>
+            <li><label><input type="checkbox"> 보증보험 가입 가능 여부</label></li>
+            <li><label><input type="checkbox"> 근저당 · 가압류 확인</label></li>
+            <li><label><input type="checkbox"> 잔금일 재열람 일정</label></li>
+          </ul>
+          <button class="tv-btn tv-btn--green tv-btn--block">전체 체크리스트 보기</button>
+        </div>
+      </div>
+
+    </aside>
+
+
+    {# ──────── 중앙: 실시간 커뮤니티 피드 ──────── #}
+    <div class="tv-board__mid">
+
+      <div class="tv-feed-hd">
+        <div>
+          <h3 class="tv-feed-hd__title">💬 실시간 커뮤니티</h3>
+          <p class="tv-feed-hd__sub">피해사례, 후기, 질문을 지역별로 확인하세요.</p>
+        </div>
+        <div class="tv-feed-hd__btns">
+          <button class="tv-btn tv-btn--outline">필터</button>
+          <button class="tv-btn tv-btn--green">+ 사례 등록</button>
+        </div>
+      </div>
+
+      {# 피드 카드들 #}
+      <article class="tv-post">
+        <div class="tv-post__tags">
+          <span class="tv-chip tv-chip--cat">전세사기</span>
+          <span class="tv-chip tv-chip--risk-high">위험도 높음</span>
+        </div>
+        <h4 class="tv-post__title">계약 전 등기부등본에서 꼭 봐야 할 부분 정리</h4>
+        <p class="tv-post__excerpt">
+          근저당, 압류, 선순위 여부를 확인하지 않고 계약했다가 보증금 반환 문제를 겪은 사례가 많습니다.
+        </p>
+        <div class="tv-post__meta">
+          <span>📍 관악구 신림동</span>
+          <span class="tv-divider">·</span>
+          <span>💬 댓글 18</span>
+          <span class="tv-divider">·</span>
+          <span>👁️ 조회 284</span>
+          <span class="tv-divider">·</span>
+          <span>👍 추천 36</span>
+          <span class="tv-divider">·</span>
+          <span>12분 전</span>
+        </div>
+      </article>
+
+      <article class="tv-post">
+        <div class="tv-post__tags">
+          <span class="tv-chip tv-chip--cat-review">중개업소 후기</span>
+          <span class="tv-chip tv-chip--risk-mid">위험도 보통</span>
+        </div>
+        <h4 class="tv-post__title">성동구 중개업소 방문 후기와 상담 체크리스트</h4>
+        <p class="tv-post__excerpt">
+          수수료, 도장, 하자 고지 여부 등 직접 확인한 내용을 공유합니다.
+        </p>
+        <div class="tv-post__meta">
+          <span>📍 성동구 성수동</span>
+          <span class="tv-divider">·</span>
+          <span>💬 댓글 9</span>
+          <span class="tv-divider">·</span>
+          <span>👁️ 조회 143</span>
+          <span class="tv-divider">·</span>
+          <span>👍 추천 21</span>
+          <span class="tv-divider">·</span>
+          <span>34분 전</span>
+        </div>
+      </article>
+
+      <article class="tv-post">
+        <div class="tv-post__tags">
+          <span class="tv-chip tv-chip--cat-info">지주택</span>
+          <span class="tv-chip tv-chip--risk-warn">위험도 주의</span>
+        </div>
+        <h4 class="tv-post__title">지역주택조합 가입 전 확인해야 할 핵심 문서</h4>
+        <p class="tv-post__excerpt">
+          토지확보율, 추가분담금 가능성, 조합 규약 등 반드시 확인해야 할 사항을 정리했습니다.
+        </p>
+        <div class="tv-post__meta">
+          <span>📍 은평구 응암동</span>
+          <span class="tv-divider">·</span>
+          <span>💬 댓글 27</span>
+          <span class="tv-divider">·</span>
+          <span>👁️ 조회 391</span>
+          <span class="tv-divider">·</span>
+          <span>👍 추천 58</span>
+          <span class="tv-divider">·</span>
+          <span>1시간 전</span>
+        </div>
+      </article>
+
+      <article class="tv-post">
+        <div class="tv-post__tags">
+          <span class="tv-chip tv-chip--cat-q">계약 질문</span>
+          <span class="tv-chip tv-chip--expert">전문가 답변</span>
+        </div>
+        <h4 class="tv-post__title">월세 계약 특약사항에 넣으면 좋은 문구를 알고 싶습니다.</h4>
+        <p class="tv-post__excerpt">
+          하자보수, 원상복구 범위, 임차인 보호 관련 특약 예시를 정리해 답변드립니다.
+        </p>
+        <div class="tv-post__meta">
+          <span>📍 마포구 합정동</span>
+          <span class="tv-divider">·</span>
+          <span>💬 댓글 12</span>
+          <span class="tv-divider">·</span>
+          <span>👁️ 조회 204</span>
+          <span class="tv-divider">·</span>
+          <span>👍 추천 19</span>
+          <span class="tv-divider">·</span>
+          <span>2시간 전</span>
+        </div>
+      </article>
+
+      <button class="tv-btn tv-btn--outline tv-btn--block">더 많은 사례 보기</button>
+
+    </div>
+
+
+    {# ──────── 우측: 지도 + 인기 게시판 ──────── #}
+    <aside class="tv-board__right">
+
+      <div class="tv-card">
+        <div class="tv-card__hd">
+          <span class="tv-card__hd-ico">🗺️</span>
+          지도 기반 현황
+        </div>
+        <div class="tv-card__bd">
+          <div class="tv-map">
+            <div class="tv-map__grid"></div>
+            <div class="tv-map__pin">⊕</div>
+          </div>
+          <p class="tv-map__caption">
+            구 등 클릭 시 지역 영역<br>
+            카카오맵 또는 SVG 지도 연결 가능
+          </p>
+        </div>
+      </div>
+
+      <div class="tv-card">
+        <div class="tv-card__hd">
+          <span class="tv-card__hd-ico">🔥</span>
+          인기 게시판
+        </div>
+        <div class="tv-card__bd tv-card__bd--list">
+          <a href="#" class="tv-list-item">
+            <span>계약 전 질문</span>
+            <span class="tv-list-item__cnt">532</span>
+          </a>
+          <a href="#" class="tv-list-item">
+            <span>피해사례 공유</span>
+            <span class="tv-list-item__cnt">214</span>
+          </a>
+          <a href="#" class="tv-list-item">
+            <span>중개업소 후기</span>
+            <span class="tv-list-item__cnt">418</span>
+          </a>
+          <a href="#" class="tv-list-item">
+            <span>지주택 주의정보</span>
+            <span class="tv-list-item__cnt">96</span>
+          </a>
+        </div>
+      </div>
+
+    </aside>
+
+  </section>
+
+</div>
+
+{% endblock %}

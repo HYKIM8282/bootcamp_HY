@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}홈 (시안 v1){% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/_mockup/landing_v1.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{# ============================================================
+   1. HERO — 중개업소 찾기 + 정보 소통 두 축을 분명히 보여주기
+   ============================================================ #}
+<section class="lp-hero">
+  <div class="lp-hero__bg-grid"></div>
+  <div class="lp-hero__inner">
+
+    <div class="lp-hero__badge">
+      <span class="lp-hero__badge-dot"></span>
+      국토교통부 공공데이터 기반
+    </div>
+
+    <h1 class="lp-hero__title">
+      믿을 수 있는 <em>중개업소</em>와<br>
+      투명한 <em>부동산 이야기</em>를 한 곳에서
+    </h1>
+
+    <p class="lp-hero__desc">
+      검증된 서울 25개 자치구 중개업 정보부터<br>
+      살아있는 사용자 후기와 정보 소통까지.
+    </p>
+
+    {# 메인 검색 — 지역 + 키워드 #}
+    <form class="lp-search" onsubmit="return false;">
+      <div class="lp-search__field">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <select class="lp-search__select">
+          <option>전체 지역</option>
+          <option>강남구</option>
+          <option>마포구</option>
+          <option>성동구</option>
+          <option>송파구</option>
+        </select>
+      </div>
+      <div class="lp-search__divider"></div>
+      <div class="lp-search__field lp-search__field--grow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="중개업소·중개사 이름, 또는 동네 이야기 검색" class="lp-search__input">
+      </div>
+      <button type="submit" class="lp-search__btn">검색</button>
+    </form>
+
+    {# CTA 듀얼 — 중개업 vs 정보 소통 #}
+    <div class="lp-hero__ctas">
+      <a href="#" class="lp-cta-btn lp-cta-btn--primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2M8 7V5a2 2 0 00-4 0v2"/></svg>
+        중개업소 둘러보기
+      </a>
+      <a href="#" class="lp-cta-btn lp-cta-btn--ghost">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        정보 소통 보러가기
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+{# ============================================================
+   2. 3대 가치 — 중개업 / 정보소통 / 데이터
+   ============================================================ #}
+<section class="lp-values">
+  <div class="lp-container">
+    <div class="lp-values__grid">
+
+      <div class="lp-value-card lp-value-card--brokers">
+        <div class="lp-value-card__icon">🏢</div>
+        <h3 class="lp-value-card__title">검증된 중개업소</h3>
+        <p class="lp-value-card__desc">
+          공공데이터로 등록 여부와 영업 상태를 확인하고,
+          사용자 후기로 한 번 더 검증된 중개업소만.
+        </p>
+        <a href="#" class="lp-value-card__link">중개업소 보기 →</a>
+      </div>
+
+      <div class="lp-value-card lp-value-card--community">
+        <div class="lp-value-card__icon">💬</div>
+        <h3 class="lp-value-card__title">부동산 정보 소통</h3>
+        <p class="lp-value-card__desc">
+          질문·후기·시세 이야기까지.
+          진짜 거주자들과 예정 입주자들의 살아있는 정보 교환.
+        </p>
+        <a href="#" class="lp-value-card__link">게시판 보기 →</a>
+      </div>
+
+      <div class="lp-value-card lp-value-card--data">
+        <div class="lp-value-card__icon">📊</div>
+        <h3 class="lp-value-card__title">투명한 공공 데이터</h3>
+        <p class="lp-value-card__desc">
+          국토부·V-World 등 공공 출처 데이터만 활용.
+          누가 어떤 근거로 알려주는지 추적 가능.
+        </p>
+        <a href="#" class="lp-value-card__link">데이터 출처 →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+{# ============================================================
+   3. 인기 중개업소 (Brokers Preview)
+   ============================================================ #}
+<section class="lp-section">
+  <div class="lp-container">
+
+    <div class="lp-section__head">
+      <div>
+        <h2 class="lp-section__title">지금 주목받는 중개업소</h2>
+        <p class="lp-section__sub">사용자 평점과 활동 빈도로 추천합니다</p>
+      </div>
+      <a href="#" class="lp-section__more">전체 보기 →</a>
+    </div>
+
+    <div class="lp-brokers-grid">
+      {% for i in "1234" %}
+      <article class="lp-broker-card">
+        <div class="lp-broker-card__cover">
+          <span class="lp-broker-card__badge">✓ 검증</span>
+        </div>
+        <div class="lp-broker-card__body">
+          <h4 class="lp-broker-card__name">○○부동산공인중개사</h4>
+          <p class="lp-broker-card__addr">서울특별시 ○○구 ○○로 12</p>
+          <div class="lp-broker-card__meta">
+            <span class="lp-rating">⭐ 4.8</span>
+            <span class="lp-divider">·</span>
+            <span class="lp-broker-card__count">후기 132건</span>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+{# ============================================================
+   4. 정보 소통 (Community Preview)
+   ============================================================ #}
+<section class="lp-section lp-section--alt">
+  <div class="lp-container">
+
+    <div class="lp-section__head">
+      <div>
+        <h2 class="lp-section__title">지금 뜨는 부동산 이야기</h2>
+        <p class="lp-section__sub">실거주자·예정자가 직접 나누는 정보</p>
+      </div>
+      <a href="#" class="lp-section__more">게시판 →</a>
+    </div>
+
+    {# 탭 #}
+    <div class="lp-tabs">
+      <button class="lp-tab lp-tab--active">전체</button>
+      <button class="lp-tab">질문</button>
+      <button class="lp-tab">후기</button>
+      <button class="lp-tab">시세 이야기</button>
+      <button class="lp-tab">동네 정보</button>
+    </div>
+
+    <div class="lp-posts-grid">
+      <article class="lp-post-card lp-post-card--hot">
+        <span class="lp-post-card__cat lp-post-card__cat--review">후기</span>
+        <h4 class="lp-post-card__title">강남 ○○ 중개사 통해서 계약했어요. 결론부터 말씀드리면...</h4>
+        <p class="lp-post-card__excerpt">신축 아파트 전세 매물을 보러갔는데 매물 설명이 매우 꼼꼼했고 등기부등본까지 미리...</p>
+        <div class="lp-post-card__meta">
+          <span class="lp-post-card__author">강남거주민</span>
+          <span class="lp-divider">·</span>
+          <span>2시간 전</span>
+          <span class="lp-post-card__stats">❤️ 42 · 💬 18</span>
+        </div>
+      </article>
+
+      <article class="lp-post-card">
+        <span class="lp-post-card__cat lp-post-card__cat--q">질문</span>
+        <h4 class="lp-post-card__title">전세 보증보험 가입 가능한 매물인지 확인하는 법?</h4>
+        <p class="lp-post-card__excerpt">처음 전세 들어가는데 보증보험 가입 가능한지 미리 확인할 방법이 있나요?...</p>
+        <div class="lp-post-card__meta">
+          <span class="lp-post-card__author">새내기세입자</span>
+          <span class="lp-divider">·</span>
+          <span>5시간 전</span>
+          <span class="lp-post-card__stats">❤️ 12 · 💬 8</span>
+        </div>
+      </article>
+
+      <article class="lp-post-card">
+        <span class="lp-post-card__cat lp-post-card__cat--info">시세</span>
+        <h4 class="lp-post-card__title">마포구 공덕동 전세 시세 — 최근 3개월 추이</h4>
+        <p class="lp-post-card__excerpt">실거래가 자료 + 동네 분위기 정리해봤습니다. 평형별 시세는 다음과 같습니다...</p>
+        <div class="lp-post-card__meta">
+          <span class="lp-post-card__author">데이터쟁이</span>
+          <span class="lp-divider">·</span>
+          <span>어제</span>
+          <span class="lp-post-card__stats">❤️ 88 · 💬 24</span>
+        </div>
+      </article>
+
+      <article class="lp-post-card">
+        <span class="lp-post-card__cat lp-post-card__cat--review">후기</span>
+        <h4 class="lp-post-card__title">송파구 ○○중개사 추천합니다. 깐깐하지만 믿을만함</h4>
+        <p class="lp-post-card__excerpt">매물 보여주실 때 단점부터 먼저 말해주시는 분이라 신뢰가 갔습니다. 계약 후에도...</p>
+        <div class="lp-post-card__meta">
+          <span class="lp-post-card__author">송파9년차</span>
+          <span class="lp-divider">·</span>
+          <span>2일 전</span>
+          <span class="lp-post-card__stats">❤️ 56 · 💬 14</span>
+        </div>
+      </article>
+
+      <article class="lp-post-card">
+        <span class="lp-post-card__cat lp-post-card__cat--q">질문</span>
+        <h4 class="lp-post-card__title">중개수수료 협상 어디까지 가능할까요?</h4>
+        <p class="lp-post-card__excerpt">법정 한도까지 부르시는 게 일반적인지, 협상의 여지가 있는지 궁금합니다...</p>
+        <div class="lp-post-card__meta">
+          <span class="lp-post-card__author">예비매수인</span>
+          <span class="lp-divider">·</span>
+          <span>3일 전</span>
+          <span class="lp-post-card__stats">❤️ 31 · 💬 22</span>
+        </div>
+      </article>
+
+      <article class="lp-post-card">
+        <span class="lp-post-card__cat lp-post-card__cat--info">동네</span>
+        <h4 class="lp-post-card__title">성동구 성수동, 실거주자가 본 진짜 장단점</h4>
+        <p class="lp-post-card__excerpt">소셜에서 보는 이미지와 실거주의 차이를 정리해보았습니다. 교통은...</p>
+        <div class="lp-post-card__meta">
+          <span class="lp-post-card__author">성수동주민</span>
+          <span class="lp-divider">·</span>
+          <span>4일 전</span>
+          <span class="lp-post-card__stats">❤️ 71 · 💬 32</span>
+        </div>
+      </article>
+    </div>
+
+  </div>
+</section>
+
+
+{# ============================================================
+   5. CTA — 회원가입 유도
+   ============================================================ #}
+<section class="lp-final-cta">
+  <div class="lp-container">
+    <h2 class="lp-final-cta__title">
+      투명한 부동산,<br>
+      여러분의 한 마디로 시작됩니다.
+    </h2>
+    <p class="lp-final-cta__desc">
+      가입하면 후기 작성, 중개업소 검색, 정보 소통이 모두 가능합니다.
+    </p>
+    <div class="lp-final-cta__btns">
+      <a href="#" class="lp-cta-btn lp-cta-btn--primary lp-cta-btn--lg">무료 회원가입</a>
+      <a href="#" class="lp-cta-btn lp-cta-btn--ghost lp-cta-btn--lg">먼저 둘러보기</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

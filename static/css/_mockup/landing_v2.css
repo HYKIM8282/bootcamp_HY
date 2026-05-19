@@ -1,0 +1,699 @@
+/* ============================================================
+   landing_v2.css — 시안 v2: 투명정보 커뮤니티 대시보드형
+   참고 이미지: 그린 + 다크네이비 / 3컬럼 / 통계카드 / 피드형
+   기준 토큰은 base.css의 :root 변수를 그대로 사용.
+   ============================================================ */
+
+/* ── v2 전용 색상 보강 ──────────────────────
+   base.css에 없는 그린 계열을 :root가 아니라 .tv-wrap 스코프로 정의
+   (전역 토큰 오염 방지)
+   ──────────────────────────────────────── */
+.tv-wrap {
+  --tv-green-900: #064E3B;
+  --tv-green-700: #047857;
+  --tv-green-600: #059669;
+  --tv-green-500: #10B981;
+  --tv-green-300: #6EE7B7;
+  --tv-green-100: #D1FAE5;
+  --tv-green-50:  #ECFDF5;
+
+  --tv-risk-high-bg:   #FEE2E2;
+  --tv-risk-high-fg:   #B91C1C;
+  --tv-risk-mid-bg:    #FEF3C7;
+  --tv-risk-mid-fg:    #92400E;
+  --tv-risk-warn-bg:   #FFEDD5;
+  --tv-risk-warn-fg:   #9A3412;
+  --tv-cat-bg:         #DBEAFE;
+  --tv-cat-fg:         #1E40AF;
+  --tv-cat-review-bg:  #D1FAE5;
+  --tv-cat-review-fg:  #047857;
+  --tv-cat-info-bg:    #E0E7FF;
+  --tv-cat-info-fg:    #4338CA;
+  --tv-cat-q-bg:       #FCE7F3;
+  --tv-cat-q-fg:       #9D174D;
+  --tv-expert-bg:      #FEF3C7;
+  --tv-expert-fg:      #92400E;
+
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px 24px 80px;
+}
+
+
+/* ============================================================
+   0) 페이지 헤더 + 스텝 네비
+   ============================================================ */
+.tv-pageheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+.tv-pageheader__brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.tv-pageheader__logo {
+  width: 48px;
+  height: 48px;
+  background: var(--tv-green-100);
+  color: var(--tv-green-700);
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+}
+.tv-pageheader__title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  color: var(--navy-900);
+  margin: 0 0 2px;
+}
+.tv-pageheader__sub {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.tv-stepnav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.tv-step {
+  border: 1px solid var(--slate-200);
+  background: var(--white);
+  color: var(--text-secondary);
+  font-family: var(--ff-sans);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  letter-spacing: -.2px;
+  transition: var(--transition);
+}
+.tv-step:hover {
+  color: var(--tv-green-700);
+  border-color: var(--tv-green-300);
+}
+.tv-step--active {
+  background: var(--tv-green-700);
+  border-color: var(--tv-green-700);
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(4, 120, 87, .3);
+}
+
+
+/* ============================================================
+   공통 버튼
+   ============================================================ */
+.tv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--ff-sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -.2px;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+.tv-btn--green {
+  background: var(--tv-green-600);
+  color: var(--white);
+  border-color: var(--tv-green-600);
+}
+.tv-btn--green:hover {
+  background: var(--tv-green-700);
+  border-color: var(--tv-green-700);
+  color: var(--white);
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(5, 150, 105, .3);
+}
+.tv-btn--dark {
+  background: var(--navy-900);
+  color: var(--white);
+  border-color: var(--navy-900);
+}
+.tv-btn--dark:hover {
+  background: var(--navy-700);
+  border-color: var(--navy-700);
+  color: var(--white);
+  text-decoration: none;
+}
+.tv-btn--outline {
+  background: var(--white);
+  color: var(--text-secondary);
+  border-color: var(--slate-200);
+}
+.tv-btn--outline:hover {
+  border-color: var(--tv-green-600);
+  color: var(--tv-green-700);
+  text-decoration: none;
+}
+.tv-btn--block {
+  width: 100%;
+  margin-top: 12px;
+}
+
+
+/* ============================================================
+   1) HERO — 그린 박스 + 사이드 알림
+   ============================================================ */
+.tv-hero {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.tv-hero__main {
+  position: relative;
+  background: linear-gradient(135deg, var(--tv-green-700) 0%, var(--tv-green-900) 100%);
+  border-radius: var(--radius-lg);
+  padding: 36px 36px 32px;
+  color: var(--white);
+  overflow: hidden;
+}
+.tv-hero__main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at top right, #000 30%, transparent 85%);
+}
+.tv-hero__title {
+  position: relative;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -.7px;
+  line-height: 1.32;
+  margin: 0 0 14px;
+}
+.tv-hero__title em {
+  font-style: normal;
+  color: var(--amber-lt);
+  font-weight: 800;
+}
+.tv-hero__desc {
+  position: relative;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, .82);
+  margin: 0 0 22px;
+}
+
+.tv-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 6px 6px 6px 16px;
+  color: var(--slate-500);
+}
+.tv-search__input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-family: var(--ff-sans);
+  font-size: 13.5px;
+  color: var(--slate-900);
+  padding: 12px 4px;
+}
+.tv-search__btn {
+  background: var(--navy-900);
+  color: var(--white);
+  border: 0;
+  font-family: var(--ff-sans);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 11px 22px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  letter-spacing: -.2px;
+  transition: var(--transition);
+}
+.tv-search__btn:hover {
+  background: var(--navy-700);
+  transform: translateY(-1px);
+}
+
+/* 사이드 알림 박스 */
+.tv-hero__alert {
+  background: var(--white);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 22px 22px 14px;
+  position: relative;
+}
+.tv-hero__alert-hd {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  gap: 8px;
+}
+.tv-hero__alert-eyebrow {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  display: block;
+  margin-bottom: 3px;
+}
+.tv-hero__alert-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--navy-900);
+  margin: 0;
+  letter-spacing: -.4px;
+}
+.tv-hero__alert-hd > div { flex: 1; }
+.tv-bell {
+  background: var(--tv-green-100);
+  color: var(--tv-green-700);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.tv-alerts {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tv-alert {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  background: var(--tv-green-50);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--tv-green-100);
+}
+.tv-alert__ico {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.tv-alert p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--slate-800);
+}
+.tv-alert p b {
+  color: var(--tv-green-700);
+  font-weight: 700;
+}
+
+
+/* ============================================================
+   2) STATS — 통계 카드 3개
+   ============================================================ */
+.tv-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.tv-stat-card {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  overflow: hidden;
+  transition: var(--transition);
+}
+.tv-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+.tv-stat-card__label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: -.2px;
+  margin-bottom: 6px;
+}
+.tv-stat-card__num {
+  font-family: var(--ff-serif);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--tv-green-700);
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+.tv-stat-card__num span {
+  font-family: var(--ff-sans);
+  font-size: 14.5px;
+  font-weight: 700;
+  margin-left: 3px;
+  color: var(--text-secondary);
+}
+.tv-stat-card__num--amber { color: var(--amber); }
+.tv-stat-card__num--red   { color: var(--red); }
+
+.tv-stat-card__sub {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.tv-stat-card__ico {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+}
+.tv-stat-card__ico--blue  { background: var(--navy-50);    color: var(--navy-700); }
+.tv-stat-card__ico--amber { background: var(--amber-pale); color: var(--amber); }
+.tv-stat-card__ico--red   { background: var(--red-pale);   color: var(--red); }
+
+
+/* ============================================================
+   3) BOARD — 3컬럼 메인
+   ============================================================ */
+.tv-board {
+  display: grid;
+  grid-template-columns: 240px 1fr 280px;
+  gap: 18px;
+  align-items: start;
+}
+
+/* 공통 카드 */
+.tv-card {
+  background: var(--white);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.tv-card__hd {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 18px;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--navy-900);
+  border-bottom: 1px solid var(--slate-100);
+  letter-spacing: -.3px;
+}
+.tv-card__hd-ico {
+  font-size: 15px;
+}
+.tv-card__bd {
+  padding: 16px 18px;
+}
+.tv-card__bd--list {
+  padding: 8px 0;
+}
+
+
+/* ──────── 좌측: 지역 필터 ──────── */
+.tv-region-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tv-region {
+  width: 100%;
+  border: 1px solid var(--slate-200);
+  background: var(--white);
+  color: var(--text-secondary);
+  font-family: var(--ff-sans);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: var(--transition);
+}
+.tv-region:hover {
+  border-color: var(--tv-green-300);
+  color: var(--tv-green-700);
+  background: var(--tv-green-50);
+}
+.tv-region--active {
+  background: var(--tv-green-600);
+  border-color: var(--tv-green-600);
+  color: var(--white);
+}
+.tv-region--active:hover {
+  background: var(--tv-green-700);
+  border-color: var(--tv-green-700);
+  color: var(--white);
+}
+
+
+/* ──────── 좌측: 체크리스트 ──────── */
+.tv-card__hd-ico--green { color: var(--tv-green-600); }
+.tv-check {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tv-check li {
+  background: var(--slate-50);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+}
+.tv-check label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--slate-700);
+  cursor: pointer;
+  margin: 0;
+  letter-spacing: -.2px;
+}
+.tv-check input[type="checkbox"] {
+  accent-color: var(--tv-green-600);
+  width: 14px;
+  height: 14px;
+}
+
+
+/* ──────── 중앙: 피드 헤더 ──────── */
+.tv-feed-hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 16px;
+  padding: 4px 0;
+  gap: 16px;
+}
+.tv-feed-hd__title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--navy-900);
+  margin: 0 0 4px;
+  letter-spacing: -.4px;
+}
+.tv-feed-hd__sub {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+.tv-feed-hd__btns {
+  display: flex;
+  gap: 8px;
+}
+
+
+/* ──────── 중앙: 피드 카드 ──────── */
+.tv-post {
+  background: var(--white);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  margin-bottom: 12px;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.tv-post:hover {
+  border-color: var(--tv-green-300);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-2px);
+}
+
+.tv-post__tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.tv-chip {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 100px;
+  letter-spacing: -.2px;
+}
+.tv-chip--cat        { background: var(--tv-cat-bg);        color: var(--tv-cat-fg); }
+.tv-chip--cat-review { background: var(--tv-cat-review-bg); color: var(--tv-cat-review-fg); }
+.tv-chip--cat-info   { background: var(--tv-cat-info-bg);   color: var(--tv-cat-info-fg); }
+.tv-chip--cat-q      { background: var(--tv-cat-q-bg);      color: var(--tv-cat-q-fg); }
+.tv-chip--risk-high  { background: var(--tv-risk-high-bg);  color: var(--tv-risk-high-fg); }
+.tv-chip--risk-mid   { background: var(--tv-risk-mid-bg);   color: var(--tv-risk-mid-fg); }
+.tv-chip--risk-warn  { background: var(--tv-risk-warn-bg);  color: var(--tv-risk-warn-fg); }
+.tv-chip--expert     { background: var(--tv-expert-bg);     color: var(--tv-expert-fg); }
+
+.tv-post__title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--navy-900);
+  margin: 0 0 6px;
+  letter-spacing: -.3px;
+  line-height: 1.4;
+}
+.tv-post__excerpt {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+}
+.tv-post__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.tv-divider {
+  color: var(--slate-300);
+}
+
+
+/* ──────── 우측: 지도 ──────── */
+.tv-map {
+  position: relative;
+  height: 180px;
+  background: var(--tv-green-50);
+  border: 1px solid var(--tv-green-100);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.tv-map__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--tv-green-100) 1px, transparent 1px),
+    linear-gradient(90deg, var(--tv-green-100) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.tv-map__pin {
+  position: relative;
+  font-size: 28px;
+  color: var(--tv-green-700);
+  font-weight: 800;
+}
+.tv-map__caption {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.55;
+}
+
+
+/* ──────── 우측: 인기 게시판 리스트 ──────── */
+.tv-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 18px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--slate-700);
+  transition: var(--transition);
+  border-bottom: 1px solid var(--slate-100);
+}
+.tv-list-item:last-child { border-bottom: 0; }
+.tv-list-item:hover {
+  background: var(--tv-green-50);
+  color: var(--tv-green-700);
+  text-decoration: none;
+}
+.tv-list-item__cnt {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--slate-100);
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+.tv-list-item:hover .tv-list-item__cnt {
+  background: var(--tv-green-100);
+  color: var(--tv-green-700);
+}
+
+
+/* ============================================================
+   반응형
+   ============================================================ */
+@media (max-width: 1100px) {
+  .tv-hero { grid-template-columns: 1fr; }
+  .tv-board {
+    grid-template-columns: 1fr 280px;
+  }
+  .tv-board__left {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .tv-board__left .tv-card { margin-bottom: 0; }
+}
+@media (max-width: 780px) {
+  .tv-pageheader { flex-direction: column; align-items: flex-start; }
+  .tv-hero__main { padding: 24px; }
+  .tv-hero__title { font-size: 22px; }
+  .tv-stats { grid-template-columns: 1fr; }
+  .tv-board { grid-template-columns: 1fr; }
+  .tv-board__left { grid-template-columns: 1fr; }
+  .tv-feed-hd { flex-direction: column; align-items: flex-start; }
+}
