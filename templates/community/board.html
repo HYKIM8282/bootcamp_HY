@@ -25,17 +25,19 @@
   <header class="board-head">
     <h2 class="board-title">📋 커뮤니티 게시판</h2>
     <div class="board-actions">
-      <select id="boardCategory" class="board-select">
-        <option value="">전체</option>
-        <option value="latest">최신글</option>
-        <option value="hot">인기글</option>
-        <option value="region">관심동네</option>
-      </select>
       <button type="button" id="boardWriteBtn" class="board-btn board-btn--primary">
         ✏ 글쓰기
       </button>
     </div>
   </header>
+
+  {# 카테고리 탭 — 클릭 시 해당 카테고리 글만 필터링 #}
+  <nav class="board-tabs" id="boardTabs" role="tablist" aria-label="카테고리">
+    <button type="button" class="board-tab is-active" data-cat="" role="tab" aria-selected="true">전체</button>
+    <button type="button" class="board-tab" data-cat="latest" role="tab" aria-selected="false">최신글</button>
+    <button type="button" class="board-tab" data-cat="hot"    role="tab" aria-selected="false">인기글</button>
+    <button type="button" class="board-tab" data-cat="region" role="tab" aria-selected="false">관심동네</button>
+  </nav>
 
   {# 게시판 표 #}
   <div class="board-table-wrap">
@@ -62,6 +64,15 @@
     <span id="boardPageInfo" class="board-page-info">1 / 1</span>
     <button type="button" id="boardNext" class="board-btn">다음 →</button>
   </div>
+</div>
+
+{# 사진 확대 라이트박스 — 갤러리에서 사진 클릭 시 표시. ← → 로 여러 장 넘기기 #}
+<div id="boardLightbox" class="board-lightbox" aria-hidden="true">
+  <button type="button" class="board-lightbox__close" data-lightbox-close aria-label="닫기">✕</button>
+  <button type="button" id="boardLightboxPrev" class="board-lightbox__nav board-lightbox__nav--prev" aria-label="이전">‹</button>
+  <button type="button" id="boardLightboxNext" class="board-lightbox__nav board-lightbox__nav--next" aria-label="다음">›</button>
+  <img id="boardLightboxImg" class="board-lightbox__img" alt="">
+  <div id="boardLightboxCount" class="board-lightbox__count"></div>
 </div>
 
 {# 글쓰기 / 상세 / 수정 모달 #}
@@ -96,6 +107,17 @@
           <label>내용</label>
           <textarea id="bfContent" rows="7" maxlength="1000" placeholder="내용을 입력하세요 (최대 1,000자)"></textarea>
         </div>
+        <div class="board-field">
+          <label>사진 첨부 <small>(여러 번 선택해서 누적 가능 · 장당 5MB 이하 · JPG/PNG/WEBP/GIF)</small></label>
+          <input type="file" id="bfImages" accept="image/*" multiple>
+          {# 다중 선택 액션바 — 선택된 사진이 있을 때만 표시 #}
+          <div id="bfImagePreviewBar" class="bf-preview-bar" hidden>
+            <span id="bfImagePreviewCount" class="bf-preview-count">선택 0장</span>
+            <button type="button" id="bfImagePreviewDelete" class="board-btn board-btn--danger">선택 삭제</button>
+          </div>
+          {# 썸네일 미리보기 — 체크박스 토글 또는 마우스 드래그로 영역 선택. JS 가 채움 #}
+          <div id="bfImagePreview" class="bf-preview"></div>
+        </div>
         <div class="board-feedback" id="bfFeedback"></div>
         <div class="board-modal__actions">
           <button type="button" class="board-btn" data-board-close>취소</button>
@@ -114,6 +136,9 @@
         </div>
         <h3 class="bd-title" id="bdTitle">—</h3>
         <pre class="bd-content" id="bdContent">—</pre>
+
+        {# 첨부 이미지 갤러리 — JS 가 채움 #}
+        <div class="bd-images" id="bdImages"></div>
 
         <div class="board-modal__actions">
           <button type="button" id="bdLikeBtn" class="board-btn">👍 좋아요</button>

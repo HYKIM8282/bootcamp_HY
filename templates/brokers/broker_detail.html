@@ -211,11 +211,13 @@
           <span class="rv-date">{{ review.created_at|date:"Y.m.d" }}</span>
         </div>
         <p class="rv-content">{{ review.content }}</p>
-        {% if review.image %}
-          <div class="rv-image-wrap">
-            <img src="{{ review.image.url }}" alt="리뷰 이미지" class="rv-image">
-          </div>
-        {% endif %}
+        {% with first_image=review.images.first %}
+          {% if first_image %}
+            <div class="rv-image-wrap">
+              <img src="{{ first_image.image.url }}" alt="리뷰 이미지" class="rv-image">
+            </div>
+          {% endif %}
+        {% endwith %}
         {% if review.author == request.user %}
           <div class="text-end mt-2">
             <a href="{% url 'interactions:review_update' review.pk %}"
@@ -228,13 +230,14 @@
           </div>
         {% endif %}
       </div>
-    {% empty %}
-      <div class="no-review" id="noReviewBox">
-        <span class="icon">💬</span>
-        <p class="mb-0 fw-semibold">아직 등록된 후기가 없습니다</p>
-        <p class="small mt-1">첫 번째 후기를 작성해보세요!</p>
-      </div>
     {% endfor %}
+
+    {# 항상 DOM 에 두고 리뷰 있을 땐 숨김 — JS 삭제 시 hidden=false 만 풀면 노출 #}
+    <div class="no-review" id="noReviewBox"{% if reviews %} hidden{% endif %}>
+      <span class="icon">💬</span>
+      <p class="mb-0 fw-semibold">아직 등록된 후기가 없습니다</p>
+      <p class="small mt-1">첫 번째 후기를 작성해보세요!</p>
+    </div>
   </div>
 
 </div>

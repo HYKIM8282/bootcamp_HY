@@ -12,14 +12,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from interactions.forms import ReviewForm
-from interactions.models import Review
+from django.contrib.contenttypes.models import ContentType
 
-from .forms import BrokerImageForm
+from interactions.forms import ReviewForm
+from interactions.models import Image, Review
+from interactions.serializers import ImageSerializer
+
 from .management.commands.fetch_broker2 import EBBrokerAPIClient, EBBrokerRequestParams
-from .models import BrokerImage, EBBrokerInfo, RealEstateAgent
+from .models import EBBrokerInfo, RealEstateAgent
 from .serializers import (
-    BrokerImageSerializer,
     EBBrokerInfoSerializer,
     EBBrokerSearchParamSerializer,
     RealEstateAgentDetailSerializer,
@@ -315,7 +316,8 @@ class BrokerDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
         agent        = get_object_or_404(RealEstateAgent, pk=pk)
         reviews      = Review.objects.filter(agent=agent).select_related("author")
-        images       = BrokerImage.objects.filter(agent=agent)
+        # 통합 Image(GFK) — RealEstateAgent.images = GenericRelation('interactions.Image')
+        images       = agent.images.all()
         review_count = reviews.count()
 
         avg_raw   = reviews.aggregate(avg=Avg("score"))["avg"]
@@ -339,7 +341,6 @@ class BrokerDetailView(LoginRequiredMixin, View):
                 "avg_score":          avg_score,
                 "review_count":       review_count,
                 "form":               ReviewForm(),
-                "image_form":         BrokerImageForm(),
                 "images":             images,
                 "score_distribution": score_distribution,
             },
@@ -374,74 +375,38 @@ class Broker2ListView(LoginRequiredMixin, View):
 # =========================================================
 
 class BrokerImageUploadView(APIView):
-    """
-    POST  /detail/<pk>/images/upload/
-    Content-Type : multipart/form-data  (axios FormData)
+    """POST /detail1/<pk>/images/upload/ — 중개업소 이미지 업로드.
 
-    요청 필드:
-        image      : 파일 (필수)
-        caption    : 설명 (선택)
-        is_primary : 대표 이미지 여부 (기본 true)
-
-    성공 응답 201:
-        { success, id, image_url, caption, is_primary, uploaded_by }
+    요청: multipart/form-data (image, caption, is_primary)
+    응답: 201 + { success, id, image_url, caption, is_primary, uploaded_by, uploaded_at }
+    검증(파일 형식·크기)은 ImageSerializer 가 담당 — DRF 단일 검증 흐름.
     """
 
     permission_classes = [IsAuthenticated]
-    # ★ MultiPartParser: FormData(파일) 파싱
-    # ★ FormParser     : 일반 POST 폼 필드 파싱
     parser_classes     = [MultiPartParser, FormParser]
 
-    ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
-    MAX_SIZE      = 5 * 1024 * 1024   # 5 MB
-
     def post(self, request, pk):
-        agent      = get_object_or_404(RealEstateAgent, pk=pk)
-        image_file = request.FILES.get("image")
+        agent = get_object_or_404(RealEstateAgent, pk=pk)
 
-        # ── 유효성 검사 ───────────────────────────────────
-        if not image_file:
-            return Response(
-                {"success": False, "error": "이미지 파일이 없습니다."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        if image_file.content_type not in self.ALLOWED_TYPES:
-            return Response(
-                {"success": False, "error": "JPG·PNG·WEBP·GIF 형식만 업로드 가능합니다."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        if image_file.size > self.MAX_SIZE:
-            return Response(
-                {"success": False, "error": "파일 크기는 5 MB 이하여야 합니다."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        serializer = ImageSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
 
-        # ── BrokerImageForm 2차 검증 ──────────────────────
-        form = BrokerImageForm(request.POST, request.FILES)
-        if not form.is_valid():
-            return Response(
-                {"success": False, "error": form.errors},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        is_primary = request.data.get("is_primary", "true").lower() == "true"
-
-        # ── 기존 이미지 전부 교체 ─────────────────────────
-        for old in BrokerImage.objects.filter(agent=agent):
+        # 기존 이미지 전부 교체 (기존 동작 유지)
+        for old in agent.images.all():
             old.image.delete(save=False)
             old.delete()
 
-        # ── 저장 ──────────────────────────────────────────
-        img             = form.save(commit=False)
-        img.agent       = agent
-        img.uploaded_by = request.user
-        img.is_primary  = is_primary
-        img.save()
+        # GFK 필드(content_type/object_id) 와 uploaded_by 는 뷰에서 주입
+        img = serializer.save(
+            content_type=ContentType.objects.get_for_model(RealEstateAgent),
+            object_id=agent.pk,
+            uploaded_by=request.user,
+        )
 
-        # ── Serializer 로 응답 ────────────────────────────
-        serializer = BrokerImageSerializer(img, context={"request": request})
+        # 저장된 객체를 다시 직렬화해 read 필드(image_url 등) 포함 응답
+        out = ImageSerializer(img, context={"request": request})
         return Response(
-            {"success": True, **serializer.data},
+            {"success": True, **out.data},
             status=status.HTTP_201_CREATED,
         )
 
@@ -467,7 +432,8 @@ class BrokerImageDeleteView(APIView):
     parser_classes     = [JSONParser]
 
     def delete(self, request, image_pk):
-        img = get_object_or_404(BrokerImage, pk=image_pk)
+        # 통합 Image(GFK) 모델 사용 — 어떤 도메인 이미지든 같은 엔드포인트로 삭제
+        img = get_object_or_404(Image, pk=image_pk)
 
         # ── 권한 검사 ─────────────────────────────────────
         if img.uploaded_by != request.user and not request.user.is_staff:

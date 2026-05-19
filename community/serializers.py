@@ -1,6 +1,8 @@
 from django.utils.timesince import timesince
 from rest_framework import serializers
 
+from interactions.serializers import ImageSerializer
+
 from .models import Post
 
 
@@ -10,6 +12,8 @@ class PostSerializer(serializers.ModelSerializer):
     author_name      = serializers.SerializerMethodField()
     category_display = serializers.CharField(source="get_category_display",    read_only=True)
     time_ago         = serializers.SerializerMethodField()
+    # 통합 이미지(GFK) — 글에 붙은 사진들 (다중 가능). 응답 전용.
+    images           = ImageSerializer(many=True, read_only=True)
 
     class Meta:
         model  = Post
@@ -27,6 +31,7 @@ class PostSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "time_ago",
+            "images",
         ]
         read_only_fields = [
             "author",

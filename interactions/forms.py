@@ -3,10 +3,11 @@ from .models import Review
 
 
 class ReviewForm(forms.ModelForm):
+    """리뷰 텍스트/별점 검증용. 이미지는 별도 흐름(interactions.Image GFK)으로 처리."""
 
     class Meta:
         model  = Review
-        fields = ['score', 'content', 'image']
+        fields = ['score', 'content']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,12 +28,3 @@ class ReviewForm(forms.ModelForm):
                 'placeholder': '리뷰를 작성해주세요.',
             }
         )
-
-        # ✅ 리뷰 이미지 위젯
-        self.fields['image'].widget = forms.ClearableFileInput(
-            attrs={
-                'class': 'form-control form-control-sm',
-                'accept': 'image/*',
-            }
-        )
-        self.fields['image'].required = False

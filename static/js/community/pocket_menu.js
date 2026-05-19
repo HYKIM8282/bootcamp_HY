@@ -215,7 +215,12 @@
     apiClient.get(CFG.listUrl, { params: params })
       .then(function (res) {
         var d = res.data || {};
-        var items = (d.results || []).filter(function (p) {
+        // PostViewSet 응답 형식: { success, data: [...], meta: { total, page, page_size, has_next } }
+        // 옛 호환(results / has_next) 도 fallback 으로 받음
+        var rows    = d.data || d.results || [];
+        var hasNext = (d.meta && d.meta.has_next) || d.has_next || false;
+
+        var items = rows.filter(function (p) {
           if (!state.keyword) return true;
           var kw = state.keyword.toLowerCase();
           return (p.title || "").toLowerCase().indexOf(kw)   !== -1
@@ -233,7 +238,7 @@
         }
         bindDeleteButtons();
 
-        if (moreBtn) moreBtn.style.display = d.has_next ? "" : "none";
+        if (moreBtn) moreBtn.style.display = hasNext ? "" : "none";
         state.loaded = true;
       })
       .catch(function (err) {

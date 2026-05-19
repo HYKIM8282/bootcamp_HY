@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from interactions.serializers import ReviewSerializer
-from .models import BrokerImage, RealEstateAgent, EBBrokerInfo
+from .models import RealEstateAgent, EBBrokerInfo
 
 
 # =========================================================
@@ -95,26 +95,5 @@ class EBBrokerSearchParamSerializer(serializers.Serializer):
         return attrs
 
 
-# =========================================================
-# BrokerImage  ← 신규 추가
-# =========================================================
-
-class BrokerImageSerializer(serializers.ModelSerializer):
-    """
-    이미지 업로드 성공 응답 직렬화
-    image_url : 절대 URL (JS 가 <img src> 에 바로 사용)
-    uploaded_by : username 문자열
-    """
-    image_url   = serializers.SerializerMethodField()
-    uploaded_by = serializers.StringRelatedField(read_only=True)
-
-    class Meta:
-        model        = BrokerImage
-        fields       = ["id", "image_url", "caption", "is_primary", "uploaded_by"]
-        read_only_fields = fields   # 응답 전용 — 쓰기는 view 에서 직접 처리
-
-    def get_image_url(self, obj):
-        request = self.context.get("request")
-        if obj.image and request:
-            return request.build_absolute_uri(obj.image.url)
-        return obj.image.url if obj.image else None
+# BrokerImageSerializer 는 interactions.serializers.ImageSerializer (GFK 통합) 로 흡수됨.
+# 외부에서 이 이름으로 import 했다면 ImageSerializer 로 교체할 것.
