@@ -3,7 +3,16 @@ from django.db import models
 
 
 class Post(models.Model):
-    """커뮤니티 글 — 포켓메뉴에서 등록·조회"""
+    """커뮤니티 게시글 — 제목·본문·카테고리·좋아요·조회수.
+
+    역할: 사용자가 작성하는 커뮤니티 글.
+    영향:
+    - community/PostLike 와 1:N (좋아요)
+    - community/views.py PostViewSet 에서 CRUD
+    - templates/community/board.html 에서 렌더링
+
+    향후 확장: 댓글 모델 추가, 공유링크 필드 추가 검토 중
+    """
 
     CATEGORY_CHOICES = [
         ("latest", "최신글"),

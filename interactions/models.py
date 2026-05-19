@@ -8,6 +8,14 @@ from brokers.models import RealEstateAgent
 
 
 class Review(models.Model):
+    """중개사 리뷰 — 별점(1~5) + 텍스트 + 작성자.
+
+    역할: 사용자가 부동산 중개업소(RealEstateAgent)에 남기는 평가.
+    영향:
+    - brokers/RealEstateAgent 와 FK 연결 (agent_id)
+    - brokers/views.py BrokerDetailView 에서 표시
+    - brokers/serializers.py RealEstateAgentDetailSerializer 에 nested 포함
+    """
 
     # 별점 선택지
     SCORE_CHOICES = [
