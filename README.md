@@ -18,7 +18,7 @@ requirements.txt → 설치 패키지
 settings.py      → DB, 환경변수, static/media 설정
 manage.py        → Django 실행 기준 위치
 .env             → SECRET_KEY, API_KEY 등
-README.md        → 기존 실행 설명
+README.md        → 프로젝트 실행 및 설정 안내
 
 
 ## 실행 문서에는 최소 이 내용이 들어가야 합니다.
