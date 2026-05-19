@@ -64,24 +64,39 @@ class Review(models.Model):
         return f"[{self.score}점] {self.agent.bsnm_cmpnm} - {self.author.username}"
 
 
-class Image(models.Model):
-    """범용 이미지 첨부 모델.
+class Attachable(models.Model):
+    """GFK 공통 추상 베이스 — 다른 모델에 "붙는" 패턴을 한 곳에 정의.
 
-    GenericForeignKey(GFK)로 어떤 모델에든 붙음. 예: 중개업소(RealEstateAgent),
-    리뷰(Review), 커뮤니티 글(Post). 도메인별로 분산된 이미지 코드를 한곳으로 통합.
+    abstract=True 라 DB 테이블 안 생김. Image, (향후) Like, Comment, Bookmark 등이
+    이 클래스를 상속하면 content_type / object_id / GenericForeignKey 와
+    (content_type, object_id) 복합 인덱스가 자동 제공됨.
+
+    상속 예시:
+        class Like(Attachable):
+            user = models.ForeignKey(settings.AUTH_USER_MODEL, ...)
+            # GFK 필드는 자동
     """
 
-    # 어느 모델의 어느 객체에 붙는지
     content_type   = models.ForeignKey(ContentType, on_delete=models.CASCADE, verbose_name='대상 모델')
     object_id      = models.PositiveIntegerField(verbose_name='대상 PK')
     content_object = GenericForeignKey('content_type', 'object_id')
 
-    # 이미지 본체
+    class Meta:
+        abstract = True
+        indexes  = [models.Index(fields=['content_type', 'object_id'])]
+
+
+class Image(Attachable):
+    """범용 이미지 첨부.
+
+    어떤 모델에든 붙음. 예: 중개업소(RealEstateAgent), 리뷰(Review), 커뮤니티 글(Post).
+    GFK 필드(content_type/object_id)는 Attachable 에서 자동 제공.
+    """
+
     image      = models.ImageField(upload_to='images/%Y/%m/', verbose_name='이미지')
     caption    = models.CharField(max_length=200, blank=True, verbose_name='설명')
     is_primary = models.BooleanField(default=False, verbose_name='대표 이미지')
 
-    # 메타
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -90,10 +105,11 @@ class Image(models.Model):
     )
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name='업로드일시')
 
-    class Meta:
+    class Meta(Attachable.Meta):
+        abstract = False
         db_table = 'interactions_image'
         ordering = ['-is_primary', '-uploaded_at']
-        indexes  = [models.Index(fields=['content_type', 'object_id'], name='idx_image_target')]
+        # Attachable.Meta.indexes (content_type, object_id) 자동 흡수
         verbose_name        = '이미지'
         verbose_name_plural = '이미지 목록'
 
