@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Review
+from .models import Review, Image
 
 
 @admin.register(Review)
@@ -40,3 +40,14 @@ class ReviewAdmin(admin.ModelAdmin):
             return obj.content[:30] + '...'
         return obj.content
     content_preview.short_description = '내용 미리보기'
+
+
+@admin.register(Image)
+class ImageAdmin(admin.ModelAdmin):
+    """범용 이미지(GFK) 관리. 대상 모델/객체ID로 필터·검색."""
+
+    list_display  = ['id', 'content_type', 'object_id', 'is_primary', 'uploaded_by', 'uploaded_at']
+    list_filter   = ['content_type', 'is_primary', 'uploaded_at']
+    search_fields = ['caption', 'object_id']
+    readonly_fields = ['uploaded_at']
+    ordering      = ['-uploaded_at']

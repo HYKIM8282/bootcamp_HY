@@ -1,5 +1,9 @@
-from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.db import models
+
 from brokers.models import RealEstateAgent
 
 
@@ -50,3 +54,50 @@ class Review(models.Model):
 
     def __str__(self):
         return f"[{self.score}점] {self.agent.bsnm_cmpnm} - {self.author.username}"
+
+
+class Image(models.Model):
+    """범용 이미지 첨부 모델.
+
+    GenericForeignKey(GFK)로 어떤 모델에든 붙음. 예: 중개업소(RealEstateAgent),
+    리뷰(Review), 커뮤니티 글(Post). 도메인별로 분산된 이미지 코드를 한곳으로 통합.
+    """
+
+    # 어느 모델의 어느 객체에 붙는지
+    content_type   = models.ForeignKey(ContentType, on_delete=models.CASCADE, verbose_name='대상 모델')
+    object_id      = models.PositiveIntegerField(verbose_name='대상 PK')
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    # 이미지 본체
+    image      = models.ImageField(upload_to='images/%Y/%m/', verbose_name='이미지')
+    caption    = models.CharField(max_length=200, blank=True, verbose_name='설명')
+    is_primary = models.BooleanField(default=False, verbose_name='대표 이미지')
+
+    # 메타
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        verbose_name='업로더',
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name='업로드일시')
+
+    class Meta:
+        db_table = 'interactions_image'
+        ordering = ['-is_primary', '-uploaded_at']
+        indexes  = [models.Index(fields=['content_type', 'object_id'], name='idx_image_target')]
+        verbose_name        = '이미지'
+        verbose_name_plural = '이미지 목록'
+
+    def __str__(self):
+        return f"Image {self.pk} → {self.content_type}({self.object_id})"
+
+    def save(self, *args, **kwargs):
+        # 같은 대상에서 is_primary=True 인 이미지는 1장만 유지 (BrokerImage 버그 흡수 수정)
+        if self.is_primary:
+            type(self).objects.filter(
+                content_type=self.content_type,
+                object_id=self.object_id,
+                is_primary=True,
+            ).exclude(pk=self.pk).update(is_primary=False)
+        super().save(*args, **kwargs)
