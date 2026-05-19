@@ -55,6 +55,9 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    # ✅ 통합 이미지(GFK) — 리뷰에 붙은 사진들 (다중 가능). 응답 전용.
+    images = ImageSerializer(many=True, read_only=True)
+
     class Meta:
         model  = Review
         fields = [
@@ -65,7 +68,7 @@ class ReviewSerializer(serializers.ModelSerializer):
             'score',
             'score_display',
             'content',
-            'image',
+            'images',
             'created_at',
             'updated_at',
         ]

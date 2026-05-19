@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
@@ -46,12 +46,8 @@ class Review(models.Model):
     # ✅ 리뷰 내용
     content  = models.TextField()
 
-    # ✅ 리뷰 이미지 (선택)
-    image = models.ImageField(
-        upload_to='reviews/%Y/%m/',
-        null=True, blank=True,
-        verbose_name='리뷰 이미지',
-    )
+    # ✅ 통합 이미지(GFK) 역방향 — review.images.all() 가능. 기존 단일 image 필드는 제거됨.
+    images = GenericRelation('interactions.Image')
 
     # ✅ 작성일 / 수정일
     created_at = models.DateTimeField(auto_now_add=True)

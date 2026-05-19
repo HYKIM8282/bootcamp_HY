@@ -211,11 +211,13 @@
           <span class="rv-date">{{ review.created_at|date:"Y.m.d" }}</span>
         </div>
         <p class="rv-content">{{ review.content }}</p>
-        {% if review.image %}
-          <div class="rv-image-wrap">
-            <img src="{{ review.image.url }}" alt="리뷰 이미지" class="rv-image">
-          </div>
-        {% endif %}
+        {% with first_image=review.images.first %}
+          {% if first_image %}
+            <div class="rv-image-wrap">
+              <img src="{{ first_image.image.url }}" alt="리뷰 이미지" class="rv-image">
+            </div>
+          {% endif %}
+        {% endwith %}
         {% if review.author == request.user %}
           <div class="text-end mt-2">
             <a href="{% url 'interactions:review_update' review.pk %}"

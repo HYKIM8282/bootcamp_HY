@@ -1,13 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.http import JsonResponse
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 
 from brokers.models import RealEstateAgent
-from .models import Review
+from .models import Image, Review
 from .forms import ReviewForm
-from .serializers import ReviewSerializer
+from .serializers import ImageSerializer, ReviewSerializer
 
 
 # ────────────────────────────────────────────────
@@ -41,16 +42,27 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 @login_required(login_url='/accounts/login/')
 def review_create(request, agent_pk):
-    """리뷰 작성"""
+    """리뷰 작성 — 텍스트/별점은 ReviewForm, 이미지는 GFK 통합 Image 로 별도 저장."""
     agent = get_object_or_404(RealEstateAgent, pk=agent_pk)
 
     if request.method == 'POST':
-        form = ReviewForm(request.POST, request.FILES)
+        form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
-            review.agent  = agent   # ✅ 중개업소 자동 연결
-            review.author = request.user  # ✅ 작성자 자동 연결
+            review.agent  = agent
+            review.author = request.user
             review.save()
+
+            # 첨부 이미지가 있으면 ImageSerializer 로 검증 후 Image(GFK) 저장
+            image_file = request.FILES.get('image')
+            if image_file:
+                img_ser = ImageSerializer(data={'image': image_file})
+                if img_ser.is_valid():
+                    img_ser.save(
+                        content_type=ContentType.objects.get_for_model(Review),
+                        object_id=review.pk,
+                        uploaded_by=request.user,
+                    )
             return redirect('brokers:broker1_detail', pk=agent_pk)
     else:
         form = ReviewForm()
@@ -97,9 +109,23 @@ def review_update(request, review_pk):
         return redirect('brokers:broker1_detail', pk=review.agent.pk)
 
     if request.method == 'POST':
-        form = ReviewForm(request.POST, request.FILES, instance=review)  # ✅ instance로 기존 데이터 불러옴
+        form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
             form.save()
+
+            # 새 이미지가 올라오면 기존 이미지를 교체 (단일 이미지 UX 유지)
+            image_file = request.FILES.get('image')
+            if image_file:
+                img_ser = ImageSerializer(data={'image': image_file})
+                if img_ser.is_valid():
+                    for old in review.images.all():
+                        old.image.delete(save=False)
+                        old.delete()
+                    img_ser.save(
+                        content_type=ContentType.objects.get_for_model(Review),
+                        object_id=review.pk,
+                        uploaded_by=request.user,
+                    )
             return redirect('brokers:broker1_detail', pk=review.agent.pk)
     else:
         form = ReviewForm(instance=review)  # ✅ GET: 기존 내용 채워서 보여줌
