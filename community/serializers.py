@@ -7,7 +7,7 @@ from .models import Post
 class PostSerializer(serializers.ModelSerializer):
     """커뮤니티 글 직렬화 — JSON 응답 전용"""
 
-    author_name      = serializers.CharField(source="author.username",         read_only=True)
+    author_name      = serializers.SerializerMethodField()
     category_display = serializers.CharField(source="get_category_display",    read_only=True)
     time_ago         = serializers.SerializerMethodField()
 
@@ -21,6 +21,7 @@ class PostSerializer(serializers.ModelSerializer):
             "category_display",
             "author",
             "author_name",
+            "nickname",
             "like_count",
             "view_count",
             "created_at",
@@ -34,6 +35,12 @@ class PostSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def get_author_name(self, obj):
+        # 닉네임을 입력했으면 닉네임, 비웠으면 회원 username
+        if obj.nickname:
+            return obj.nickname
+        return obj.author.username if obj.author else "익명"
 
     def get_time_ago(self, obj):
         # 예) "1분", "3시간", "2일" 뒤에 "전" 부가

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}대장리본 — 시작{% endblock %}
+
+{% block content %}
+<div class="gateway">
+  {# 커뮤니티: 로그인 없이 바로 게시판 #}
+  <div class="left">
+    <a href="{% url 'community:board' %}">커뮤니티</a>
+  </div>
+  {# 지도보기: dashboard는 @login_required → 비로그인 시 자동 로그인 페이지로 이동 #}
+  <div class="right">
+    <a href="{% url 'brokers:dashboard' %}">지도보기</a>
+  </div>
+</div>
+{% endblock content %}

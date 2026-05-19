@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}커뮤니티 게시판{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/community/board.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="board-wrap">
+
+  {# JS 가 사용하는 설정값 — URL/CSRF/로그인 상태 #}
+  <script id="boardConfig" type="application/json">
+  {
+    "listUrl":   "{% url 'community:post-list' %}",
+    "csrfToken": "{{ csrf_token }}",
+    "isAuthenticated": {% if user.is_authenticated %}true{% else %}false{% endif %},
+    "currentUser":     "{{ user.username|escapejs }}",
+    "loginUrl":        "{% url 'accounts:login' %}?next=/community/"
+  }
+  </script>
+
+  <header class="board-head">
+    <h2 class="board-title">📋 커뮤니티 게시판</h2>
+    <div class="board-actions">
+      <select id="boardCategory" class="board-select">
+        <option value="">전체</option>
+        <option value="latest">최신글</option>
+        <option value="hot">인기글</option>
+        <option value="region">관심동네</option>
+      </select>
+      <button type="button" id="boardWriteBtn" class="board-btn board-btn--primary">
+        ✏ 글쓰기
+      </button>
+    </div>
+  </header>
+
+  {# 게시판 표 #}
+  <div class="board-table-wrap">
+    <table class="board-table">
+      <thead>
+        <tr>
+          <th class="col-no">No</th>
+          <th class="col-title">제목</th>
+          <th class="col-author">작성자</th>
+          <th class="col-date">작성일</th>
+          <th class="col-view">조회수</th>
+          <th class="col-like">좋아요</th>
+        </tr>
+      </thead>
+      <tbody id="boardTbody">
+        {# JS 가 채워 넣음. 초기엔 로딩 표시 #}
+        <tr class="board-row board-row--empty"><td colspan="6">불러오는 중…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="board-pager">
+    <button type="button" id="boardPrev" class="board-btn">← 이전</button>
+    <span id="boardPageInfo" class="board-page-info">1 / 1</span>
+    <button type="button" id="boardNext" class="board-btn">다음 →</button>
+  </div>
+</div>
+
+{# 글쓰기 / 상세 / 수정 모달 #}
+<div id="boardModal" class="board-modal" aria-hidden="true">
+  <div class="board-modal__backdrop" data-board-close></div>
+  <div class="board-modal__dialog">
+    <header class="board-modal__head">
+      <h3 class="board-modal__title" id="boardModalTitle">새 글 작성</h3>
+      <button class="board-modal__close" type="button" data-board-close>✕</button>
+    </header>
+
+    <div class="board-modal__body" id="boardModalBody">
+      {# 작성/수정 폼 #}
+      <div id="boardForm">
+        <div class="board-field">
+          <label>제목</label>
+          <input type="text" id="bfTitle" maxlength="80" placeholder="제목을 입력하세요">
+        </div>
+        <div class="board-field">
+          <label>카테고리</label>
+          <select id="bfCategory">
+            <option value="latest">최신글</option>
+            <option value="hot">인기글</option>
+            <option value="region">관심동네</option>
+          </select>
+        </div>
+        <div class="board-field">
+          <label>닉네임 <small>(비우면 회원 ID로 표시됩니다)</small></label>
+          <input type="text" id="bfNickname" maxlength="30" placeholder="익명 닉네임 (선택)">
+        </div>
+        <div class="board-field">
+          <label>내용</label>
+          <textarea id="bfContent" rows="7" maxlength="1000" placeholder="내용을 입력하세요 (최대 1,000자)"></textarea>
+        </div>
+        <div class="board-feedback" id="bfFeedback"></div>
+        <div class="board-modal__actions">
+          <button type="button" class="board-btn" data-board-close>취소</button>
+          <button type="button" id="bfSubmit" class="board-btn board-btn--primary">등록</button>
+        </div>
+      </div>
+
+      {# 상세 보기 #}
+      <div id="boardDetail" style="display:none;">
+        <div class="bd-meta">
+          <span class="bd-cat" id="bdCategory">최신글</span>
+          <span class="bd-author" id="bdAuthor">—</span>
+          <span class="bd-date" id="bdDate">—</span>
+          <span class="bd-view">조회 <em id="bdView">0</em></span>
+          <span class="bd-like">좋아요 <em id="bdLike">0</em></span>
+        </div>
+        <h3 class="bd-title" id="bdTitle">—</h3>
+        <pre class="bd-content" id="bdContent">—</pre>
+
+        <div class="board-modal__actions">
+          <button type="button" id="bdLikeBtn" class="board-btn">👍 좋아요</button>
+          <button type="button" id="bdEditBtn" class="board-btn" style="display:none;">수정</button>
+          <button type="button" id="bdDeleteBtn" class="board-btn board-btn--danger" style="display:none;">삭제</button>
+          <button type="button" class="board-btn" data-board-close>닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/community/board.js' %}" defer></script>
+{% endblock %}

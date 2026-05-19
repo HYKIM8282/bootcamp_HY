@@ -21,7 +21,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 
 
 urlpatterns = [
@@ -36,11 +36,14 @@ urlpatterns = [
     # review / interaction 쪽이 따로 있으면 그대로 유지
     path("interactions/", include("interactions.urls")),
 
-    # 커뮤니티 (글쓰기/목록/삭제)
+    # 커뮤니티 (게시판/CRUD API)
     path("community/", include(("community.urls", "community"), namespace="community")),
 
-    # 루트("/") → 대시보드로 리다이렉트 (미로그인이면 login_required가 로그인 페이지로 보냄)
-    path("", RedirectView.as_view(url="/brokers/dashboard/", permanent=False)),
+    # 게이트웨이 (시작 페이지) — 로그인 없이 접근 가능
+    path("gateway/", TemplateView.as_view(template_name="gateway.html"), name="gateway"),
+
+    # 루트("/") → 게이트웨이로 리다이렉트
+    path("", RedirectView.as_view(url="/gateway/", permanent=False)),
 ]
 
 if settings.DEBUG:
