@@ -569,26 +569,22 @@
 }
 .review-card .rv-image:hover { transform: scale(1.02); }
 
-/* 수정/삭제 버튼 (Bootstrap 오버라이드) */
-.review-card .btn-outline-primary {
-  font-size: .72rem !important;
-  padding: .22rem .65rem !important;
-  border-radius: 6px !important;
-  border-color: var(--n700) !important;
-  color: var(--n700) !important;
-  font-weight: 600 !important;
-}
-.review-card .btn-outline-primary:hover {
-  background: var(--n900) !important;
-  border-color: var(--n900) !important;
-  color: var(--white) !important;
-}
-
+/* 수정/삭제 버튼 (Bootstrap 오버라이드) — 공통 속성 묶음 */
+.review-card .btn-outline-primary,
 .review-card .btn-outline-danger {
   font-size: .72rem !important;
   padding: .22rem .65rem !important;
   border-radius: 6px !important;
   font-weight: 600 !important;
+}
+.review-card .btn-outline-primary {
+  border-color: var(--n700) !important;
+  color: var(--n700) !important;
+}
+.review-card .btn-outline-primary:hover {
+  background: var(--n900) !important;
+  border-color: var(--n900) !important;
+  color: var(--white) !important;
 }
 
 /* 리뷰 없음 */
