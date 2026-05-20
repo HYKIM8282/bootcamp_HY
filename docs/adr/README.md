@@ -9,6 +9,8 @@
 | 번호 | 제목 | Status |
 |------|------|--------|
 | [0001](0001-viewset-based-drf-structure.md) | ViewSet 기반 DRF 구조 채택 | Accepted |
+| [0002](0002-manageable-frontend-layout.md) | 관리 가능한 프론트엔드 레이아웃 | Accepted |
+| [0003](0003-public-data-first.md) | 공공데이터 우선 정책 | Accepted |
 
 ## Status 종류
 
