@@ -6,9 +6,13 @@
 """
 from fastapi import APIRouter
 
+from schemas.sentiment import AnalyzeRequest, AnalyzeResponse
+from services import sentiment_service
+
 router = APIRouter(prefix="/sentiment", tags=["sentiment"])
 
-# 3단계에서 추가 예정:
-# @router.post("/analyze")
-# def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
-#     return sentiment_service.analyze_text(req)
+
+@router.post("/analyze", response_model=AnalyzeResponse)
+def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
+    """텍스트 + 별점 → 감정 분석 결과."""
+    return sentiment_service.analyze_text(req)
