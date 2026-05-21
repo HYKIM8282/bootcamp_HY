@@ -25,14 +25,14 @@ media/
 .DS_Store
 Thumbs.db
 
-# AI/ML (있으면)
-*.pt          # PyTorch 모델
-*.pkl         # pickle 모델
-*.h5          # Keras 모델
-data/raw/     # 원본 데이터
+# AI/ML 모델 파일 (PyTorch=.pt, pickle=.pkl, Keras=.h5)
+*.pt
+*.pkl
+*.h5
+data/raw/
 
-# 도구
-.claude/      # Claude Code 설정
+# Claude Code 설정
+.claude/
 
-# 로컬 작업물 (커밋 금지)
-docs-vault    # 옵시디언 vault (심볼릭 링크 또는 디렉토리)
+# 옵시디언 vault (심볼릭 링크 또는 디렉토리)
+docs-vault
