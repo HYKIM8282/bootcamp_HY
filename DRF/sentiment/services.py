@@ -79,3 +79,26 @@ def _save_error_result(review, error_msg: str) -> SentimentResult:
         model_version="",
         raw_response={"error": error_msg},
     )
+
+
+def calc_trust_score(
+    avg_star: Optional[float], avg_sentiment: Optional[float]
+) -> Optional[float]:
+    """별점 평균 + 감정점수 평균 → 종합 신뢰점수 (0~100).
+
+    공식 (가중치):
+        norm_star      = avg_star / 5            # 1~5 → 0~1
+        norm_sentiment = (avg_sentiment + 1) / 2 # -1~+1 → 0~1
+        trust          = (norm_star × 0.3 + norm_sentiment × 0.7) × 100
+
+    감정점수가 없으면 별점만으로 정규화 점수 반환.
+    """
+    if avg_star is None and avg_sentiment is None:
+        return None
+
+    norm_star = (avg_star or 0) / 5
+    if avg_sentiment is None:
+        return round(norm_star * 100, 1)
+
+    norm_sent = (avg_sentiment + 1) / 2
+    return round((norm_star * 0.3 + norm_sent * 0.7) * 100, 1)

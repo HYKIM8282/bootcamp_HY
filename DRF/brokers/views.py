@@ -315,26 +315,59 @@ class BrokerDetailView(LoginRequiredMixin, View):
 
     def get(self, request, pk):
         agent        = get_object_or_404(RealEstateAgent, pk=pk)
-        reviews      = Review.objects.filter(agent=agent).select_related("author")
+        reviews      = list(
+            Review.objects.filter(agent=agent).select_related("author")
+        )
         # 통합 Image(GFK) — RealEstateAgent.images = GenericRelation('interactions.Image')
         images       = agent.images.all()
-        review_count = reviews.count()
+        review_count = len(reviews)
 
-        avg_raw   = reviews.aggregate(avg=Avg("score"))["avg"]
+        avg_raw   = (
+            sum(r.score for r in reviews) / review_count if review_count else None
+        )
         avg_score = round(avg_raw, 1) if avg_raw else 0
 
         score_distribution = [
             {
                 "score": s,
-                "count": (cnt := reviews.filter(score=s).count()),
+                "count": (cnt := sum(1 for r in reviews if r.score == s)),
                 "pct":   round(cnt / review_count * 100) if review_count else 0,
             }
             for s in [5, 4, 3, 2, 1]
         ]
 
+        # ─── 감정분석 결과 합산 (8단계) ────────────────────────────
+        from sentiment.models import SentimentResult
+        from sentiment.services import calc_trust_score
+
+        review_ct = ContentType.objects.get_for_model(Review)
+        sentiment_qs = (
+            SentimentResult.objects
+            .filter(target_type=review_ct, target_id__in=[r.id for r in reviews])
+            .exclude(label="error")
+            .order_by("-created_at")
+        )
+        # target_id 별 최신 1건만 (재분석 히스토리 중 최신)
+        sentiment_map = {}
+        for sr in sentiment_qs:
+            if sr.target_id not in sentiment_map:
+                sentiment_map[sr.target_id] = sr
+
+        # Review 각각에 .sentiment attach (template 에서 review.sentiment 접근)
+        for r in reviews:
+            r.sentiment = sentiment_map.get(r.id)
+
+        # 평균 감정점수 (-1 ~ +1)
+        scores = [sr.score for sr in sentiment_map.values()]
+        avg_sentiment = round(sum(scores) / len(scores), 3) if scores else None
+
+        # 종합 신뢰점수 (0~100)
+        trust_score = calc_trust_score(avg_raw, avg_sentiment)
+        # ───────────────────────────────────────────────────────────
+
         return render(
             request,
-            "brokers/broker_detail.html",   # ★ [수정] detail.html → broker_detail.html
+            "brokers/broker_detail.html",
             {
                 "agent":              agent,
                 "reviews":            reviews,
@@ -343,6 +376,9 @@ class BrokerDetailView(LoginRequiredMixin, View):
                 "form":               ReviewForm(),
                 "images":             images,
                 "score_distribution": score_distribution,
+                "avg_sentiment":      avg_sentiment,
+                "trust_score":        trust_score,
+                "analyzed_count":     len(sentiment_map),
             },
         )
 

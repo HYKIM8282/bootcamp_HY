@@ -147,6 +147,20 @@
 
   </div>
 
+  {% if trust_score is not None %}
+    <div class="trust-score-card" style="padding:16px;margin-bottom:12px;background:#f4f8ff;border-radius:8px;text-align:center;">
+      <div style="font-size:14px;color:#555;">🤖 AI 종합 신뢰점수</div>
+      <div style="font-size:36px;font-weight:bold;color:#2c5fb3;margin:4px 0;">
+        {{ trust_score }}<span style="font-size:18px;">점</span>
+      </div>
+      <div style="font-size:12px;color:#777;">
+        별점 {{ avg_score }} · 감정점수
+        {% if avg_sentiment is not None %}{{ avg_sentiment }}{% else %}–{% endif %}
+        · 분석 {{ analyzed_count }}/{{ review_count }}건
+      </div>
+    </div>
+  {% endif %}
+
   <div class="rating-card">
     <div>
       <div class="rating-big">{{ avg_score|default:"0" }}</div>
@@ -207,6 +221,15 @@
               {% endfor %}
             </span>
             <span class="rv-score">{{ review.score }}점</span>
+            {% if review.sentiment %}
+              {% if review.sentiment.label == "positive" %}
+                <span style="padding:2px 8px;border-radius:12px;background:#e8f5e9;color:#2e7d32;font-size:11px;">😊 긍정 {{ review.sentiment.score }}</span>
+              {% elif review.sentiment.label == "negative" %}
+                <span style="padding:2px 8px;border-radius:12px;background:#ffebee;color:#c62828;font-size:11px;">😞 부정 {{ review.sentiment.score }}</span>
+              {% elif review.sentiment.label == "neutral" %}
+                <span style="padding:2px 8px;border-radius:12px;background:#eceff1;color:#546e7a;font-size:11px;">😐 중립 {{ review.sentiment.score }}</span>
+              {% endif %}
+            {% endif %}
           </div>
           <span class="rv-date">{{ review.created_at|date:"Y.m.d" }}</span>
         </div>
