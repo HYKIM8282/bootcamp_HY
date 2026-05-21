@@ -50,6 +50,33 @@ class SentimentResult(models.Model):
     )
     confidence = models.FloatField(default=0.0, verbose_name="결과 확신도(0~1)")
 
+    # AI 응답 (FastAPI 연동) ─────────────────────────────
+    LABEL_CHOICES = [
+        ("positive", "긍정"),
+        ("neutral", "중립"),
+        ("negative", "부정"),
+        ("error", "분석 실패"),
+    ]
+    label = models.CharField(
+        max_length=20,
+        choices=LABEL_CHOICES,
+        default="neutral",
+        verbose_name="감정 라벨",
+    )
+    model_version = models.CharField(
+        max_length=50,
+        default="",
+        blank=True,
+        verbose_name="모델 버전",
+        help_text="어느 분석기로 만든 결과인지 추적용 (예: dummy-v0, klue-bert-v1)",
+    )
+    raw_response = models.JSONField(
+        default=dict,
+        blank=True,
+        verbose_name="원본 응답",
+        help_text="FastAPI 원본 JSON 응답 백업 (디버깅·재현용)",
+    )
+
     # 매칭 근거 (디버깅/투명성용)
     positive_hits = models.JSONField(default=list, blank=True, verbose_name="긍정 매칭")
     negative_hits = models.JSONField(default=list, blank=True, verbose_name="부정 매칭")

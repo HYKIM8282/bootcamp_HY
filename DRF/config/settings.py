@@ -15,11 +15,19 @@ BASE_URLS2= os.getenv("BASE_URLS2", "https://api.vworld.kr/ned/data/getEBBfficeI
 VWORLD_TIMEOUT    = int(os.getenv("VWORLD_TIMEOUT", 10))
 VWORLD_DOMAIN = os.getenv("VWORLD_DOMAIN", "localhost")
 
+# ───────────────────────────────────────────────────────
+# AI 감정분석 (FastAPI 연동) — sentiment 앱에서 사용
+# ───────────────────────────────────────────────────────
+FASTAPI_URL        = os.getenv("FASTAPI_URL", "http://127.0.0.1:8001")
+FASTAPI_TIMEOUT    = float(os.getenv("FASTAPI_TIMEOUT", 10.0))
+INTERNAL_API_KEY   = os.getenv("INTERNAL_API_KEY", "dev-key-change-me")
+USE_DUMMY_ANALYZER = os.getenv("USE_DUMMY", "false").lower() == "true"
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$tc#bm&y2cyf$_#=!iyjn@tt&u@r+iw+u#qh-=f-dq!q4)95hv'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
