@@ -168,3 +168,33 @@ STATICFILES_DIRS = [
 
 # collectstatic이 모아둘 최종 폴더
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+# ───────────────────────────────────────────────────────
+# Celery — 비동기 작업 큐 (sentiment.tasks 등에서 사용)
+# ───────────────────────────────────────────────────────
+# Broker  = 작업 큐 보관소 (Django → Worker 로 전달)
+# Backend = 결과 저장소 (선택적, 결과 조회 안 하면 비활성화 가능)
+#
+# Redis DB 번호 분리 이유:
+#   /0 = 큐, /1 = 결과 → redis-cli SELECT 로 따로 디버깅 가능
+# ───────────────────────────────────────────────────────
+CELERY_BROKER_URL     = os.getenv("CELERY_BROKER_URL",     "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/1")
+
+# 직렬화: JSON 만 허용 (보안 + 호환성)
+CELERY_ACCEPT_CONTENT    = ["json"]
+CELERY_TASK_SERIALIZER   = "json"
+CELERY_RESULT_SERIALIZER = "json"
+
+# 시간대: Django 의 TIME_ZONE 재사용 (Asia/Seoul)
+CELERY_TIMEZONE   = TIME_ZONE
+CELERY_ENABLE_UTC = True
+
+# 작업 관리
+CELERY_TASK_TRACK_STARTED   = True   # "STARTED" 상태 추적 (디버깅 용이)
+CELERY_TASK_TIME_LIMIT      = 60     # 한 task 최대 60초 (FastAPI 행 걸려도 워커 보호)
+CELERY_TASK_SOFT_TIME_LIMIT = 50     # 50초에 SoftTimeLimitExceeded 예외 → graceful cleanup
+
+# 개발 편의: 로컬에서 worker 안 띄우고도 즉시 실행 (테스트용)
+# CELERY_TASK_ALWAYS_EAGER = True   # 필요 시 주석 해제
