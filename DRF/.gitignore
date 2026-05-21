@@ -1,8 +1,13 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
 *.so
+
+# 가상환경 (절대!)
+.venv/
+venv/
+env/
+.env
 
 # Django
 *.log
@@ -10,11 +15,6 @@ db.sqlite3
 db.sqlite3.bak*
 db.sqlite3-journal
 media/
-
-# 환경설정
-.env
-.venv/
-venv/
 
 # IDE
 .vscode/
@@ -25,7 +25,14 @@ venv/
 .DS_Store
 Thumbs.db
 
-docs-vault
+# AI/ML (있으면)
+*.pt          # PyTorch 모델
+*.pkl         # pickle 모델
+*.h5          # Keras 모델
+data/raw/     # 원본 데이터
 
-# Claude Code
-.claude/
+# 도구
+.claude/      # Claude Code 설정
+
+# 로컬 작업물 (커밋 금지)
+docs-vault    # 옵시디언 vault (심볼릭 링크 또는 디렉토리)
