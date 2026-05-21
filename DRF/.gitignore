@@ -33,6 +33,3 @@ data/raw/
 
 # Claude Code 설정
 .claude/
-
-# 옵시디언 vault (심볼릭 링크 또는 디렉토리)
-docs-vault
