@@ -4,8 +4,10 @@
 """
 import os
 
-# 모델 설정 (5단계에서 사용)
-MODEL_NAME = os.getenv("MODEL_NAME", "klue/bert-base")
+# 모델 설정 (6단계 — 한국어 일반 텍스트 감정분석, 부동산 리뷰에 적합)
+# Copycats/koelectra-... : 2-class (negative/positive), 약 420MB
+# cli_test.py 에서 검증된 모델
+MODEL_NAME = os.getenv("MODEL_NAME", "Copycats/koelectra-base-v3-generalized-sentiment-analysis")
 MAX_INPUT_LENGTH = int(os.getenv("MAX_INPUT_LENGTH", "512"))
 
 # 인증

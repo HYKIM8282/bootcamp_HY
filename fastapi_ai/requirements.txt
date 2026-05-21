@@ -4,7 +4,9 @@ uvicorn[standard]==0.30.6
 pydantic==2.9.2
 python-dotenv==1.0.1
 
-# 5단계(실제 모델)에서 추가 예정:
-# transformers==4.45.0
-# torch==2.4.0
-# httpx==0.27.0
+# 6단계: 실제 모델 (KoElectra)
+transformers==4.45.0
+torch==2.4.0
+
+# DRF→FastAPI 호출용 (DRF .venv에도 있지만 FastAPI쪽 통신 도구로 같이)
+httpx==0.27.0
